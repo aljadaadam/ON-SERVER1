@@ -4,7 +4,7 @@ import { adminApi } from '../api/client';
 import {
   PhoneIcon, CurrencyDollarIcon,
   Cog6ToothIcon, DocumentTextIcon, BanknotesIcon,
-  CheckBadgeIcon, ArrowPathIcon, ServerStackIcon
+  CheckBadgeIcon, ArrowPathIcon
 } from '@heroicons/react/24/outline';
 import PageBanner from '../components/PageBanner';
 
@@ -81,7 +81,6 @@ const groupIcons: Record<string, React.ComponentType<React.SVGProps<SVGSVGElemen
   'الإيداع': CurrencyDollarIcon,
   'السياسات': DocumentTextIcon,
   'عام': Cog6ToothIcon,
-  'المزود': ServerStackIcon,
 };
 
 const groupGradients: Record<string, string> = {
@@ -91,7 +90,6 @@ const groupGradients: Record<string, string> = {
   'الإيداع': 'from-amber-500 to-amber-600',
   'السياسات': 'from-gray-500 to-gray-600',
   'عام': 'from-indigo-500 to-indigo-600',
-  'المزود': 'from-rose-500 to-rose-600',
 };
 
 const settingGroups = [
@@ -118,10 +116,6 @@ const settingGroups = [
   {
     title: 'عام',
     keys: ['maintenance_mode', 'announcement'],
-  },
-  {
-    title: 'المزود',
-    keys: ['provider_url', 'provider_username', 'provider_api_key'],
   },
 ];
 
@@ -152,9 +146,6 @@ const settingLabels: Record<string, string> = {
   bankak_min_amount: 'الحد الأدنى',
   bankak_max_amount: 'الحد الأقصى',
   bankak_transfer_note: 'تعليق التحويل',
-  provider_url: 'رابط API',
-  provider_username: 'المستخدم',
-  provider_api_key: 'مفتاح API',
 };
 
 export default function Settings() {
