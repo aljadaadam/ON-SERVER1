@@ -53,6 +53,13 @@ class MainActivity : ComponentActivity() {
                     val isChecking by maintenanceViewModel.isChecking.collectAsState()
                     val announcement by maintenanceViewModel.announcement.collectAsState()
 
+                    // Track if splash has finished (give it enough time)
+                    var splashFinished by remember { mutableStateOf(false) }
+                    LaunchedEffect(Unit) {
+                        kotlinx.coroutines.delay(4000) // Wait for splash animation to complete
+                        splashFinished = true
+                    }
+
                     // Re-check maintenance mode when app resumes
                     val lifecycleOwner = LocalLifecycleOwner.current
                     DisposableEffect(lifecycleOwner) {
@@ -68,14 +75,16 @@ class MainActivity : ComponentActivity() {
                     }
 
                     Box(modifier = Modifier.fillMaxSize()) {
-                        if (!isChecking && isMaintenanceMode) {
+                        // Always show AppNavigation (splash plays first)
+                        AppNavigation(tokenManager = tokenManager)
+
+                        // Overlay maintenance screen AFTER splash finishes
+                        if (splashFinished && !isChecking && isMaintenanceMode) {
                             MaintenanceScreen(
                                 onRetry = { maintenanceViewModel.checkMaintenanceMode() },
                                 isChecking = isChecking,
                                 announcement = announcement
                             )
-                        } else {
-                            AppNavigation(tokenManager = tokenManager)
                         }
                     }
                 }
