@@ -20,10 +20,32 @@ export class OrderService {
       throw Object.assign(new Error('One or more products not found'), { statusCode: 400 });
     }
 
-    // Validate IMEI for IMEI-type services (check both 'imei' and 'IMEI' keys)
+    // Validate IMEI for IMEI-type services
+    // Check metadata.imei, metadata.IMEI, and also search inside fieldValues
     for (const item of items) {
       const product = products.find(p => p.id === item.productId)!;
-      const imeiVal = item.metadata?.imei || item.metadata?.IMEI;
+      let imeiVal = item.metadata?.imei || item.metadata?.IMEI;
+      
+      // If not found directly, search in fieldValues for any key containing 'imei' (case-insensitive)
+      if (!imeiVal && item.metadata?.fieldValues && typeof item.metadata.fieldValues === 'object') {
+        for (const [key, val] of Object.entries(item.metadata.fieldValues)) {
+          if (key.toLowerCase().includes('imei') || key.toLowerCase().includes('lock code') || key.toLowerCase().includes('sn')) {
+            imeiVal = val as string;
+            // Also set it at the top level so downstream code can find it
+            if (!item.metadata.imei) item.metadata.imei = imeiVal;
+            break;
+          }
+        }
+        // If still not found, use the first field value as IMEI for IMEI-type products
+        if (!imeiVal) {
+          const firstVal = Object.values(item.metadata.fieldValues)[0] as string;
+          if (firstVal) {
+            imeiVal = firstVal;
+            if (!item.metadata.imei) item.metadata.imei = imeiVal;
+          }
+        }
+      }
+      
       if (product.serviceType === 'IMEI' && (!imeiVal || String(imeiVal).length < 10)) {
         throw Object.assign(new Error(`IMEI is required for "${product.name}"`), { statusCode: 400 });
       }
@@ -35,7 +57,17 @@ export class OrderService {
       const product = products.find(p => p.id === item.productId)!;
       const price = product.price * item.quantity;
       totalAmount += price;
-      const imeiVal = item.metadata?.imei || item.metadata?.IMEI;
+      let imeiVal = item.metadata?.imei || item.metadata?.IMEI;
+      // Also search in fieldValues if not found directly
+      if (!imeiVal && item.metadata?.fieldValues && typeof item.metadata.fieldValues === 'object') {
+        for (const [key, val] of Object.entries(item.metadata.fieldValues)) {
+          if (key.toLowerCase().includes('imei') || key.toLowerCase().includes('lock code') || key.toLowerCase().includes('sn')) {
+            imeiVal = val as string;
+            break;
+          }
+        }
+        if (!imeiVal) imeiVal = Object.values(item.metadata.fieldValues)[0] as string;
+      }
       return {
         productId: item.productId,
         quantity: item.quantity,

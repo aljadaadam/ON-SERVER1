@@ -117,12 +117,16 @@ class ProductDetailViewModel @Inject constructor(
 
         viewModelScope.launch {
             val metadata = mutableMapOf<String, Any>()
-            // Extract IMEI from fieldValues if present (case-insensitive key check)
-            val imeiEntry = state.fieldValues.entries.find { 
-                it.key.equals("IMEI", ignoreCase = true) 
+            // Extract IMEI from fieldValues: check if any key contains "imei", "lock code", or "sn"
+            val imeiEntry = state.fieldValues.entries.find { entry ->
+                val k = entry.key.lowercase()
+                k.contains("imei") || k.contains("lock code") || k.contains("sn")
             }
-            if (imeiEntry != null && imeiEntry.value.isNotBlank()) {
-                metadata["imei"] = imeiEntry.value
+            // For IMEI service type, use first field value as fallback
+            val imeiValue = imeiEntry?.value?.takeIf { it.isNotBlank() }
+                ?: if (product.serviceType == "IMEI") state.fieldValues.values.firstOrNull() else null
+            if (!imeiValue.isNullOrBlank()) {
+                metadata["imei"] = imeiValue
             }
             if (state.fieldValues.isNotEmpty()) {
                 metadata["fieldValues"] = state.fieldValues.toMap()
