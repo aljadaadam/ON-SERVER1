@@ -87,9 +87,12 @@ export class CronService {
           const result = await externalProvider.getOrderStatus(order.externalOrderId);
 
           if (!result.success) {
+            console.log(`[Cron] Order ${order.orderNumber}: getOrderStatus failed — ${result.message}`);
             stillPending++;
             continue;
           }
+
+          console.log(`[Cron] Order ${order.orderNumber}: provider status=${result.status}, codes=${result.codes ? result.codes.substring(0, 50) : 'none'}`);
 
           if (result.status === 'COMPLETED') {
             // Order completed — update status and store result codes

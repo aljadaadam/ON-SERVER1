@@ -607,22 +607,52 @@ export class ExternalProviderService {
 
       if (data.SUCCESS) {
         const successArr = Array.isArray(data.SUCCESS) ? data.SUCCESS : [data.SUCCESS];
-        const result = successArr[0] || {};
+        // DHRU nests the actual data in SUCCESS.RESULT or directly in SUCCESS
+        const rawResult = successArr[0] || {};
+        const result = rawResult.RESULT || rawResult.Result || rawResult;
         
-        // Map SD-Unlocker status to our status
-        const rawStatus = (result.STATUS || result.Status || '').toUpperCase();
-        let mappedStatus = 'PROCESSING';
+        // Get STATUS — DHRU returns numeric codes as strings ('0'-'5')
+        const rawStatus = String(result.STATUS || result.Status || result.status || '').trim();
         
-        if (rawStatus === 'COMPLETED' || rawStatus === 'SUCCESS' || rawStatus === 'DONE') {
-          mappedStatus = 'COMPLETED';
-        } else if (rawStatus === 'REJECTED' || rawStatus === 'CANCELLED' || rawStatus === 'FAILED') {
-          mappedStatus = 'REJECTED';
-        } else if (rawStatus === 'PENDING' || rawStatus === 'INPROGRESS' || rawStatus === 'IN PROGRESS') {
-          mappedStatus = 'PROCESSING';
-        }
+        console.log(`[SD-Unlocker] getOrderStatus ref=${referenceId}: rawStatus="${rawStatus}", keys=${Object.keys(result).join(',')}`);
 
-        // Extract codes/keys from response
-        const codes = result.CODE || result.CODES || result.Code || result.RESULT || '';
+        // DHRU Fusion numeric status mapping
+        const numericStatusMap: Record<string, string> = {
+          '0': 'PROCESSING',   // waiting / in queue
+          '1': 'PROCESSING',   // pending / processing
+          '2': 'REJECTED',     // rejected
+          '3': 'REJECTED',     // failed
+          '4': 'COMPLETED',    // completed successfully
+          '5': 'REJECTED',     // cancelled
+        };
+
+        // String-based status mapping (fallback for other providers)
+        const stringStatusMap: Record<string, string> = {
+          'COMPLETED': 'COMPLETED',
+          'SUCCESS': 'COMPLETED',
+          'DONE': 'COMPLETED',
+          'REJECTED': 'REJECTED',
+          'CANCELLED': 'REJECTED',
+          'FAILED': 'REJECTED',
+          'PENDING': 'PROCESSING',
+          'WAITING': 'PROCESSING',
+          'INPROGRESS': 'PROCESSING',
+          'IN PROGRESS': 'PROCESSING',
+          'PROCESSING': 'PROCESSING',
+        };
+
+        // Try numeric mapping first, then string mapping
+        let mappedStatus = numericStatusMap[rawStatus]
+          || stringStatusMap[rawStatus.toUpperCase()]
+          || 'PROCESSING'; // default
+
+        // Extract codes/keys from response — check multiple possible field names
+        const codes = result.CODE || result.CODES || result.Code || result.Codes
+          || result.RESULT || result.Result || result.result
+          || result.UNLOCKCODE || result.UnlockCode
+          || result.KEY || result.Key || '';
+
+        console.log(`[SD-Unlocker] Order ref=${referenceId}: mapped=${mappedStatus}, codes=${codes ? String(codes).substring(0, 50) : 'none'}`);
 
         return {
           success: true,
