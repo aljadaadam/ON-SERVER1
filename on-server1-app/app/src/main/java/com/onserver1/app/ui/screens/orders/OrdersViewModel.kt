@@ -13,6 +13,7 @@ import javax.inject.Inject
 data class OrdersUiState(
     val orders: List<Order> = emptyList(),
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val error: String? = null
 )
 
@@ -36,6 +37,18 @@ class OrdersViewModel @Inject constructor(
                 _state.value = OrdersUiState(orders = orders, isLoading = false)
             }.onFailure { e ->
                 _state.value = OrdersUiState(isLoading = false, error = e.message)
+            }
+        }
+    }
+
+    fun refresh() {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isRefreshing = true, error = null)
+            val result = productRepository.getOrders()
+            result.onSuccess { orders ->
+                _state.value = _state.value.copy(orders = orders, isRefreshing = false, isLoading = false)
+            }.onFailure { e ->
+                _state.value = _state.value.copy(isRefreshing = false, error = e.message)
             }
         }
     }

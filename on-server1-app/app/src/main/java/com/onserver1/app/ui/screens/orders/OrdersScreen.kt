@@ -9,6 +9,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Receipt
 import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.onserver1.app.R
 import com.onserver1.app.data.model.Order
 import com.onserver1.app.ui.theme.*
+import kotlinx.coroutines.delay
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,6 +34,17 @@ fun OrdersScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val d = LocalDimens.current
+
+    // Auto-refresh every 30s if there are active (PENDING/PROCESSING) orders
+    val hasActiveOrders = state.orders.any {
+        it.status.lowercase() in listOf("pending", "processing")
+    }
+    LaunchedEffect(hasActiveOrders) {
+        while (hasActiveOrders) {
+            delay(30_000)
+            viewModel.refresh()
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
@@ -86,15 +99,21 @@ fun OrdersScreen(
             }
 
             else -> {
-                LazyColumn(
-                    contentPadding = PaddingValues(
-                        horizontal = d.screenPadding,
-                        vertical = d.space8
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(d.space10)
+                PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = { viewModel.refresh() },
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    items(state.orders) { order ->
-                        OrderCard(order = order, d = d)
+                    LazyColumn(
+                        contentPadding = PaddingValues(
+                            horizontal = d.screenPadding,
+                            vertical = d.space8
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(d.space10)
+                    ) {
+                        items(state.orders) { order ->
+                            OrderCard(order = order, d = d)
+                        }
                     }
                 }
             }
