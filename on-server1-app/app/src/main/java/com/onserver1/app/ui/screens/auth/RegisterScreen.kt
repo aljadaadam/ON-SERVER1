@@ -39,7 +39,8 @@ fun RegisterScreen(
 
     LaunchedEffect(state) {
         if (state is AuthUiState.Success) {
-            onRegisterSuccess("user-id-placeholder")
+            val userId = (state as AuthUiState.Success).userId ?: ""
+            onRegisterSuccess(userId)
         }
     }
 

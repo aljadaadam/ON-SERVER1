@@ -106,10 +106,9 @@ fun AppNavigation(tokenManager: TokenManager) {
 
             composable(Screen.Register.route) {
                 RegisterScreen(
-                    onRegisterSuccess = { _ ->
-                        // Skip OTP temporarily - go directly to Home
-                        navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Login.route) { inclusive = true }
+                    onRegisterSuccess = { userId ->
+                        navController.navigate(Screen.OtpVerification.createRoute(userId)) {
+                            popUpTo(Screen.Register.route) { inclusive = true }
                         }
                     },
                     onNavigateToLogin = {
@@ -123,8 +122,8 @@ fun AppNavigation(tokenManager: TokenManager) {
                 OtpScreen(
                     userId = userId,
                     onVerified = {
-                        navController.navigate(Screen.Login.route) {
-                            popUpTo(Screen.Register.route) { inclusive = true }
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
                         }
                     }
                 )

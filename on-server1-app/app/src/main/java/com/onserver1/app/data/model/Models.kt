@@ -37,6 +37,11 @@ data class ResetPasswordRequest(
     val newPassword: String
 )
 
+data class RegisterResponse(
+    val userId: String,
+    val message: String?
+)
+
 data class ForgotPasswordResponse(
     val message: String,
     val userId: String?

@@ -27,14 +27,12 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    suspend fun register(name: String, email: String, password: String, phone: String?): Result<AuthResponse> {
+    suspend fun register(name: String, email: String, password: String, phone: String?): Result<String> {
         return try {
             val response = apiService.register(RegisterRequest(email, password, name, phone))
             if (response.isSuccessful && response.body()?.success == true) {
-                val authData = response.body()!!.data!!
-                tokenManager.saveTokens(authData.accessToken, authData.refreshToken)
-                tokenManager.saveUserId(authData.user.id)
-                Result.success(authData)
+                val data = response.body()!!.data!!
+                Result.success(data.userId)
             } else {
                 Result.failure(Exception(response.body()?.message ?: "Registration failed"))
             }
@@ -47,9 +45,28 @@ class AuthRepository @Inject constructor(
         return try {
             val response = apiService.verifyOtp(OtpVerifyRequest(userId, code))
             if (response.isSuccessful && response.body()?.success == true) {
+                // If tokens are returned (EMAIL_VERIFICATION), save them for auto-login
+                val authData = response.body()!!.data
+                if (authData != null && authData.accessToken.isNotEmpty()) {
+                    tokenManager.saveTokens(authData.accessToken, authData.refreshToken)
+                    tokenManager.saveUserId(authData.user.id)
+                }
                 Result.success("Verified successfully")
             } else {
                 Result.failure(Exception(response.body()?.message ?: "Verification failed"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun resendOtp(userId: String): Result<String> {
+        return try {
+            val response = apiService.resendOtp(mapOf("userId" to userId, "type" to "EMAIL_VERIFICATION"))
+            if (response.isSuccessful && response.body()?.success == true) {
+                Result.success("OTP sent")
+            } else {
+                Result.failure(Exception(response.body()?.message ?: "Failed to resend OTP"))
             }
         } catch (e: Exception) {
             Result.failure(e)

@@ -10,6 +10,21 @@ export class AuthService {
   async register(data: { email: string; password: string; name: string; phone?: string }) {
     const existingUser = await prisma.user.findUnique({ where: { email: data.email } });
     if (existingUser) {
+      // If user exists but not verified, resend OTP
+      if (!existingUser.isVerified) {
+        const otpCode = generateOtp();
+        await prisma.otpCode.create({
+          data: {
+            code: otpCode,
+            type: 'EMAIL_VERIFICATION',
+            expiresAt: getOtpExpiry(env.OTP_EXPIRY_MINUTES),
+            userId: existingUser.id,
+          },
+        });
+        console.log(`[OTP] Re-sent verification code for ${data.email}: ${otpCode}`);
+        sendOtpEmail(data.email, existingUser.name, otpCode, 'EMAIL_VERIFICATION').catch(() => {});
+        return { userId: existingUser.id, message: 'تم إعادة إرسال رمز التأكيد' };
+      }
       throw Object.assign(new Error('Email already registered'), { statusCode: 409 });
     }
 
@@ -20,38 +35,27 @@ export class AuthService {
         password: hashedPassword,
         name: data.name,
         phone: data.phone,
-        isVerified: true, // TODO: Remove auto-verify when OTP is enabled
+        isVerified: false,
       },
     });
 
-    // Send welcome email (fire-and-forget)
-    sendWelcomeEmail(data.email, data.name).catch(() => {});
-
-    // Auto-login after registration (skip OTP temporarily)
-    const tokenPayload = { userId: user.id, role: user.role };
-    const accessToken = generateAccessToken(tokenPayload);
-    const refreshToken = generateRefreshToken(tokenPayload);
-
-    await prisma.refreshToken.create({
+    // Generate OTP and send via email
+    const otpCode = generateOtp();
+    await prisma.otpCode.create({
       data: {
-        token: refreshToken,
+        code: otpCode,
+        type: 'EMAIL_VERIFICATION',
+        expiresAt: getOtpExpiry(env.OTP_EXPIRY_MINUTES),
         userId: user.id,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
     });
+
+    console.log(`[OTP] Verification code for ${data.email}: ${otpCode}`);
+    sendOtpEmail(data.email, data.name, otpCode, 'EMAIL_VERIFICATION').catch(() => {});
 
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
-        balance: user.balance,
-        role: user.role,
-        isVerified: user.isVerified,
-      },
-      accessToken,
-      refreshToken,
+      userId: user.id,
+      message: 'تم التسجيل بنجاح. تحقق من بريدك الإلكتروني لرمز التأكيد.',
     };
   }
 
@@ -63,6 +67,10 @@ export class AuthService {
 
     if (!user.isActive) {
       throw Object.assign(new Error('Account is deactivated'), { statusCode: 403 });
+    }
+
+    if (!user.isVerified) {
+      throw Object.assign(new Error('يرجى تأكيد بريدك الإلكتروني أولاً'), { statusCode: 403 });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -119,10 +127,41 @@ export class AuthService {
     });
 
     if (type === 'EMAIL_VERIFICATION') {
-      await prisma.user.update({
+      const user = await prisma.user.update({
         where: { id: userId },
         data: { isVerified: true },
       });
+
+      // Send welcome email after verification
+      sendWelcomeEmail(user.email, user.name).catch(() => {});
+
+      // Auto-login: return tokens so the app can go straight to Home
+      const tokenPayload = { userId: user.id, role: user.role };
+      const accessToken = generateAccessToken(tokenPayload);
+      const refreshToken = generateRefreshToken(tokenPayload);
+
+      await prisma.refreshToken.create({
+        data: {
+          token: refreshToken,
+          userId: user.id,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      });
+
+      return {
+        message: 'OTP verified successfully',
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          avatar: user.avatar,
+          balance: user.balance,
+          role: user.role,
+          isVerified: user.isVerified,
+        },
+        accessToken,
+        refreshToken,
+      };
     }
 
     return { message: 'OTP verified successfully' };

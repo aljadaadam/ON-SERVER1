@@ -10,13 +10,13 @@ interface ApiService {
     // Auth
     // ============================================
     @POST("auth/register")
-    suspend fun register(@Body request: RegisterRequest): Response<ApiResponse<AuthResponse>>
+    suspend fun register(@Body request: RegisterRequest): Response<ApiResponse<RegisterResponse>>
 
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): Response<ApiResponse<AuthResponse>>
 
     @POST("auth/verify-otp")
-    suspend fun verifyOtp(@Body request: OtpVerifyRequest): Response<ApiResponse<Map<String, String>>>
+    suspend fun verifyOtp(@Body request: OtpVerifyRequest): Response<ApiResponse<AuthResponse>>
 
     @POST("auth/resend-otp")
     suspend fun resendOtp(@Body request: Map<String, String>): Response<ApiResponse<Map<String, String>>>

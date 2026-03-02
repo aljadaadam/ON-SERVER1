@@ -12,7 +12,7 @@ import javax.inject.Inject
 sealed class AuthUiState {
     data object Idle : AuthUiState()
     data object Loading : AuthUiState()
-    data class Success(val message: String = "") : AuthUiState()
+    data class Success(val message: String = "", val userId: String? = null) : AuthUiState()
     data class Error(val message: String) : AuthUiState()
 }
 
@@ -56,7 +56,7 @@ class AuthViewModel @Inject constructor(
             _registerState.value = AuthUiState.Loading
             val result = authRepository.register(name, email, password, phone)
             _registerState.value = result.fold(
-                onSuccess = { AuthUiState.Success("Registration successful") },
+                onSuccess = { userId -> AuthUiState.Success("Registration successful", userId = userId) },
                 onFailure = { AuthUiState.Error(it.message ?: "Registration failed") }
             )
         }
@@ -115,6 +115,17 @@ class AuthViewModel @Inject constructor(
 
     fun resetOtpState() {
         _otpState.value = AuthUiState.Idle
+    }
+
+    fun resendOtp(userId: String) {
+        viewModelScope.launch {
+            _otpState.value = AuthUiState.Loading
+            val result = authRepository.resendOtp(userId)
+            _otpState.value = result.fold(
+                onSuccess = { AuthUiState.Success("OTP resent") },
+                onFailure = { AuthUiState.Error(it.message ?: "Failed to resend OTP") }
+            )
+        }
     }
 
     fun resetForgotPasswordState() {

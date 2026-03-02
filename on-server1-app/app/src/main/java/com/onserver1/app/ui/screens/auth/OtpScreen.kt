@@ -127,7 +127,7 @@ fun OtpScreen(
 
             Spacer(modifier = Modifier.height(d.space24))
 
-            TextButton(onClick = { /* Resend OTP */ }) {
+            TextButton(onClick = { viewModel.resendOtp(userId) }) {
                 Text(stringResource(R.string.resend_code), color = AccentYellow, fontSize = d.font15)
             }
         }
