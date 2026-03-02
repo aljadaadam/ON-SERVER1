@@ -217,4 +217,10 @@
     <string name="deposit_tap_to_upload">اضغط لرفع صورة الإيصال</string>
     <string name="deposit_submit_request">إرسال طلب الإيداع</string>
     <string name="deposit_scan_qr">امسح رمز QR لنسخ العنوان</string>
+
+    <!-- Maintenance -->
+    <string name="maintenance_title">تحت الصيانة</string>
+    <string name="maintenance_message">نقوم حالياً بإجراء صيانة مجدولة. سيعود التطبيق للعمل قريباً.</string>
+    <string name="maintenance_retry">إعادة المحاولة</string>
+    <string name="maintenance_submessage">شكراً لصبركم</string>
 </resources>

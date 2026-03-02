@@ -216,4 +216,10 @@
     <string name="deposit_tap_to_upload">Tap to upload receipt image</string>
     <string name="deposit_submit_request">Submit Deposit Request</string>
     <string name="deposit_scan_qr">Scan QR Code to copy address</string>
+
+    <!-- Maintenance -->
+    <string name="maintenance_title">Under Maintenance</string>
+    <string name="maintenance_message">We are currently performing scheduled maintenance. The app will be back online shortly.</string>
+    <string name="maintenance_retry">Try Again</string>
+    <string name="maintenance_submessage">Thank you for your patience</string>
 </resources>
