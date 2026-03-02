@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -19,12 +20,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.onserver1.app.R
 import com.onserver1.app.ui.theme.*
 
@@ -150,9 +153,9 @@ fun AddBalanceScreen(
             GatewayCard(
                 title = stringResource(R.string.deposit_bankak),
                 subtitle = stringResource(R.string.deposit_bankak_desc),
-                icon = Icons.Default.AccountBalance,
+                imageUrl = "https://6990ab01681c79fa0bccfe99.imgix.net/bank.png",
                 isSelected = selectedGateway == "BANKAK",
-                gradientColors = listOf(Color(0xFF1565C0), Color(0xFF0D47A1)),
+                gradientColors = listOf(Color(0xFFE52228), Color(0xFFC41E22)),
                 onClick = { selectedGateway = "BANKAK" },
                 d = d
             )
@@ -251,7 +254,8 @@ fun AddBalanceScreen(
 fun GatewayCard(
     title: String,
     subtitle: String,
-    icon: ImageVector,
+    icon: ImageVector? = null,
+    imageUrl: String? = null,
     isSelected: Boolean,
     gradientColors: List<Color>,
     onClick: () -> Unit,
@@ -278,19 +282,30 @@ fun GatewayCard(
                 .padding(d.space16),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color.White.copy(alpha = 0.2f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    icon,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(d.icon24)
+            if (imageUrl != null) {
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = title,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
                 )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White.copy(alpha = 0.2f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        icon ?: Icons.Default.Payment,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(d.icon24)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(d.space12))

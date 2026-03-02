@@ -35,6 +35,7 @@ interface SettingsForm {
   bankak_exchange_rate: string;
   bankak_min_amount: string;
   bankak_max_amount: string;
+  bankak_transfer_note: string;
 }
 
 const defaultSettings: SettingsForm = {
@@ -64,6 +65,7 @@ const defaultSettings: SettingsForm = {
   bankak_exchange_rate: '600',
   bankak_min_amount: '1',
   bankak_max_amount: '1000',
+  bankak_transfer_note: 'شحن رصيد محفظة',
 };
 
 const groupIcons: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
@@ -101,7 +103,7 @@ const settingGroups = [
   },
   {
     title: 'بوابة بنكك',
-    keys: ['bankak_account_name', 'bankak_account_number', 'bankak_bank_name', 'bankak_exchange_rate', 'bankak_min_amount', 'bankak_max_amount'],
+    keys: ['bankak_account_name', 'bankak_account_number', 'bankak_bank_name', 'bankak_exchange_rate', 'bankak_min_amount', 'bankak_max_amount', 'bankak_transfer_note'],
   },
   {
     title: 'إعدادات مالية',
@@ -144,6 +146,7 @@ const settingLabels: Record<string, string> = {
   bankak_exchange_rate: 'سعر الصرف (1 USD = ? SDG)',
   bankak_min_amount: 'الحد الأدنى (USD)',
   bankak_max_amount: 'الحد الأقصى (USD)',
+  bankak_transfer_note: 'تعليق التحويل',
 };
 
 export default function Settings() {

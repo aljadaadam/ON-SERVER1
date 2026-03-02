@@ -245,6 +245,7 @@ data class BankakGateway(
     val accountName: String,
     val accountNumber: String,
     val bankName: String,
+    val transferNote: String? = null,
     val exchangeRate: Double,
     val minAmount: Double,
     val maxAmount: Double
