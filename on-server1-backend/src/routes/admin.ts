@@ -4,6 +4,7 @@ import prisma from '../config/database';
 import { orderService } from '../services/orderService';
 import { syncService } from '../services/syncService';
 import { externalProvider } from '../services/externalProvider';
+import nodemailer from 'nodemailer';
 
 const router = Router();
 
@@ -223,6 +224,57 @@ router.get('/provider/balance', async (_req: Request, res: Response, next: NextF
     res.json({ success: true, data: result });
   } catch (error) {
     next(error);
+  }
+});
+
+// POST /api/admin/test-email - Send test email
+router.post('/test-email', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { to } = req.body;
+    if (!to) throw Object.assign(new Error('البريد المستلم مطلوب'), { statusCode: 400 });
+
+    // Read SMTP settings from DB
+    const smtpSettings = await prisma.setting.findMany({
+      where: { key: { in: ['smtp_host', 'smtp_port', 'smtp_user', 'smtp_pass', 'smtp_from_email', 'smtp_from_name', 'smtp_secure'] } },
+    });
+    const smtp: Record<string, string> = {};
+    smtpSettings.forEach(s => { smtp[s.key] = s.value; });
+
+    if (!smtp.smtp_host || !smtp.smtp_user || !smtp.smtp_pass) {
+      throw Object.assign(new Error('إعدادات SMTP غير مكتملة. الرجاء حفظ الإعدادات أولاً'), { statusCode: 400 });
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: smtp.smtp_host,
+      port: parseInt(smtp.smtp_port || '587'),
+      secure: smtp.smtp_secure === 'true',
+      auth: {
+        user: smtp.smtp_user,
+        pass: smtp.smtp_pass,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"${smtp.smtp_from_name || 'ON-SERVER1'}" <${smtp.smtp_from_email || smtp.smtp_user}>`,
+      to,
+      subject: '✅ اختبار اتصال البريد — ON-SERVER1',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 30px; background: #1A1A2E; border-radius: 16px; color: #fff;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <div style="display: inline-block; background: #FFD700; color: #000; font-weight: bold; padding: 8px 20px; border-radius: 8px; font-size: 18px;">ON-SERVER1</div>
+          </div>
+          <h2 style="text-align: center; color: #4CAF50;">✅ تم الاتصال بنجاح!</h2>
+          <p style="text-align: center; color: #ccc; font-size: 14px;">إعدادات SMTP تعمل بشكل صحيح.<br/>هذا بريد اختبار تلقائي.</p>
+          <hr style="border: none; border-top: 1px solid #374151; margin: 20px 0;" />
+          <p style="text-align: center; color: #888; font-size: 11px;">ON-SERVER1 — ${new Date().toLocaleString('ar-SA')}</p>
+        </div>
+      `,
+    });
+
+    res.json({ success: true, message: 'تم إرسال بريد الاختبار بنجاح' });
+  } catch (error: any) {
+    if (error.statusCode) return next(error);
+    res.status(500).json({ success: false, message: error.message || 'فشل إرسال البريد' });
   }
 });
 

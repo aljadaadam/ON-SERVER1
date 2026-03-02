@@ -10,6 +10,7 @@ import {
   Cog6ToothIcon,
   ArrowRightStartOnRectangleIcon,
   ServerStackIcon,
+  EnvelopeIcon,
 } from '@heroicons/react/24/outline';
 import {
   ChartBarIcon as ChartBarSolid,
@@ -20,6 +21,7 @@ import {
   UsersIcon as UsersSolid,
   PhotoIcon as PhotoSolid,
   Cog6ToothIcon as Cog6ToothSolid,
+  EnvelopeIcon as EnvelopeSolid,
 } from '@heroicons/react/24/solid';
 
 const menuItems = [
@@ -30,6 +32,7 @@ const menuItems = [
   { path: '/deposits', label: 'الإيداعات', icon: BanknotesIcon, activeIcon: BanknotesSolid },
   { path: '/users', label: 'المستخدمين', icon: UsersIcon, activeIcon: UsersSolid },
   { path: '/banners', label: 'البانرات', icon: PhotoIcon, activeIcon: PhotoSolid },
+  { path: '/email', label: 'البريد', icon: EnvelopeIcon, activeIcon: EnvelopeSolid },
   { path: '/settings', label: 'الإعدادات', icon: Cog6ToothIcon, activeIcon: Cog6ToothSolid },
 ];
 

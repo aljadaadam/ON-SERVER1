@@ -9,6 +9,7 @@ import Banners from './pages/Banners';
 import Categories from './pages/Categories';
 import Settings from './pages/Settings';
 import Deposits from './pages/Deposits';
+import EmailSettings from './pages/EmailSettings';
 import Sidebar from './components/Sidebar';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -61,6 +62,7 @@ export default function App() {
         <Route path="/deposits" element={<WrappedRoute><Deposits /></WrappedRoute>} />
         <Route path="/users" element={<WrappedRoute><Users /></WrappedRoute>} />
         <Route path="/banners" element={<WrappedRoute><Banners /></WrappedRoute>} />
+        <Route path="/email" element={<WrappedRoute><EmailSettings /></WrappedRoute>} />
         <Route path="/settings" element={<WrappedRoute><Settings /></WrappedRoute>} />
       </Routes>
     </BrowserRouter>
