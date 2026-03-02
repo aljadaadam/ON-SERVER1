@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.onserver1.app.R
 import com.onserver1.app.data.model.Order
 import com.onserver1.app.ui.theme.*
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -192,6 +193,16 @@ fun OrderCard(order: Order, d: Dimens) {
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                         )
                     }
+                    // Show submitted field value (IMEI, lock code, etc.)
+                    val fieldDisplay = extractFieldDisplay(item.imei, item.metadata)
+                    if (fieldDisplay != null) {
+                        Text(
+                            text = fieldDisplay,
+                            fontSize = d.font12,
+                            color = AccentYellow.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(start = d.space4, bottom = d.space4)
+                        )
+                    }
                 }
                 if (items.size > 3) {
                     Text(
@@ -236,4 +247,21 @@ private fun formatDate(dateStr: String): String {
     } catch (e: Exception) {
         dateStr.substringBefore('T')
     }
+}
+
+private fun extractFieldDisplay(imei: String?, metadata: String?): String? {
+    // Try IMEI first
+    if (!imei.isNullOrBlank()) return imei
+    // Try to extract from metadata fieldValues
+    if (metadata.isNullOrBlank()) return null
+    return try {
+        val json = JSONObject(metadata)
+        val fieldValues = if (json.has("fieldValues")) json.getJSONObject("fieldValues") else json
+        val keys = fieldValues.keys()
+        if (keys.hasNext()) {
+            val key = keys.next()
+            val value = fieldValues.getString(key)
+            if (value.isNotBlank()) value else null
+        } else null
+    } catch (_: Exception) { null }
 }

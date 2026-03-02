@@ -355,7 +355,9 @@ fun AppNavigation(tokenManager: TokenManager) {
                 ProductDetailScreen(
                     onBack = { navController.popBackStack() },
                     onOrderSuccess = {
-                        navController.popBackStack(Screen.Home.route, inclusive = false)
+                        navController.navigate(Screen.Orders.route) {
+                            popUpTo(Screen.Home.route) { inclusive = false }
+                        }
                     }
                 )
             }
