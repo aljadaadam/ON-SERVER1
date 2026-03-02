@@ -184,11 +184,23 @@ export default function Products() {
     return counts;
   }, [products]);
 
+  // Filter categories based on selected service type
+  const filteredCategories = useMemo(() => {
+    if (!filterServiceType) return flatCategories;
+    const categoryIds = new Set(
+      products.filter(p => p.serviceType === filterServiceType).map(p => p.categoryId)
+    );
+    return flatCategories.filter(cat => categoryIds.has(cat.id));
+  }, [flatCategories, products, filterServiceType]);
+
   const totalPages = Math.ceil(filteredProducts.length / perPage);
   const paginatedProducts = filteredProducts.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   // Reset page when filters change
   useEffect(() => { setCurrentPage(1); }, [filterCategory, filterFeatured, filterServiceType, searchQuery]);
+
+  // Reset category filter when service type changes
+  useEffect(() => { setFilterCategory(''); }, [filterServiceType]);
 
   const handleSync = async () => {
     setSyncing(true);
@@ -571,7 +583,7 @@ export default function Products() {
             <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-0.5 flex items-center gap-1"><FolderIcon className="w-3.5 h-3.5" /> التصنيف</label>
             <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="input-field text-sm">
               <option value="">جميع التصنيفات</option>
-              {flatCategories.map(cat => (
+              {filteredCategories.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.icon || ''} {cat.nameAr || cat.name} ({cat._count?.products ?? ''})</option>
               ))}
             </select>
