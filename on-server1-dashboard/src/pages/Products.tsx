@@ -62,6 +62,8 @@ export default function Products() {
   const [providerForm, setProviderForm] = useState({ url: '', username: '', apiKey: '' });
   const [showApiKey, setShowApiKey] = useState(false);
   const [savingProvider, setSavingProvider] = useState(false);
+  const [deletingProducts, setDeletingProducts] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Filters
   const [filterCategory, setFilterCategory] = useState('');
@@ -457,7 +459,47 @@ export default function Products() {
             >
               تحديث الرصيد
             </button>
+            <button onClick={() => setShowDeleteConfirm(true)}
+              className="text-xs px-3 py-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-300 hover:text-red-200 border border-red-500/20 transition-all duration-200 flex items-center gap-1.5"
+            >
+              <TrashIcon className="w-3.5 h-3.5" /> حذف جميع المنتجات
+            </button>
           </div>
+
+          {/* Delete Confirmation */}
+          {showDeleteConfirm && (
+            <div className="mt-2.5 p-3 bg-red-500/10 backdrop-blur-sm rounded-xl border border-red-500/20">
+              <p className="text-xs text-red-200 mb-2">⚠️ هل أنت متأكد من حذف جميع منتجات المصدر؟ لا يمكن التراجع عن هذا الإجراء.</p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={async () => {
+                    setDeletingProducts(true);
+                    try {
+                      const res = await adminApi.deleteAllProviderProducts();
+                      const count = res.data?.data?.deleted || 0;
+                      toast.success(`تم حذف ${count} منتج بنجاح`);
+                      setShowDeleteConfirm(false);
+                      loadProducts();
+                    } catch {
+                      toast.error('فشل حذف المنتجات');
+                    } finally {
+                      setDeletingProducts(false);
+                    }
+                  }}
+                  disabled={deletingProducts}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-red-500/80 hover:bg-red-500 text-white transition-all duration-200 flex items-center gap-1 disabled:opacity-50"
+                >
+                  {deletingProducts ? <><ArrowPathIcon className="w-3 h-3 animate-spin" /> جاري الحذف...</> : <><TrashIcon className="w-3 h-3" /> نعم، احذف الكل</>}
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/70 hover:text-white border border-white/10 transition-all duration-200"
+                >
+                  إلغاء
+                </button>
+              </div>
+            </div>
+          )}
 
           {syncResult && (
             <div className="mt-2.5 p-2 bg-white/5 backdrop-blur-sm rounded-lg text-[11px] border border-white/10">

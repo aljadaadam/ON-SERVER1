@@ -206,6 +206,18 @@ router.post('/provider/sync', async (req: Request, res: Response, next: NextFunc
   }
 });
 
+// DELETE /api/admin/provider/products - Delete all provider products
+router.delete('/provider/products', async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await prisma.product.deleteMany({
+      where: { externalId: { not: null } },
+    });
+    res.json({ success: true, data: { deleted: result.count }, message: `تم حذف ${result.count} منتج` });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // GET /api/admin/provider/balance - Get SD-Unlocker balance
 router.get('/provider/balance', async (_req: Request, res: Response, next: NextFunction) => {
   try {
