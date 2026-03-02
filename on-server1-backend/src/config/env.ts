@@ -23,11 +23,7 @@ export const env = {
   SMTP_USER: process.env.SMTP_USER || '',
   SMTP_PASS: process.env.SMTP_PASS || '',
 
-  // External Provider (SD-Unlocker)
-  EXTERNAL_PROVIDER_URL: process.env.EXTERNAL_PROVIDER_URL || '',
-  EXTERNAL_PROVIDER_USERNAME: process.env.EXTERNAL_PROVIDER_USERNAME || '',
-  EXTERNAL_PROVIDER_API_KEY: process.env.EXTERNAL_PROVIDER_API_KEY || '',
-  EXTERNAL_PROVIDER_SECRET: process.env.EXTERNAL_PROVIDER_SECRET || '',
+
 
   // Admin
   ADMIN_EMAIL: process.env.ADMIN_EMAIL || 'admin@onserver1.com',

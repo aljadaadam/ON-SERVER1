@@ -1,4 +1,3 @@
-import { env } from '../config/env';
 import prisma from '../config/database';
 
 // ============================================
@@ -67,23 +66,23 @@ export class ExternalProviderService {
   private apiKey: string;
 
   constructor() {
-    this.apiUrl = env.EXTERNAL_PROVIDER_URL;
-    this.username = env.EXTERNAL_PROVIDER_USERNAME;
-    this.apiKey = env.EXTERNAL_PROVIDER_API_KEY;
+    this.apiUrl = '';
+    this.username = '';
+    this.apiKey = '';
   }
 
-  /** Reload config from database settings (falls back to env vars) */
+  /** Reload config from database settings */
   async reloadConfig(): Promise<void> {
     try {
       const settings = await prisma.setting.findMany({
         where: { key: { in: ['provider_url', 'provider_username', 'provider_api_key'] } },
       });
       const map = new Map(settings.map(s => [s.key, s.value]));
-      this.apiUrl = map.get('provider_url') || env.EXTERNAL_PROVIDER_URL;
-      this.username = map.get('provider_username') || env.EXTERNAL_PROVIDER_USERNAME;
-      this.apiKey = map.get('provider_api_key') || env.EXTERNAL_PROVIDER_API_KEY;
+      this.apiUrl = map.get('provider_url') || '';
+      this.username = map.get('provider_username') || '';
+      this.apiKey = map.get('provider_api_key') || '';
     } catch (err) {
-      console.warn('[Provider] Failed to reload config from DB, using env defaults');
+      console.warn('[Provider] Failed to reload config from DB');
     }
   }
 

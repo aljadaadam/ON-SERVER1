@@ -4,7 +4,7 @@ import { adminApi } from '../api/client';
 import {
   GlobeAltIcon, PhoneIcon, CurrencyDollarIcon,
   Cog6ToothIcon, DocumentTextIcon, BanknotesIcon,
-  CheckBadgeIcon, ArrowPathIcon
+  CheckBadgeIcon, ArrowPathIcon, ServerStackIcon
 } from '@heroicons/react/24/outline';
 import PageBanner from '../components/PageBanner';
 
@@ -36,6 +36,10 @@ interface SettingsForm {
   bankak_min_amount: string;
   bankak_max_amount: string;
   bankak_transfer_note: string;
+  // Provider settings
+  provider_url: string;
+  provider_username: string;
+  provider_api_key: string;
 }
 
 const defaultSettings: SettingsForm = {
@@ -66,6 +70,10 @@ const defaultSettings: SettingsForm = {
   bankak_min_amount: '1',
   bankak_max_amount: '1000',
   bankak_transfer_note: 'شحن رصيد محفظة',
+  // Provider defaults
+  provider_url: '',
+  provider_username: '',
+  provider_api_key: '',
 };
 
 const groupIcons: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
@@ -76,6 +84,7 @@ const groupIcons: Record<string, React.ComponentType<React.SVGProps<SVGSVGElemen
   'إعدادات مالية': CurrencyDollarIcon,
   'السياسات والخصوصية': DocumentTextIcon,
   'إعدادات عامة': Cog6ToothIcon,
+  'مزود الخدمات': ServerStackIcon,
 };
 
 const groupGradients: Record<string, string> = {
@@ -86,6 +95,7 @@ const groupGradients: Record<string, string> = {
   'إعدادات مالية': 'from-amber-500 to-amber-600',
   'السياسات والخصوصية': 'from-gray-500 to-gray-600',
   'إعدادات عامة': 'from-indigo-500 to-indigo-600',
+  'مزود الخدمات': 'from-rose-500 to-rose-600',
 };
 
 const settingGroups = [
@@ -117,6 +127,10 @@ const settingGroups = [
     title: 'إعدادات عامة',
     keys: ['maintenance_mode', 'announcement', 'terms_url', 'privacy_url'],
   },
+  {
+    title: 'مزود الخدمات',
+    keys: ['provider_url', 'provider_username', 'provider_api_key'],
+  },
 ];
 
 const settingLabels: Record<string, string> = {
@@ -147,6 +161,10 @@ const settingLabels: Record<string, string> = {
   bankak_min_amount: 'الحد الأدنى (USD)',
   bankak_max_amount: 'الحد الأقصى (USD)',
   bankak_transfer_note: 'تعليق التحويل',
+  // Provider labels
+  provider_url: 'رابط API المزود',
+  provider_username: 'اسم المستخدم',
+  provider_api_key: 'مفتاح API',
 };
 
 export default function Settings() {
@@ -238,7 +256,7 @@ export default function Settings() {
         onChange={e => updateSetting(key, e.target.value)}
         className="input-field"
         placeholder={settingLabels[key]}
-        dir={key === 'usdt_wallet_address' ? 'ltr' : undefined}
+        dir={key === 'usdt_wallet_address' || key === 'provider_url' || key === 'provider_api_key' ? 'ltr' : undefined}
       />
     );
   };
