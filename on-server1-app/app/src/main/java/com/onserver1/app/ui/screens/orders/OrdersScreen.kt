@@ -35,12 +35,9 @@ fun OrdersScreen(
     val state by viewModel.state.collectAsState()
     val d = LocalDimens.current
 
-    // Auto-refresh every 30s if there are active (PENDING/PROCESSING) orders
-    val hasActiveOrders = state.orders.any {
-        it.status.lowercase() in listOf("pending", "processing")
-    }
-    LaunchedEffect(hasActiveOrders) {
-        while (hasActiveOrders) {
+    // Auto-refresh every 30s while screen is open
+    LaunchedEffect(Unit) {
+        while (true) {
             delay(30_000)
             viewModel.refresh()
         }
