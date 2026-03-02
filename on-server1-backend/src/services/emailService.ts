@@ -98,8 +98,8 @@ function wrap(body: string): string {
         </tr>
         <!-- Footer -->
         <tr>
-          <td style="padding:16px 30px 24px;border-top:1px solid #2A2A4A;text-align:center;">
-            <p style="margin:0;color:#666;font-size:11px;">© ${new Date().getFullYear()} ON-SERVER1 — هذا بريد تلقائي، لا ترد عليه.</p>
+          <td style="padding:20px 30px 28px;border-top:1px solid #2A2A4A;text-align:center;">
+            <p style="margin:0;color:#9CA3AF;font-size:14px;">© ${new Date().getFullYear()} ON-SERVER1 — هذا بريد تلقائي، لا ترد عليه.</p>
           </td>
         </tr>
       </table>
@@ -111,10 +111,10 @@ function wrap(body: string): string {
 
 // Helpers
 const badge = (text: string, bg: string, color: string = '#fff') =>
-  `<span style="display:inline-block;background:${bg};color:${color};padding:5px 16px;border-radius:8px;font-weight:700;font-size:14px;">${text}</span>`;
+  `<span style="display:inline-block;background:${bg};color:${color};padding:8px 20px;border-radius:8px;font-weight:700;font-size:16px;">${text}</span>`;
 
 const infoRow = (label: string, value: string) =>
-  `<tr><td style="padding:6px 12px;color:#999;font-size:13px;white-space:nowrap;">${label}</td><td style="padding:6px 12px;color:#E0E0E0;font-size:13px;font-weight:600;">${value}</td></tr>`;
+  `<tr><td style="padding:10px 14px;color:#B0B8C8;font-size:15px;white-space:nowrap;">${label}</td><td style="padding:10px 14px;color:#FFFFFF;font-size:15px;font-weight:600;">${value}</td></tr>`;
 
 const infoTable = (rows: string) =>
   `<table width="100%" cellpadding="0" cellspacing="0" style="background:#141425;border-radius:10px;margin:16px 0;">${rows}</table>`;
@@ -131,11 +131,11 @@ export async function sendWelcomeEmail(to: string, name: string) {
       <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#4CAF50,#2E7D32);margin-bottom:8px;">
         <span style="font-size:32px;">🎉</span>
       </div>
-      <h2 style="color:#fff;margin:8px 0 4px;font-size:22px;">مرحباً بك، ${name}!</h2>
-      <p style="color:#aaa;margin:0;font-size:14px;">تم إنشاء حسابك بنجاح في ON-SERVER1</p>
+      <h2 style="color:#fff;margin:8px 0 4px;font-size:26px;">مرحباً بك، ${name}!</h2>
+      <p style="color:#C0C8D8;margin:0;font-size:16px;">تم إنشاء حسابك بنجاح في ON-SERVER1</p>
     </div>
     ${divider}
-    <p style="color:#ccc;font-size:14px;line-height:1.7;text-align:center;">
+    <p style="color:#D1D5DB;font-size:16px;line-height:1.8;text-align:center;">
       يمكنك الآن تصفح الخدمات وتقديم طلباتك.<br/>
       قم بشحن رصيدك للبدء في استخدام المنصة.
     </p>
@@ -159,15 +159,15 @@ export async function sendOtpEmail(to: string, name: string, code: string, type:
       <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#FF9800,#F57C00);margin-bottom:8px;">
         <span style="font-size:32px;">${icon}</span>
       </div>
-      <h2 style="color:#fff;margin:8px 0 4px;font-size:22px;">${typeLabel}</h2>
-      <p style="color:#aaa;margin:0;font-size:14px;">مرحباً ${name}</p>
+      <h2 style="color:#fff;margin:8px 0 4px;font-size:26px;">${typeLabel}</h2>
+      <p style="color:#C0C8D8;margin:0;font-size:16px;">مرحباً ${name}</p>
     </div>
     ${divider}
-    <p style="color:#ccc;font-size:14px;text-align:center;">استخدم الرمز التالي:</p>
-    <div style="text-align:center;margin:20px 0;">
-      <div style="display:inline-block;background:#141425;border:2px solid #FFD700;border-radius:12px;padding:16px 40px;letter-spacing:12px;font-size:32px;font-weight:800;color:#FFD700;">${code}</div>
+    <p style="color:#D1D5DB;font-size:16px;text-align:center;">استخدم الرمز التالي:</p>
+    <div style="text-align:center;margin:24px 0;">
+      <div style="display:inline-block;background:#141425;border:2px solid #FFD700;border-radius:12px;padding:20px 48px;letter-spacing:14px;font-size:38px;font-weight:800;color:#FFD700;">${code}</div>
     </div>
-    <p style="color:#999;font-size:12px;text-align:center;">الرمز صالح لمدة 10 دقائق فقط. لا تشاركه مع أي شخص.</p>
+    <p style="color:#B0B8C8;font-size:14px;text-align:center;">الرمز صالح لمدة 10 دقائق فقط. لا تشاركه مع أي شخص.</p>
   `);
   return sendEmail(to, `${icon} ${typeLabel} — ON-SERVER1`, html);
 }
@@ -182,11 +182,11 @@ export async function sendPasswordResetSuccessEmail(to: string, name: string) {
       <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#4CAF50,#2E7D32);margin-bottom:8px;">
         <span style="font-size:32px;">🔒</span>
       </div>
-      <h2 style="color:#fff;margin:8px 0 4px;font-size:22px;">تم تغيير كلمة المرور</h2>
-      <p style="color:#aaa;margin:0;font-size:14px;">مرحباً ${name}</p>
+      <h2 style="color:#fff;margin:8px 0 4px;font-size:26px;">تم تغيير كلمة المرور</h2>
+      <p style="color:#C0C8D8;margin:0;font-size:16px;">مرحباً ${name}</p>
     </div>
     ${divider}
-    <p style="color:#ccc;font-size:14px;line-height:1.7;text-align:center;">
+    <p style="color:#D1D5DB;font-size:16px;line-height:1.8;text-align:center;">
       تم إعادة تعيين كلمة المرور الخاصة بك بنجاح.<br/>
       إذا لم تقم بهذا الإجراء، يرجى التواصل معنا فوراً.
     </p>
@@ -214,8 +214,8 @@ export async function sendDepositCreatedEmail(
       <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#2196F3,#1565C0);margin-bottom:8px;">
         <span style="font-size:32px;">💰</span>
       </div>
-      <h2 style="color:#fff;margin:8px 0 4px;font-size:22px;">إيداع جديد</h2>
-      <p style="color:#aaa;margin:0;font-size:14px;">مرحباً ${name}</p>
+      <h2 style="color:#fff;margin:8px 0 4px;font-size:26px;">إيداع جديد</h2>
+      <p style="color:#C0C8D8;margin:0;font-size:16px;">مرحباً ${name}</p>
     </div>
     ${divider}
     ${infoTable(
@@ -223,9 +223,9 @@ export async function sendDepositCreatedEmail(
       infoRow('المبلغ', `$${data.amount.toFixed(2)}`) +
       infoRow('طريقة الدفع', gatewayLabel) +
       infoRow('الحالة', `<span style="color:${statusColor};font-weight:700;">${statusLabel}</span>`) +
-      (data.txHash ? infoRow('Hash', `<span style="font-size:11px;word-break:break-all;">${data.txHash}</span>`) : '')
+      (data.txHash ? infoRow('Hash', `<span style="font-size:13px;word-break:break-all;">${data.txHash}</span>`) : '')
     )}
-    <p style="color:#999;font-size:12px;text-align:center;margin-top:16px;">
+    <p style="color:#B0B8C8;font-size:15px;text-align:center;margin-top:16px;">
       ${data.status === 'CONFIRMED' ? 'تم إضافة الرصيد إلى حسابك تلقائياً.' : 'سيتم مراجعة الإيداع وتأكيده من قبل الإدارة.'}
     </p>
   `);
@@ -245,8 +245,8 @@ export async function sendDepositApprovedEmail(
       <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#4CAF50,#2E7D32);margin-bottom:8px;">
         <span style="font-size:32px;">✅</span>
       </div>
-      <h2 style="color:#fff;margin:8px 0 4px;font-size:22px;">تم تأكيد الإيداع</h2>
-      <p style="color:#aaa;margin:0;font-size:14px;">مرحباً ${name}</p>
+      <h2 style="color:#fff;margin:8px 0 4px;font-size:26px;">تم تأكيد الإيداع</h2>
+      <p style="color:#C0C8D8;margin:0;font-size:16px;">مرحباً ${name}</p>
     </div>
     ${divider}
     ${infoTable(
@@ -256,7 +256,7 @@ export async function sendDepositApprovedEmail(
       infoRow('الحالة', '<span style="color:#4CAF50;font-weight:700;">مؤكد ✓</span>') +
       (data.adminNote ? infoRow('ملاحظة', data.adminNote) : '')
     )}
-    <p style="color:#ccc;font-size:14px;text-align:center;margin-top:16px;">
+    <p style="color:#D1D5DB;font-size:16px;text-align:center;margin-top:16px;">
       تم إضافة <strong style="color:#FFD700;">$${data.amount.toFixed(2)}</strong> إلى رصيدك.
     </p>
   `);
@@ -276,8 +276,8 @@ export async function sendDepositRejectedEmail(
       <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#F44336,#C62828);margin-bottom:8px;">
         <span style="font-size:32px;">❌</span>
       </div>
-      <h2 style="color:#fff;margin:8px 0 4px;font-size:22px;">تم رفض الإيداع</h2>
-      <p style="color:#aaa;margin:0;font-size:14px;">مرحباً ${name}</p>
+      <h2 style="color:#fff;margin:8px 0 4px;font-size:26px;">تم رفض الإيداع</h2>
+      <p style="color:#C0C8D8;margin:0;font-size:16px;">مرحباً ${name}</p>
     </div>
     ${divider}
     ${infoTable(
@@ -287,7 +287,7 @@ export async function sendDepositRejectedEmail(
       infoRow('الحالة', '<span style="color:#F44336;font-weight:700;">مرفوض ✗</span>') +
       (data.adminNote ? infoRow('السبب', data.adminNote) : '')
     )}
-    <p style="color:#999;font-size:12px;text-align:center;margin-top:16px;">
+    <p style="color:#B0B8C8;font-size:15px;text-align:center;margin-top:16px;">
       إذا كان لديك استفسار، يرجى التواصل مع الدعم.
     </p>
   `);
@@ -302,15 +302,15 @@ export async function sendOrderCreatedEmail(
   to: string, name: string,
   data: { orderNumber: string; totalAmount: number; productNames: string[] }
 ) {
-  const productsList = data.productNames.map(p => `<li style="color:#E0E0E0;padding:4px 0;font-size:13px;">${p}</li>`).join('');
+  const productsList = data.productNames.map(p => `<li style="color:#FFFFFF;padding:6px 0;font-size:15px;">${p}</li>`).join('');
 
   const html = wrap(`
     <div style="text-align:center;margin-bottom:16px;">
       <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#9C27B0,#6A1B9A);margin-bottom:8px;">
         <span style="font-size:32px;">📦</span>
       </div>
-      <h2 style="color:#fff;margin:8px 0 4px;font-size:22px;">تم استلام طلبك</h2>
-      <p style="color:#aaa;margin:0;font-size:14px;">مرحباً ${name}</p>
+      <h2 style="color:#fff;margin:8px 0 4px;font-size:26px;">تم استلام طلبك</h2>
+      <p style="color:#C0C8D8;margin:0;font-size:16px;">مرحباً ${name}</p>
     </div>
     ${divider}
     ${infoTable(
@@ -318,11 +318,11 @@ export async function sendOrderCreatedEmail(
       infoRow('المبلغ الإجمالي', `$${data.totalAmount.toFixed(2)}`) +
       infoRow('الحالة', `${badge('قيد المعالجة', '#FF9800')}`)
     )}
-    <div style="background:#141425;border-radius:10px;padding:12px 16px;margin:12px 0;">
-      <p style="color:#999;font-size:12px;margin:0 0 8px;">المنتجات:</p>
+    <div style="background:#141425;border-radius:10px;padding:14px 18px;margin:14px 0;">
+      <p style="color:#B0B8C8;font-size:14px;margin:0 0 10px;">المنتجات:</p>
       <ul style="margin:0;padding-right:16px;list-style:none;">${productsList}</ul>
     </div>
-    <p style="color:#999;font-size:12px;text-align:center;margin-top:16px;">
+    <p style="color:#B0B8C8;font-size:15px;text-align:center;margin-top:16px;">
       سيتم تحديثك عند اكتمال الطلب أو تغييره.
     </p>
   `);
@@ -342,8 +342,8 @@ export async function sendOrderCompletedEmail(
       <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#4CAF50,#2E7D32);margin-bottom:8px;">
         <span style="font-size:32px;">🎉</span>
       </div>
-      <h2 style="color:#fff;margin:8px 0 4px;font-size:22px;">اكتمل طلبك!</h2>
-      <p style="color:#aaa;margin:0;font-size:14px;">مرحباً ${name}</p>
+      <h2 style="color:#fff;margin:8px 0 4px;font-size:26px;">اكتمل طلبك!</h2>
+      <p style="color:#C0C8D8;margin:0;font-size:16px;">مرحباً ${name}</p>
     </div>
     ${divider}
     ${infoTable(
@@ -352,11 +352,11 @@ export async function sendOrderCompletedEmail(
       infoRow('الحالة', '<span style="color:#4CAF50;font-weight:700;">مكتمل ✓</span>')
     )}
     ${data.resultCodes ? `
-    <div style="background:#141425;border-radius:10px;padding:14px 16px;margin:12px 0;">
-      <p style="color:#999;font-size:12px;margin:0 0 8px;">النتيجة / الأكواد:</p>
-      <p style="color:#FFD700;font-size:13px;word-break:break-all;margin:0;font-family:monospace;">${data.resultCodes}</p>
+    <div style="background:#141425;border-radius:10px;padding:16px 18px;margin:14px 0;">
+      <p style="color:#B0B8C8;font-size:14px;margin:0 0 10px;">النتيجة / الأكواد:</p>
+      <p style="color:#FFD700;font-size:16px;word-break:break-all;margin:0;font-family:monospace;">${data.resultCodes}</p>
     </div>` : ''}
-    <p style="color:#ccc;font-size:14px;text-align:center;margin-top:16px;">
+    <p style="color:#D1D5DB;font-size:16px;text-align:center;margin-top:16px;">
       شكراً لاستخدامك ON-SERVER1! 🙏
     </p>
   `);
@@ -376,8 +376,8 @@ export async function sendOrderRejectedEmail(
       <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#F44336,#C62828);margin-bottom:8px;">
         <span style="font-size:32px;">🔄</span>
       </div>
-      <h2 style="color:#fff;margin:8px 0 4px;font-size:22px;">طلب مرفوض — تم الاسترجاع</h2>
-      <p style="color:#aaa;margin:0;font-size:14px;">مرحباً ${name}</p>
+      <h2 style="color:#fff;margin:8px 0 4px;font-size:26px;">طلب مرفوض — تم الاسترجاع</h2>
+      <p style="color:#C0C8D8;margin:0;font-size:16px;">مرحباً ${name}</p>
     </div>
     ${divider}
     ${infoTable(
@@ -387,7 +387,7 @@ export async function sendOrderRejectedEmail(
       infoRow('السبب', data.reason) +
       infoRow('الاسترجاع', `<span style="color:#4CAF50;font-weight:700;">$${data.totalAmount.toFixed(2)} تم إعادته ✓</span>`)
     )}
-    <p style="color:#ccc;font-size:14px;text-align:center;margin-top:16px;">
+    <p style="color:#D1D5DB;font-size:16px;text-align:center;margin-top:16px;">
       تم إعادة المبلغ إلى رصيدك تلقائياً.
     </p>
   `);
@@ -404,12 +404,12 @@ export async function sendTestEmail(to: string): Promise<{ success: boolean; mes
       <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#4CAF50,#2E7D32);margin-bottom:8px;">
         <span style="font-size:32px;">✅</span>
       </div>
-      <h2 style="color:#fff;margin:8px 0 4px;font-size:22px;">تم الاتصال بنجاح!</h2>
-      <p style="color:#aaa;margin:0;font-size:14px;">إعدادات SMTP تعمل بشكل صحيح</p>
+      <h2 style="color:#fff;margin:8px 0 4px;font-size:26px;">تم الاتصال بنجاح!</h2>
+      <p style="color:#C0C8D8;margin:0;font-size:16px;">إعدادات SMTP تعمل بشكل صحيح</p>
     </div>
     ${divider}
-    <p style="color:#ccc;font-size:14px;text-align:center;">هذا بريد اختبار تلقائي من لوحة التحكم.</p>
-    <p style="color:#888;font-size:12px;text-align:center;">${new Date().toLocaleString('ar-SA')}</p>
+    <p style="color:#D1D5DB;font-size:16px;text-align:center;">هذا بريد اختبار تلقائي من لوحة التحكم.</p>
+    <p style="color:#B0B8C8;font-size:14px;text-align:center;">${new Date().toLocaleString('ar-SA')}</p>
   `);
 
   try {
