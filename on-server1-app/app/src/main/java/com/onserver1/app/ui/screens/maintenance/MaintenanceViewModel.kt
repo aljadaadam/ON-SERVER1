@@ -21,6 +21,9 @@ class MaintenanceViewModel @Inject constructor(
     private val _isChecking = MutableStateFlow(true)
     val isChecking: StateFlow<Boolean> = _isChecking
 
+    private val _announcement = MutableStateFlow<String?>(null)
+    val announcement: StateFlow<String?> = _announcement
+
     init {
         checkMaintenanceMode()
     }
@@ -35,6 +38,10 @@ class MaintenanceViewModel @Inject constructor(
                     val mode = settings["maintenance_mode"] == "true"
                     Log.d("MaintenanceVM", "maintenance_mode value from server: '${settings["maintenance_mode"]}' -> isMaintenanceMode=$mode")
                     _isMaintenanceMode.value = mode
+                    // Store announcement text if available
+                    val ann = settings["announcement"]?.takeIf { it.isNotBlank() }
+                    _announcement.value = ann
+                    Log.d("MaintenanceVM", "announcement: $ann")
                 }.onFailure {
                     Log.e("MaintenanceVM", "Failed to get settings: ${it.message}")
                     // If we can't reach server, don't block the app

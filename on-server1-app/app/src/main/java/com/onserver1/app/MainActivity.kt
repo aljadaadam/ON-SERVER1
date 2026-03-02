@@ -51,6 +51,7 @@ class MainActivity : ComponentActivity() {
                     val maintenanceViewModel: MaintenanceViewModel = hiltViewModel()
                     val isMaintenanceMode by maintenanceViewModel.isMaintenanceMode.collectAsState()
                     val isChecking by maintenanceViewModel.isChecking.collectAsState()
+                    val announcement by maintenanceViewModel.announcement.collectAsState()
 
                     // Re-check maintenance mode when app resumes
                     val lifecycleOwner = LocalLifecycleOwner.current
@@ -70,7 +71,8 @@ class MainActivity : ComponentActivity() {
                         if (!isChecking && isMaintenanceMode) {
                             MaintenanceScreen(
                                 onRetry = { maintenanceViewModel.checkMaintenanceMode() },
-                                isChecking = isChecking
+                                isChecking = isChecking,
+                                announcement = announcement
                             )
                         } else {
                             AppNavigation(tokenManager = tokenManager)

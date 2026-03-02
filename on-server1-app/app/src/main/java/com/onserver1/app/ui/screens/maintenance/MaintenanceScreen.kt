@@ -25,7 +25,8 @@ import com.onserver1.app.R
 @Composable
 fun MaintenanceScreen(
     onRetry: () -> Unit,
-    isChecking: Boolean = false
+    isChecking: Boolean = false,
+    announcement: String? = null
 ) {
     // Gear rotation animation
     val infiniteTransition = rememberInfiniteTransition(label = "gear")
@@ -96,6 +97,28 @@ fun MaintenanceScreen(
                 textAlign = TextAlign.Center,
                 lineHeight = 24.sp
             )
+
+            // Custom announcement from admin
+            if (!announcement.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0xFF1E293B))
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = announcement,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFFFBBF24),
+                        textAlign = TextAlign.Center,
+                        lineHeight = 22.sp,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(40.dp))
 
