@@ -32,6 +32,7 @@ import com.onserver1.app.R
 import com.onserver1.app.ui.components.BalanceCard
 import com.onserver1.app.ui.components.CinematicBanner
 import com.onserver1.app.ui.components.RamadanBanner
+import com.onserver1.app.ui.components.BankakBanner
 import com.onserver1.app.ui.components.ProductCard
 import com.onserver1.app.ui.theme.*
 import kotlinx.coroutines.delay
@@ -101,14 +102,14 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(d.space12))
 
-        // Banner Pager with auto-scroll (2 banners)
-        val bannerPagerState = rememberPagerState(pageCount = { 2 })
+        // Banner Pager with auto-scroll (3 banners)
+        val bannerPagerState = rememberPagerState(pageCount = { 3 })
 
         // Auto-scroll every 5 seconds
         LaunchedEffect(Unit) {
             while (true) {
                 delay(5000L)
-                val nextPage = (bannerPagerState.currentPage + 1) % 2
+                val nextPage = (bannerPagerState.currentPage + 1) % 3
                 bannerPagerState.animateScrollToPage(
                     page = nextPage,
                     animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
@@ -127,7 +128,10 @@ fun HomeScreen(
                 0 -> CinematicBanner(
                     modifier = Modifier.fillMaxSize()
                 )
-                1 -> RamadanBanner(
+                1 -> BankakBanner(
+                    modifier = Modifier.fillMaxSize()
+                )
+                2 -> RamadanBanner(
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -140,7 +144,7 @@ fun HomeScreen(
                 .padding(top = d.space8),
             horizontalArrangement = Arrangement.Center
         ) {
-            repeat(2) { index ->
+            repeat(3) { index ->
                 val isActive = bannerPagerState.currentPage == index
                 Box(
                     modifier = Modifier
