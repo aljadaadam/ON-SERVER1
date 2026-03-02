@@ -196,10 +196,8 @@ router.put('/provider/settings', async (req: Request, res: Response, next: NextF
 router.post('/provider/sync', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { markupPercent } = req.body;
-    if (!markupPercent && markupPercent !== 0) {
-      return res.status(400).json({ success: false, message: 'يجب تحديد نسبة الربح' });
-    }
-    const result = await syncService.syncProducts(markupPercent);
+    const markup = typeof markupPercent === 'number' ? markupPercent : 0;
+    const result = await syncService.syncProducts(markup);
     res.json({ success: true, data: result });
   } catch (error) {
     next(error);

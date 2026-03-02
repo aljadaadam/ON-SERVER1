@@ -191,14 +191,10 @@ export default function Products() {
   useEffect(() => { setCurrentPage(1); }, [filterCategory, filterFeatured, filterServiceType, searchQuery]);
 
   const handleSync = async () => {
-    if (markupPercent === '' || markupPercent < 0) {
-      toast.error('يجب تحديد نسبة الربح أولاً');
-      return;
-    }
     setSyncing(true);
     setSyncResult(null);
     try {
-      const response = await adminApi.syncProducts(markupPercent);
+      const response = await adminApi.syncProducts(typeof markupPercent === 'number' ? markupPercent : 0);
       const result = response.data.data;
       setSyncResult(result);
       toast.success(`تم المزامنة: ${result.created} جديد، ${result.updated} محدث`);
@@ -442,9 +438,10 @@ export default function Products() {
           {/* Sync Controls */}
           <div className="flex flex-wrap items-end gap-3">
             <div>
-              <label className="block text-[10px] text-blue-200/60 mb-0.5">نسبة الربح %</label>
-              <input type="number" min="0" max="500" value={markupPercent} onChange={e => setMarkupPercent(parseInt(e.target.value) || 0)}
-                className="w-20 text-xs px-2.5 py-1.5 rounded-lg bg-white/10 border border-white/10 text-white focus:outline-none focus:border-blue-400/50"
+              <label className="block text-[10px] text-blue-200/60 mb-0.5">نسبة الربح % (اختياري)</label>
+              <input type="number" min="0" max="500" value={markupPercent} onChange={e => setMarkupPercent(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
+                placeholder="0"
+                className="w-20 text-xs px-2.5 py-1.5 rounded-lg bg-white/10 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-blue-400/50"
               />
             </div>
             <button onClick={handleSync} disabled={syncing}
