@@ -32,8 +32,6 @@ private val BankakGreen = Color(0xFFC8D900)
 private val BankakGreenLight = Color(0xFFDBED00)
 private val BankakCream = Color(0xFFFFF8E7)
 
-private const val BANKAK_LOGO_URL = "https://6990ab01681c79fa0bccfe99.imgix.net/"
-
 /**
  * Cinematic Bankak payment banner — rich animated background with brand identity.
  */
@@ -351,7 +349,7 @@ fun BankakBanner(
 
                 // Logo from URL
                 AsyncImage(
-                    model = BANKAK_LOGO_URL,
+                    model = "https://6990ab01681c79fa0bccfe99.imgix.net/bank.png",
                     contentDescription = "Bankak",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
