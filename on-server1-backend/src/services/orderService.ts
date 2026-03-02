@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import prisma from '../config/database';
 import { externalProvider } from './externalProvider';
 
@@ -103,8 +102,14 @@ export class OrderService {
         },
       });
 
-      // Create order
-      const orderNumber = `ON-${Date.now()}-${uuidv4().slice(0, 4).toUpperCase()}`;
+      // Create order - sequential number starting at 100000, incrementing by 70
+      const lastOrder = await tx.order.findFirst({ orderBy: { createdAt: 'desc' }, select: { orderNumber: true } });
+      let nextNum = 100000;
+      if (lastOrder) {
+        const lastNum = parseInt(lastOrder.orderNumber, 10);
+        if (!isNaN(lastNum)) nextNum = lastNum + 70;
+      }
+      const orderNumber = String(nextNum);
       const newOrder = await tx.order.create({
         data: {
           orderNumber,
