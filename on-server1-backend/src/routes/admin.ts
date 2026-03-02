@@ -25,7 +25,7 @@ router.get('/stats', async (_req: Request, res: Response, next: NextFunction) =>
       prisma.user.count(),
       prisma.product.count({ where: { isActive: true } }),
       prisma.order.count(),
-      prisma.order.count({ where: { status: 'PENDING' } }),
+      prisma.order.count({ where: { status: { in: ['PENDING', 'WAITING'] } } }),
       prisma.order.aggregate({ _sum: { totalAmount: true }, where: { status: 'COMPLETED' } }),
       prisma.order.findMany({
         take: 10,

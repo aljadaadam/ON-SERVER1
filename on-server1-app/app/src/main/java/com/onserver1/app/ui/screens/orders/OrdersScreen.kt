@@ -122,7 +122,9 @@ fun OrdersScreen(
 fun OrderCard(order: Order, d: Dimens) {
     val statusColor = when (order.status.lowercase()) {
         "completed", "delivered" -> SuccessGreen
-        "pending", "processing" -> WarningOrange
+        "pending" -> WarningOrange
+        "waiting" -> Color(0xFFF97316)
+        "processing" -> Color(0xFF3B82F6)
         "rejected" -> ErrorRed
         else -> TextGray
     }
@@ -131,6 +133,7 @@ fun OrderCard(order: Order, d: Dimens) {
         "completed" -> stringResource(R.string.status_completed)
         "delivered" -> stringResource(R.string.status_delivered)
         "pending" -> stringResource(R.string.status_pending)
+        "waiting" -> stringResource(R.string.status_waiting)
         "processing" -> stringResource(R.string.status_processing)
         "rejected" -> stringResource(R.string.status_rejected)
         else -> order.status

@@ -50,6 +50,7 @@ export default function Orders() {
   const statusOptions = [
     { value: '', label: 'الكل' },
     { value: 'PENDING', label: 'في الانتظار' },
+    { value: 'WAITING', label: 'في الطابور' },
     { value: 'PROCESSING', label: 'قيد المعالجة' },
     { value: 'COMPLETED', label: 'مكتمل' },
     { value: 'REJECTED', label: 'مرفوض' },
@@ -57,6 +58,7 @@ export default function Orders() {
 
   const statusColors: Record<string, string> = {
     PENDING: 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400',
+    WAITING: 'bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400',
     PROCESSING: 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400',
     COMPLETED: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400',
     REJECTED: 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400',

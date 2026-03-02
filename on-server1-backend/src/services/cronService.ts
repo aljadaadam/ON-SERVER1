@@ -60,7 +60,7 @@ export class CronService {
       // Find orders that are PENDING or PROCESSING with a reference ID
       const pendingOrders = await prisma.order.findMany({
         where: {
-          status: { in: ['PENDING', 'PROCESSING'] },
+          status: { in: ['PENDING', 'WAITING', 'PROCESSING'] },
           externalOrderId: { not: null },
         },
         include: {
@@ -135,17 +135,24 @@ export class CronService {
               }).catch(() => {});
             }
           } else if (result.status === 'PROCESSING') {
-            // Provider started processing — move PENDING → PROCESSING
-            if (order.status === 'PENDING') {
+            // Provider started processing — move to PROCESSING
+            if (order.status !== 'PROCESSING') {
               await prisma.order.update({
                 where: { id: order.id },
                 data: { status: 'PROCESSING' },
               });
-              console.log(`[Cron] Order ${order.orderNumber} PENDING → PROCESSING`);
+              console.log(`[Cron] Order ${order.orderNumber} ${order.status} → PROCESSING`);
             }
             stillPending++;
-          } else if (result.status === 'PENDING') {
-            // Still waiting in queue — keep as PENDING
+          } else if (result.status === 'WAITING') {
+            // Provider has it in queue — move to WAITING
+            if (order.status === 'PENDING') {
+              await prisma.order.update({
+                where: { id: order.id },
+                data: { status: 'WAITING' },
+              });
+              console.log(`[Cron] Order ${order.orderNumber} PENDING → WAITING`);
+            }
             stillPending++;
           } else {
             stillPending++;

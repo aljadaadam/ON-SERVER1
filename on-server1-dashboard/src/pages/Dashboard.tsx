@@ -26,6 +26,7 @@ interface Stats {
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING: '#EAB308',
+  WAITING: '#F97316',
   PROCESSING: '#3B82F6',
   COMPLETED: '#22C55E',
   REJECTED: '#EF4444',
@@ -52,7 +53,7 @@ export default function Dashboard() {
         statusCount[o.status] = (statusCount[o.status] || 0) + 1;
       });
       const statusLabels: Record<string, string> = {
-        PENDING: 'في الانتظار', PROCESSING: 'قيد المعالجة', COMPLETED: 'مكتمل',
+        PENDING: 'في الانتظار', WAITING: 'في الطابور', PROCESSING: 'قيد المعالجة', COMPLETED: 'مكتمل',
         REJECTED: 'مرفوض',
       };
       setOrdersByStatus(
@@ -230,6 +231,7 @@ export default function Dashboard() {
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
     PENDING: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400',
+    WAITING: 'bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400',
     PROCESSING: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400',
     COMPLETED: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400',
     REJECTED: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400',
@@ -237,6 +239,7 @@ function StatusBadge({ status }: { status: string }) {
 
   const labels: Record<string, string> = {
     PENDING: 'في الانتظار',
+    WAITING: 'في الطابور',
     PROCESSING: 'قيد المعالجة',
     COMPLETED: 'مكتمل',
     REJECTED: 'مرفوض',
