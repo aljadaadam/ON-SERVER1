@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ON-SERVER1</string>
+
+    <!-- Navigation -->
+    <string name="home">الرئيسية</string>
+    <string name="services">الخدمات</string>
+    <string name="games">الألعاب</string>
+    <string name="profile">الملف الشخصي</string>
+    <string name="my_account">حسابي</string>
+
+    <!-- Auth -->
+    <string name="login">تسجيل الدخول</string>
+    <string name="register">إنشاء حساب</string>
+    <string name="email">البريد الإلكتروني</string>
+    <string name="password">كلمة المرور</string>
+    <string name="name">الاسم</string>
+    <string name="full_name">الاسم الكامل</string>
+    <string name="phone">رقم الهاتف</string>
+    <string name="phone_optional">رقم الهاتف (اختياري)</string>
+    <string name="verify_otp">التحقق من الرمز</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="login_button">تسجيل الدخول</string>
+    <string name="register_button">إنشاء حساب</string>
+    <string name="no_account">ليس لديك حساب؟ </string>
+    <string name="have_account">لديك حساب بالفعل؟ </string>
+    <string name="create_new_account">إنشاء حساب جديد</string>
+    <string name="digital_services">خدمات رقمية متكاملة</string>
+    <string name="forgot_password">نسيت كلمة المرور؟</string>
+    <string name="forgot_password_title">نسيت كلمة المرور</string>
+    <string name="forgot_password_desc">أدخل بريدك الإلكتروني وسنرسل لك رمز لإعادة تعيين كلمة المرور</string>
+    <string name="send_reset_code">إرسال رمز التعيين</string>
+    <string name="reset_password_title">إعادة تعيين كلمة المرور</string>
+    <string name="reset_password_desc">أدخل رمز التحقق المرسل إلى بريدك الإلكتروني وكلمة المرور الجديدة</string>
+    <string name="reset_password_button">إعادة تعيين كلمة المرور</string>
+    <string name="password_reset_success">تم إعادة تعيين كلمة المرور بنجاح. يرجى تسجيل الدخول بكلمة المرور الجديدة.</string>
+    <string name="back_to_login">العودة لتسجيل الدخول</string>
+    <string name="otp_title">التحقق من الرمز</string>
+    <string name="otp_message">تم إرسال رمز التحقق إلى بريدك الإلكتروني\nيرجى إدخال الرمز المكون من 6 أرقام</string>
+    <string name="otp_code">رمز التحقق</string>
+    <string name="verify_button">تحقق</string>
+    <string name="resend_code">إعادة إرسال الرمز</string>
+
+    <!-- Home -->
+    <string name="hello">مرحباً %s</string>
+    <string name="balance">الرصيد</string>
+    <string name="add_balance">إضافة رصيد</string>
+    <string name="insufficient_balance">رصيدك غير كافٍ. رصيدك: $%1$s، المطلوب: $%2$s</string>
+    <string name="no_enough_balance">لا يوجد رصيد كافٍ</string>
+    <string name="featured_products">منتجات مميزة</string>
+    <string name="view_all">عرض الكل</string>
+    <string name="quick_services">خدمات سريعة</string>
+    <string name="mobile_recharge">شحن جوال</string>
+    <string name="games_label">ألعاب</string>
+    <string name="gifts">هدايا</string>
+    <string name="subscriptions">اشتراكات</string>
+    <string name="programs_software">برامج وسوفت وير</string>
+    <string name="tools_activations">أدوات\nوتفعيلات</string>
+    <string name="flash_firmware">فلاش\nوفيرم وير</string>
+    <string name="licenses">تراخيص</string>
+    <string name="schematics">مخططات</string>
+    <string name="notifications">الإشعارات</string>
+
+    <!-- Services -->
+    <string name="search_service">بحث عن خدمة...</string>
+    <string name="all">الكل</string>
+    <string name="all_products">جميع المنتجات</string>
+    <string name="gift_cards">بطاقات الهدايا</string>
+    <string name="filter">تصفية</string>
+    <string name="search">بحث</string>
+    <string name="server_services">سيرفر</string>
+    <string name="search_server">بحث في خدمات السيرفر...</string>
+    <string name="select_group">المجموعة</string>
+    <string name="all_groups">الكل</string>
+
+    <!-- IMEI -->
+    <string name="imei_services">IMEI</string>
+    <string name="search_imei">بحث في خدمات IMEI...</string>
+
+    <!-- Games (legacy) -->
+    <string name="games_and_cards">الألعاب والبطاقات</string>
+    <string name="game_cards">بطاقات الألعاب</string>
+    <string name="gift_cards_tab">بطاقات الهدايا</string>
+    <string name="game_topup">شحن ألعاب</string>
+    <string name="no_products">لا توجد منتجات حالياً</string>
+
+    <!-- Profile -->
+    <string name="user_default">المستخدم</string>
+    <string name="my_orders">طلباتي</string>
+    <string name="transactions">المعاملات المالية</string>
+    <string name="settings">الإعدادات</string>
+    <string name="help_support">المساعدة والدعم</string>
+    <string name="about_app">حول التطبيق</string>
+
+    <!-- Orders -->
+    <string name="no_orders">لا توجد طلبات بعد</string>
+    <string name="product">المنتج</string>
+    <string name="more_items">+%d منتجات أخرى</string>
+    <string name="status_completed">مكتمل</string>
+    <string name="status_delivered">تم التسليم</string>
+    <string name="status_pending">قيد الانتظار</string>
+    <string name="status_processing">قيد المعالجة</string>
+    <string name="status_cancelled">ملغي</string>
+    <string name="status_failed">فشل</string>
+
+    <!-- Transactions -->
+    <string name="no_transactions">لا توجد معاملات بعد</string>
+    <string name="balance_label">الرصيد:</string>
+    <string name="tx_deposit">إيداع</string>
+    <string name="tx_purchase">شراء</string>
+    <string name="tx_refund">استرداد</string>
+    <string name="tx_withdrawal">سحب</string>
+
+    <!-- Settings -->
+    <string name="settings_general">عام</string>
+    <string name="settings_language">اللغة</string>
+    <string name="settings_language_value">العربية</string>
+    <string name="settings_notifications">الإشعارات</string>
+    <string name="settings_notifications_desc">استقبال إشعارات التطبيق</string>
+    <string name="settings_cinematic_splash">شاشة البداية السينمائية</string>
+    <string name="settings_cinematic_splash_desc">أنيميشن صندوق يفتح مع تصنيفات الخدمات</string>
+    <string name="settings_account">الحساب</string>
+    <string name="settings_edit_profile">تعديل الملف الشخصي</string>
+    <string name="settings_change_password">تغيير كلمة المرور</string>
+    <string name="settings_privacy">الخصوصية</string>
+    <string name="privacy_policy">سياسة الخصوصية</string>
+    <string name="terms_of_service">شروط الخدمة</string>
+
+    <!-- Edit Profile &amp; Password -->
+    <string name="profile_updated">تم تحديث الملف الشخصي بنجاح</string>
+    <string name="save_changes">حفظ التغييرات</string>
+    <string name="current_password">كلمة المرور الحالية</string>
+    <string name="new_password">كلمة المرور الجديدة</string>
+    <string name="confirm_password">تأكيد كلمة المرور</string>
+    <string name="passwords_dont_match">كلمات المرور غير متطابقة</string>
+    <string name="password_changed">تم تغيير كلمة المرور بنجاح</string>
+    <string name="change_password_button">تغيير كلمة المرور</string>
+    <string name="password_requirements">يجب أن تكون كلمة المرور 6 أحرف على الأقل</string>
+    <string name="no_content_available">لا يوجد محتوى متاح</string>
+
+    <!-- Help &amp; Support -->
+    <string name="help_contact_us">تواصل معنا</string>
+    <string name="help_email">البريد الإلكتروني</string>
+    <string name="help_phone">الهاتف</string>
+    <string name="help_whatsapp">واتساب</string>
+    <string name="help_chat_now">محادثة الآن</string>
+    <string name="help_telegram">تلجرام</string>
+    <string name="help_faq">الأسئلة الشائعة</string>
+    <string name="faq_q1">كيف أضيف رصيد لحسابي؟</string>
+    <string name="faq_a1">اذهب إلى ملفك الشخصي واضغط على "إضافة رصيد". يمكنك إضافة رصيد باستخدام طرق دفع متنوعة.</string>
+    <string name="faq_q2">كيف أشتري منتج؟</string>
+    <string name="faq_a2">تصفح المنتجات من الرئيسية أو الخدمات، اختر المنتج، وأكمل الشراء باستخدام رصيدك.</string>
+    <string name="faq_q3">كيف أتابع طلبي؟</string>
+    <string name="faq_a3">اذهب إلى الملف الشخصي ← طلباتي لمشاهدة جميع طلباتك وحالتها.</string>
+    <string name="faq_q4">هل يمكنني استرداد المبلغ؟</string>
+    <string name="faq_a4">للمنتجات المؤهلة، تواصل مع الدعم خلال 24 ساعة من الشراء. يتم استرداد المبلغ إلى رصيد حسابك.</string>
+
+    <!-- About -->
+    <string name="about_version">الإصدار %s</string>
+    <string name="about_description">ON-SERVER1 منصتك المتكاملة للخدمات الرقمية وبطاقات الألعاب وبطاقات الهدايا وشحن الجوال. سريعة وآمنة وموثوقة.</string>
+    <string name="about_rate_app">تقييم التطبيق</string>
+    <string name="about_share_app">مشاركة التطبيق</string>
+    <string name="about_developer">صُنع بـ ❤ بواسطة فريق ON-SERVER1</string>
+
+    <!-- Dialog -->
+    <string name="dialog_error_title">خطأ</string>
+    <string name="dialog_success_title">نجاح</string>
+    <string name="dialog_warning_title">تحذير</string>
+    <string name="dialog_info_title">معلومة</string>
+    <string name="dialog_ok">موافق</string>
+    <string name="dialog_cancel">إلغاء</string>
+    <string name="dialog_retry">إعادة المحاولة</string>
+
+    <!-- WebView -->
+    <string name="back">رجوع</string>
+
+    <!-- Deposit -->
+    <string name="deposit_enter_amount">أدخل المبلغ (دولار)</string>
+
+    <!-- Product Detail -->
+    <string name="product_details">تفاصيل المنتج</string>
+    <string name="enter_imei">أدخل رقم IMEI</string>
+    <string name="imei_placeholder">مثال: 356938035643809</string>
+    <string name="imei_hint">رقم IMEI المكون من 15 رقم من جهازك</string>
+    <string name="required_fields">المعلومات المطلوبة</string>
+    <string name="quantity">الكمية</string>
+    <string name="quantity_range">النطاق</string>
+    <string name="total_amount">المبلغ الإجمالي</string>
+    <string name="place_order">تقديم الطلب</string>
+    <string name="order_success_title">تم تقديم الطلب!</string>
+    <string name="order_success_message">تم تقديم طلبك بنجاح وجاري معالجته.</string>
+    <string name="order_number">رقم الطلب</string>
+
+    <!-- Deposit (continued) -->
+    <string name="deposit_select_method">اختر طريقة الدفع</string>
+    <string name="deposit_usdt_desc">الدفع بـ USDT (BEP20)</string>
+    <string name="deposit_bankak">بنكك</string>
+    <string name="deposit_bankak_desc">تحويل بنكي عبر بنكك</string>
+    <string name="deposit_continue">متابعة</string>
+    <string name="deposit_payment">الدفع</string>
+    <string name="deposit_amount_to_send">المبلغ المطلوب إرساله</string>
+    <string name="deposit_amount_to_transfer">المبلغ المطلوب تحويله</string>
+    <string name="deposit_wallet_address">عنوان المحفظة</string>
+    <string name="deposit_copied">تم النسخ!</string>
+    <string name="deposit_usdt_instructions_title">تعليمات مهمة</string>
+    <string name="deposit_usdt_instructions">1. أرسل المبلغ المحدد أعلاه إلى عنوان المحفظة\n2. استخدم شبكة BEP20 (BSC) فقط\n3. انسخ والصق هاش المعاملة أدناه\n4. انتظر التحقق (عادة 1-3 دقائق)</string>
+    <string name="deposit_tx_hash">هاش المعاملة (TX Hash)</string>
+    <string name="deposit_verify_and_submit">تحقق وإرسال</string>
+    <string name="deposit_exchange_rate">سعر الصرف</string>
+    <string name="deposit_amount_local">المبلغ المحلي</string>
+    <string name="deposit_bank_details">تفاصيل البنك</string>
+    <string name="deposit_bank_name">اسم البنك</string>
+    <string name="deposit_account_name">اسم الحساب</string>
+    <string name="deposit_account_number">رقم الحساب</string>
+    <string name="deposit_upload_receipt">رفع إيصال التحويل</string>
+    <string name="deposit_tap_to_upload">اضغط لرفع صورة الإيصال</string>
+    <string name="deposit_submit_request">إرسال طلب الإيداع</string>
+    <string name="deposit_scan_qr">امسح رمز QR لنسخ العنوان</string>
+</resources>

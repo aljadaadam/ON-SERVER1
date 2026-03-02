@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ON-SERVER1</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="container">
+      <div class="header-content">
+        <h1 class="logo">ON-SERVER1</h1>
+        <div class="header-search">
+          <input type="text" id="searchInput" placeholder="ابحث عن منتج..." class="search-input" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Banners Slider -->
+  <section class="banners-section" id="bannersSection">
+    <div class="banners-slider" id="bannersSlider">
+      <!-- Banners loaded dynamically -->
+    </div>
+    <div class="banners-dots" id="bannersDots"></div>
+  </section>
+
+  <!-- Categories -->
+  <section class="section" id="categoriesSection">
+    <div class="container">
+      <h2 class="section-title">التصنيفات</h2>
+      <div class="categories-grid" id="categoriesGrid">
+        <!-- Categories loaded dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products -->
+  <section class="section" id="featuredSection">
+    <div class="container">
+      <h2 class="section-title">منتجات مميزة ⭐</h2>
+      <div class="products-grid" id="featuredGrid">
+        <!-- Featured products loaded dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- All Products -->
+  <section class="section" id="productsSection">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">جميع المنتجات</h2>
+        <div class="filter-tabs" id="filterTabs">
+          <button class="filter-tab active" data-type="">الكل</button>
+          <button class="filter-tab" data-type="GAME_CARD">بطاقات ألعاب</button>
+          <button class="filter-tab" data-type="GIFT_CARD">بطاقات هدايا</button>
+          <button class="filter-tab" data-type="TOP_UP">شحن</button>
+          <button class="filter-tab" data-type="SUBSCRIPTION">اشتراكات</button>
+          <button class="filter-tab" data-type="SERVICE">خدمات</button>
+        </div>
+      </div>
+      <div class="products-grid" id="productsGrid">
+        <!-- Products loaded dynamically -->
+      </div>
+      <div class="load-more" id="loadMore" style="display:none;">
+        <button class="btn-load-more" id="loadMoreBtn">تحميل المزيد</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Detail Modal -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <div id="modalBody">
+        <!-- Product detail loaded dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading" id="loadingSpinner">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

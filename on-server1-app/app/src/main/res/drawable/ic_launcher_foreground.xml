@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- ===== BACK HALF of orbital swoosh (behind ON text, top portion) ===== -->
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:rotation="-20">
+        <!-- Outer ring - top half only (behind text) -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="
+                M10,54
+                A46,17 0 0,1 98,54
+                L98,54
+                A46,17 0 0,1 10,54 Z
+                M15,54
+                A41,13 0 0,0 93,54
+                A41,13 0 0,0 15,54 Z"
+            android:fillType="evenOdd" />
+        <!-- Inner accent line - top half -->
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="1.4"
+            android:fillColor="#00000000"
+            android:pathData="M24,54 A32,9 0 0,1 84,54" />
+    </group>
+
+    <!-- ===== "O" letter (bold, wide) ===== -->
+    <!-- Outer O shape -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,54 C30,42.5 36,35 44,35 C52,35 58,42.5 58,54 C58,65.5 52,73 44,73 C36,73 30,65.5 30,54 Z" />
+    <!-- Inner O cutout -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M37,54 C37,46 40.5,41.5 44,41.5 C47.5,41.5 51,46 51,54 C51,62 47.5,66.5 44,66.5 C40.5,66.5 37,62 37,54 Z" />
+
+    <!-- ===== "N" letter (bold) ===== -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M57,73 L57,35 L64,35 L78,61 L78,35 L85,35 L85,73 L78,73 L64,47 L64,73 Z" />
+
+    <!-- ===== FRONT HALF of orbital swoosh (in front of ON text, bottom portion) ===== -->
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:rotation="-20">
+        <!-- Outer ring - bottom half only (in front of text) -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="
+                M10,54
+                A46,17 0 0,0 98,54
+                L98,54
+                A46,17 0 0,0 10,54 Z
+                M15,54
+                A41,13 0 0,1 93,54
+                A41,13 0 0,1 15,54 Z"
+            android:fillType="evenOdd" />
+        <!-- Inner accent line - bottom half -->
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="1.4"
+            android:fillColor="#00000000"
+            android:pathData="M24,54 A32,9 0 0,0 84,54" />
+    </group>
+
+</vector>

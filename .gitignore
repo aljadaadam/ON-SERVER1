@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+on-server1-app/build/
+on-server1-app/.gradle/
+on-server1-app/app/build/
+on-server1-dashboard/dist/
+on-server1-web/dist/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Database
+*.db
+*.db-journal
+prisma/*.db
+prisma/*.db-journal
+on-server1-backend/prisma/*.db
+on-server1-backend/prisma/*.db-journal
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Uploads
+on-server1-backend/uploads/receipts/*
+!on-server1-backend/uploads/receipts/.gitkeep
+
+# Gradle
+.gradle/
+local.properties
+
+# Android
+*.apk
+*.aab
+*.keystore
