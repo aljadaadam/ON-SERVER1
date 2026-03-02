@@ -47,7 +47,7 @@ function WrappedRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/ctrl-7x9a3k">
       <Toaster position="top-left" toastOptions={{
         style: { background: '#1A1A2E', color: '#fff', borderRadius: '12px', border: '1px solid #374151' },
         success: { iconTheme: { primary: '#FFD700', secondary: '#000' } },

@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
+  base: '/ctrl-7x9a3k/',
   plugins: [react()],
   resolve: {
     alias: {

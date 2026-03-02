@@ -29,8 +29,8 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            buildConfigField("String", "BASE_URL", "\"https://api.onserver1.com/api/\"")
-            buildConfigField("String", "WEB_URL", "\"https://web.onserver1.com/\"")
+            buildConfigField("String", "BASE_URL", "\"https://on-server2.com/api/\"")
+            buildConfigField("String", "WEB_URL", "\"https://on-server2.com/\"")
         }
     }
 
