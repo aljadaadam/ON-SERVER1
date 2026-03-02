@@ -618,8 +618,8 @@ export class ExternalProviderService {
 
         // DHRU Fusion numeric status mapping
         const numericStatusMap: Record<string, string> = {
-          '0': 'PROCESSING',   // waiting / in queue
-          '1': 'PROCESSING',   // pending / processing
+          '0': 'PENDING',      // waiting / in queue — لسه في الطابور
+          '1': 'PROCESSING',   // pending / processing — بدأ المعالجة
           '2': 'REJECTED',     // rejected
           '3': 'REJECTED',     // failed
           '4': 'COMPLETED',    // completed successfully
@@ -634,8 +634,8 @@ export class ExternalProviderService {
           'REJECTED': 'REJECTED',
           'CANCELLED': 'REJECTED',
           'FAILED': 'REJECTED',
-          'PENDING': 'PROCESSING',
-          'WAITING': 'PROCESSING',
+          'PENDING': 'PENDING',
+          'WAITING': 'PENDING',
           'INPROGRESS': 'PROCESSING',
           'IN PROGRESS': 'PROCESSING',
           'PROCESSING': 'PROCESSING',

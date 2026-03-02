@@ -134,8 +134,8 @@ export class CronService {
                 orderNumber: order.orderNumber, totalAmount: order.totalAmount, reason: 'مرفوض من المزود',
               }).catch(() => {});
             }
-          } else if (result.status === 'PROCESSING' || result.status === 'PENDING') {
-            // Provider acknowledged — move PENDING → PROCESSING
+          } else if (result.status === 'PROCESSING') {
+            // Provider started processing — move PENDING → PROCESSING
             if (order.status === 'PENDING') {
               await prisma.order.update({
                 where: { id: order.id },
@@ -143,6 +143,9 @@ export class CronService {
               });
               console.log(`[Cron] Order ${order.orderNumber} PENDING → PROCESSING`);
             }
+            stillPending++;
+          } else if (result.status === 'PENDING') {
+            // Still waiting in queue — keep as PENDING
             stillPending++;
           } else {
             stillPending++;
