@@ -226,11 +226,11 @@ export class OrderService {
       }
     }
 
-    // All items submitted successfully → PROCESSING
+    // All items submitted — save reference but keep PENDING
+    // Cron will transition to PROCESSING when provider acknowledges
     await prisma.order.update({
       where: { id: orderId },
       data: {
-        status: 'PROCESSING',
         externalOrderId: lastRefId || null,
       },
     });
