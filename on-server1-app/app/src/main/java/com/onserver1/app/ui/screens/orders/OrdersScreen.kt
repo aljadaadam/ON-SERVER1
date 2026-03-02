@@ -106,7 +106,7 @@ fun OrderCard(order: Order, d: Dimens) {
     val statusColor = when (order.status.lowercase()) {
         "completed", "delivered" -> SuccessGreen
         "pending", "processing" -> WarningOrange
-        "cancelled", "failed" -> ErrorRed
+        "rejected" -> ErrorRed
         else -> TextGray
     }
 
@@ -115,8 +115,7 @@ fun OrderCard(order: Order, d: Dimens) {
         "delivered" -> stringResource(R.string.status_delivered)
         "pending" -> stringResource(R.string.status_pending)
         "processing" -> stringResource(R.string.status_processing)
-        "cancelled" -> stringResource(R.string.status_cancelled)
-        "failed" -> stringResource(R.string.status_failed)
+        "rejected" -> stringResource(R.string.status_rejected)
         else -> order.status
     }
 

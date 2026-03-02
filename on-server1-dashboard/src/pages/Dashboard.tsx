@@ -28,9 +28,7 @@ const STATUS_COLORS: Record<string, string> = {
   PENDING: '#EAB308',
   PROCESSING: '#3B82F6',
   COMPLETED: '#22C55E',
-  FAILED: '#EF4444',
-  CANCELLED: '#6B7280',
-  REFUNDED: '#8B5CF6',
+  REJECTED: '#EF4444',
 };
 
 export default function Dashboard() {
@@ -54,8 +52,8 @@ export default function Dashboard() {
         statusCount[o.status] = (statusCount[o.status] || 0) + 1;
       });
       const statusLabels: Record<string, string> = {
-        PENDING: 'معلق', PROCESSING: 'قيد التنفيذ', COMPLETED: 'مكتمل',
-        FAILED: 'فشل', CANCELLED: 'ملغي', REFUNDED: 'مسترد',
+        PENDING: 'في الانتظار', PROCESSING: 'قيد المعالجة', COMPLETED: 'مكتمل',
+        REJECTED: 'مرفوض',
       };
       setOrdersByStatus(
         Object.entries(statusCount).map(([status, count]) => ({
@@ -234,16 +232,14 @@ function StatusBadge({ status }: { status: string }) {
     PENDING: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400',
     PROCESSING: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400',
     COMPLETED: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400',
-    FAILED: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400',
-    CANCELLED: 'bg-gray-100 text-gray-700 dark:bg-gray-500/20 dark:text-gray-400',
+    REJECTED: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400',
   };
 
   const labels: Record<string, string> = {
-    PENDING: 'معلق',
-    PROCESSING: 'قيد التنفيذ',
+    PENDING: 'في الانتظار',
+    PROCESSING: 'قيد المعالجة',
     COMPLETED: 'مكتمل',
-    FAILED: 'فشل',
-    CANCELLED: 'ملغي',
+    REJECTED: 'مرفوض',
   };
 
   return (

@@ -247,9 +247,7 @@ enum OrderStatus {
   PENDING
   PROCESSING
   COMPLETED
-  FAILED
-  CANCELLED
-  REFUNDED
+  REJECTED
 }
 
 enum TransactionType {

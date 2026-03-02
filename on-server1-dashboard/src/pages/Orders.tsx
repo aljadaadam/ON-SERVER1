@@ -49,19 +49,17 @@ export default function Orders() {
 
   const statusOptions = [
     { value: '', label: 'الكل' },
-    { value: 'PENDING', label: 'معلق' },
-    { value: 'PROCESSING', label: 'قيد التنفيذ' },
+    { value: 'PENDING', label: 'في الانتظار' },
+    { value: 'PROCESSING', label: 'قيد المعالجة' },
     { value: 'COMPLETED', label: 'مكتمل' },
-    { value: 'FAILED', label: 'فشل' },
-    { value: 'CANCELLED', label: 'ملغي' },
+    { value: 'REJECTED', label: 'مرفوض' },
   ];
 
   const statusColors: Record<string, string> = {
     PENDING: 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400',
     PROCESSING: 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400',
     COMPLETED: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400',
-    FAILED: 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400',
-    CANCELLED: 'bg-gray-50 text-gray-600 dark:bg-gray-500/10 dark:text-gray-400',
+    REJECTED: 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400',
   };
 
   return (

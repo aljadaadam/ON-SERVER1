@@ -87,8 +87,8 @@ export class OrderService {
       return newOrder;
     });
 
-    // Submit to SD-Unlocker (async, don't block response)
-    this.processWithExternalProvider(order.id, order.items).catch(err => {
+    // Submit to external provider and handle errors properly
+    this.processWithExternalProvider(order).catch(err => {
       console.error('[OrderService] External processing failed:', err.message);
     });
 
@@ -96,11 +96,15 @@ export class OrderService {
   }
 
   /**
-   * Process order items with SD-Unlocker API
-   * For each item: determine IMEI, build custom fields, call placeOrder
+   * Process order items with external provider API
+   * Handles two error cases:
+   *   1. Provider rejected the order → REJECTED + refund + notify
+   *   2. Connection error → stays PENDING + admin notification
    */
-  private async processWithExternalProvider(orderId: string, orderItems: any[]) {
-    let allSuccess = true;
+  private async processWithExternalProvider(order: any) {
+    const orderId = order.id;
+    const orderNumber = order.orderNumber;
+    const orderItems = order.items;
     let lastRefId = '';
 
     for (const item of orderItems) {
@@ -116,15 +120,8 @@ export class OrderService {
         if (product.serviceType === 'SERVER' || product.serviceType === 'REMOTE') {
           imei = externalProvider.generateRandomImei();
         } else {
-          // IMEI type but no IMEI provided — error
-          allSuccess = false;
-          await prisma.order.update({
-            where: { id: orderId },
-            data: {
-              status: 'FAILED',
-              responseData: JSON.stringify({ error: 'IMEI required but not provided' }),
-            },
-          });
+          // IMEI type but no IMEI provided — reject
+          await this.rejectOrderWithRefund(orderId, orderNumber, order.userId, order.totalAmount, 'IMEI مطلوب ولم يتم توفيره');
           return;
         }
       }
@@ -140,75 +137,90 @@ export class OrderService {
         } catch {}
       }
 
-      // Call SD-Unlocker
-      const result = await externalProvider.placeOrder(
-        product.externalId,
-        imei,
-        item.quantity > 1 ? item.quantity : undefined,
-        customFields
-      );
+      try {
+        // Call external provider
+        const result = await externalProvider.placeOrder(
+          product.externalId,
+          imei,
+          item.quantity > 1 ? item.quantity : undefined,
+          customFields
+        );
 
-      if (result.success) {
-        lastRefId = result.referenceId;
-        // Update IMEI on order item
-        await prisma.orderItem.update({
-          where: { id: item.id },
-          data: { imei },
-        });
-      } else {
-        allSuccess = false;
-        // Refund user on failure
-        await this.refundOrder(orderId);
+        if (result.success) {
+          lastRefId = result.referenceId;
+          // Update IMEI on order item
+          await prisma.orderItem.update({
+            where: { id: item.id },
+            data: { imei },
+          });
+        } else {
+          // ════════════════════════════════════════
+          // الحالة 1: المصدر رفض الطلب صراحةً
+          // ════════════════════════════════════════
+          const errorMsg = result.message || 'الطلب مرفوض من المصدر';
+          await this.rejectOrderWithRefund(orderId, orderNumber, order.userId, order.totalAmount, errorMsg);
+          return;
+        }
+      } catch (err: any) {
+        // ════════════════════════════════════════
+        // الحالة 2: مشكلة اتصال (timeout, شبكة...)
+        // ════════════════════════════════════════
+        // الطلب يبقى PENDING — لا نعرف هل المصدر استلمه
+        // لا استرجاع (المصدر قد يكون نفّذه)
+        console.error(`[OrderService] Connection error for order ${orderNumber}:`, err.message);
         await prisma.order.update({
           where: { id: orderId },
           data: {
-            status: 'FAILED',
-            responseData: JSON.stringify(result.rawResponse || { error: result.message }),
+            responseData: JSON.stringify({ error: `CONNECTION_ERROR: ${err.message}` }),
           },
         });
+        // The order stays PENDING — admin should check manually
         return;
       }
     }
 
-    // Update order with reference ID and PROCESSING status
+    // All items submitted successfully → PROCESSING
     await prisma.order.update({
       where: { id: orderId },
       data: {
-        status: allSuccess ? 'PROCESSING' : 'FAILED',
+        status: 'PROCESSING',
         externalOrderId: lastRefId || null,
-        responseData: allSuccess ? null : JSON.stringify({ error: 'Some items failed' }),
       },
     });
   }
 
   /**
-   * Refund user for a failed order
+   * Reject order: set REJECTED status, refund wallet, log transaction
    */
-  private async refundOrder(orderId: string) {
-    const order = await prisma.order.findUnique({
+  private async rejectOrderWithRefund(orderId: string, orderNumber: string, userId: string, totalAmount: number, reason: string) {
+    // Update order status to REJECTED
+    await prisma.order.update({
       where: { id: orderId },
-      include: { user: true },
+      data: {
+        status: 'REJECTED',
+        responseData: JSON.stringify({ error: reason }),
+      },
     });
-    if (!order) return;
 
+    // Refund to wallet
     await prisma.$transaction(async (tx) => {
       const user = await tx.user.update({
-        where: { id: order.userId },
-        data: { balance: { increment: order.totalAmount } },
+        where: { id: userId },
+        data: { balance: { increment: totalAmount } },
       });
 
       await tx.transaction.create({
         data: {
-          userId: order.userId,
+          userId,
           type: 'REFUND',
-          amount: order.totalAmount,
+          amount: totalAmount,
           balance: user.balance,
-          description: `Refund for failed order ${order.orderNumber}`,
+          description: `استرجاع تلقائي: طلب #${orderNumber} مرفوض من المصدر — ${reason}`,
         },
       });
     });
 
-    console.log(`[OrderService] Refunded ${order.totalAmount} for order ${order.orderNumber}`);
+    console.log(`[OrderService] Order ${orderNumber} REJECTED — refunded ${totalAmount}. Reason: ${reason}`);
   }
 
   async getOrdersByUser(userId: string, page: number = 1, limit: number = 20) {

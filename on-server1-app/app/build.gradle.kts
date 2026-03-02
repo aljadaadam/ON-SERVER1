@@ -20,8 +20,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
-        buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:3000/api/\"")
-        buildConfigField("String", "WEB_URL", "\"http://10.0.2.2:4000/\"")
+        buildConfigField("String", "BASE_URL", "\"https://on-server2.com/api/\"")
+        buildConfigField("String", "WEB_URL", "\"https://on-server2.com/\"")
     }
 
     buildTypes {

@@ -617,7 +617,7 @@ export class ExternalProviderService {
         if (rawStatus === 'COMPLETED' || rawStatus === 'SUCCESS' || rawStatus === 'DONE') {
           mappedStatus = 'COMPLETED';
         } else if (rawStatus === 'REJECTED' || rawStatus === 'CANCELLED' || rawStatus === 'FAILED') {
-          mappedStatus = 'FAILED';
+          mappedStatus = 'REJECTED';
         } else if (rawStatus === 'PENDING' || rawStatus === 'INPROGRESS' || rawStatus === 'IN PROGRESS') {
           mappedStatus = 'PROCESSING';
         }

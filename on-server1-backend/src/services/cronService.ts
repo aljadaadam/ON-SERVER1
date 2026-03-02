@@ -76,7 +76,7 @@ export class CronService {
       console.log(`[Cron] Checking ${pendingOrders.length} pending orders...`);
 
       let completed = 0;
-      let failed = 0;
+      let rejected = 0;
       let stillPending = 0;
 
       for (const order of pendingOrders) {
@@ -102,20 +102,20 @@ export class CronService {
             });
             completed++;
             console.log(`[Cron] Order ${order.orderNumber} COMPLETED${result.codes ? ' (codes: ' + result.codes.substring(0, 30) + '...)' : ''}`);
-          } else if (result.status === 'FAILED') {
-            // Order failed — refund user
+          } else if (result.status === 'REJECTED') {
+            // Order rejected — refund user
             await prisma.order.update({
               where: { id: order.id },
               data: {
-                status: 'FAILED',
+                status: 'REJECTED',
                 responseData: JSON.stringify(result.rawResponse),
               },
             });
 
             // Auto-refund
             await this.refundOrder(order);
-            failed++;
-            console.log(`[Cron] Order ${order.orderNumber} FAILED — refunded ${order.totalAmount}`);
+            rejected++;
+            console.log(`[Cron] Order ${order.orderNumber} REJECTED — refunded ${order.totalAmount}`);
           } else {
             stillPending++;
           }
@@ -127,8 +127,8 @@ export class CronService {
         }
       }
 
-      if (completed + failed > 0) {
-        console.log(`[Cron] Results: ${completed} completed, ${failed} failed, ${stillPending} still pending`);
+      if (completed + rejected > 0) {
+        console.log(`[Cron] Results: ${completed} completed, ${rejected} rejected, ${stillPending} still pending`);
       }
     } finally {
       this.isRunning = false;
@@ -152,7 +152,7 @@ export class CronService {
             type: 'REFUND',
             amount: order.totalAmount,
             balance: user.balance,
-            description: `Auto-refund for failed order ${order.orderNumber}`,
+            description: `استرجاع تلقائي: طلب ${order.orderNumber} مرفوض من المصدر`,
           },
         });
       });

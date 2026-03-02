@@ -99,8 +99,7 @@
     <string name="status_delivered">Delivered</string>
     <string name="status_pending">Pending</string>
     <string name="status_processing">Processing</string>
-    <string name="status_cancelled">Cancelled</string>
-    <string name="status_failed">Failed</string>
+    <string name="status_rejected">Rejected</string>
 
     <!-- Transactions -->
     <string name="no_transactions">No transactions yet</string>
