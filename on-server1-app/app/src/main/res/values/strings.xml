@@ -206,10 +206,11 @@
     <string name="deposit_verify_and_submit">Verify &amp; Submit</string>
     <string name="deposit_exchange_rate">Exchange Rate</string>
     <string name="deposit_amount_local">Local Amount</string>
-    <string name="deposit_bank_details">Bank Details</string>
-    <string name="deposit_bank_name">Bank Name</string>
-    <string name="deposit_account_name">Account Name</string>
+    <string name="deposit_bank_details">Transfer Details</string>
     <string name="deposit_account_number">Account Number</string>
+    <string name="deposit_account_name">Account Name</string>
+    <string name="deposit_comment">Comment</string>
+    <string name="deposit_comment_hint">Add a comment (optional)</string>
     <string name="deposit_upload_receipt">Upload Transfer Receipt</string>
     <string name="deposit_tap_to_upload">Tap to upload receipt image</string>
     <string name="deposit_submit_request">Submit Deposit Request</string>

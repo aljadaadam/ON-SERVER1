@@ -232,18 +232,21 @@ class ProductRepository @Inject constructor(
         }
     }
 
-    suspend fun createBankakDeposit(amount: Double, receiptFile: java.io.File): Result<Deposit> {
+    suspend fun createBankakDeposit(amount: Double, receiptFile: java.io.File, note: String? = null): Result<Deposit> {
         return try {
             val amountBody = okhttp3.RequestBody.create(
                 "text/plain".toMediaType(), amount.toString()
             )
+            val noteBody = note?.takeIf { it.isNotBlank() }?.let {
+                okhttp3.RequestBody.create("text/plain".toMediaType(), it)
+            }
             val receiptBody = okhttp3.RequestBody.create(
                 "image/*".toMediaType(), receiptFile
             )
             val receiptPart = okhttp3.MultipartBody.Part.createFormData(
                 "receipt", receiptFile.name, receiptBody
             )
-            val response = apiService.createBankakDeposit(amountBody, receiptPart)
+            val response = apiService.createBankakDeposit(amountBody, noteBody, receiptPart)
             if (response.isSuccessful && response.body()?.success == true) {
                 Result.success(response.body()!!.data!!)
             } else {

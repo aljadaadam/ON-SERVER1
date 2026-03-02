@@ -201,6 +201,7 @@ model Deposit {
   status          DepositStatus @default(PENDING)
   txHash          String?       // BEP20 transaction hash
   receiptImage    String?       // Bankak receipt image path
+  note            String?       // User comment/note
   adminNote       String?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt

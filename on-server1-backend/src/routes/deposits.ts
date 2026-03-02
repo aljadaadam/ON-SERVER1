@@ -243,7 +243,7 @@ router.post('/usdt', authenticate, async (req: Request, res: Response, next: Nex
 // POST /api/deposits/bankak - Create Bankak deposit with receipt
 router.post('/bankak', authenticate, upload.single('receipt'), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { amount } = req.body;
+    const { amount, note } = req.body;
     const parsedAmount = parseFloat(amount);
     
     if (!parsedAmount || parsedAmount <= 0) {
@@ -276,6 +276,7 @@ router.post('/bankak', authenticate, upload.single('receipt'), async (req: Reque
         gateway: 'BANKAK',
         status: 'PENDING',
         receiptImage: receiptPath,
+        note: note || null,
       },
     });
 

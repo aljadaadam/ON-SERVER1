@@ -81,10 +81,10 @@ class DepositViewModel @Inject constructor(
         }
     }
 
-    fun submitBankakDeposit(amount: Double, receiptFile: java.io.File) {
+    fun submitBankakDeposit(amount: Double, receiptFile: java.io.File, note: String? = null) {
         viewModelScope.launch {
             _state.value = _state.value.copy(isSubmitting = true, error = null, successMessage = null)
-            repository.createBankakDeposit(amount, receiptFile).fold(
+            repository.createBankakDeposit(amount, receiptFile, note).fold(
                 onSuccess = { deposit ->
                     _state.value = _state.value.copy(
                         isSubmitting = false,

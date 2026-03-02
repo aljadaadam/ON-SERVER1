@@ -1,0 +1,44 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+
+    <!-- Red circle background -->
+    <path
+        android:fillColor="#E52228"
+        android:pathData="M48,48m-46,0a46,46 0,1 1,92 0a46,46 0,1 1,-92 0" />
+
+    <!-- Subtle shadow -->
+    <path
+        android:fillColor="#00000020"
+        android:pathData="M48,48L92,48C92,73.4,71.4,94,48,94C24.6,94,4,73.4,4,48L48,48Z" />
+
+    <!-- Letter ب (Ba) - stylized -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M25,52 C25,46 30,42 38,42 L58,42 C62,42 65,44 65,48 C65,52 62,54 58,54 L32,54 C30,54 29,55 29,56 C29,58 31,59 34,59 L62,59 C64,59 65,60 65,62 C65,64 64,65 62,65 L34,65 C28,65 25,61 25,56 L25,52Z" />
+
+    <!-- Dot under ب -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M44,68m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0" />
+
+    <!-- WiFi/signal arcs (green/yellow) -->
+    <path
+        android:fillColor="#C8D900"
+        android:strokeWidth="0"
+        android:pathData="M62,38 C62,38 66,34 66,30 C66,28 65,26 63,26 C61,26 60,28 60,30 C60,32 62,35 62,38Z" />
+    <path
+        android:fillColor="#C8D900"
+        android:pathData="M66,42 C70,38 72,34 72,28 C72,24 70,22 68,22"
+        android:strokeColor="#C8D900"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M70,44 C76,38 78,32 78,26 C78,20 76,18 74,18"
+        android:strokeColor="#C8D900"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round" />
+</vector>

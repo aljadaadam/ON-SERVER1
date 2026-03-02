@@ -126,6 +126,7 @@ interface ApiService {
     @POST("deposits/bankak")
     suspend fun createBankakDeposit(
         @Part("amount") amount: okhttp3.RequestBody,
+        @Part("note") note: okhttp3.RequestBody?,
         @Part receipt: okhttp3.MultipartBody.Part
     ): Response<ApiResponse<Deposit>>
 

@@ -7,11 +7,13 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -25,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -47,6 +50,7 @@ fun BankakPaymentScreen(
     val d = LocalDimens.current
     val context = LocalContext.current
     var receiptUri by remember { mutableStateOf<Uri?>(null) }
+    var comment by remember { mutableStateOf("") }
 
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -141,13 +145,26 @@ fun BankakPaymentScreen(
 
                     Spacer(modifier = Modifier.height(d.space16))
 
-                    // Bank Details
-                    Text(
-                        text = stringResource(R.string.deposit_bank_details),
-                        fontSize = d.font15,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+                    // Bankak Logo + Title
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_bankak_logo),
+                            contentDescription = "Bankak",
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                        )
+                        Spacer(modifier = Modifier.width(d.space12))
+                        Text(
+                            text = stringResource(R.string.deposit_bank_details),
+                            fontSize = d.font15,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
                     Spacer(modifier = Modifier.height(d.space8))
 
                     Card(
@@ -159,8 +176,8 @@ fun BankakPaymentScreen(
                     ) {
                         Column(modifier = Modifier.padding(d.space16)) {
                             BankInfoRow(
-                                label = stringResource(R.string.deposit_bank_name),
-                                value = gatewayInfo?.bankName ?: "بنكك",
+                                label = stringResource(R.string.deposit_account_number),
+                                value = gatewayInfo?.accountNumber ?: "",
                                 context = context,
                                 d = d
                             )
@@ -174,18 +191,40 @@ fun BankakPaymentScreen(
                                 context = context,
                                 d = d
                             )
-                            HorizontalDivider(
-                                modifier = Modifier.padding(vertical = d.space8),
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
-                            )
-                            BankInfoRow(
-                                label = stringResource(R.string.deposit_account_number),
-                                value = gatewayInfo?.accountNumber ?: "",
-                                context = context,
-                                d = d
-                            )
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(d.space16))
+
+                    // Comment Field
+                    Text(
+                        text = stringResource(R.string.deposit_comment),
+                        fontSize = d.font15,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(d.space8))
+
+                    OutlinedTextField(
+                        value = comment,
+                        onValueChange = { comment = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = {
+                            Text(
+                                text = stringResource(R.string.deposit_comment_hint),
+                                fontSize = d.font13
+                            )
+                        },
+                        shape = RoundedCornerShape(d.corner12),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = AccentYellow,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f),
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ),
+                        minLines = 2,
+                        maxLines = 4
+                    )
 
                     Spacer(modifier = Modifier.height(d.space16))
 
@@ -315,7 +354,7 @@ fun BankakPaymentScreen(
                                         input.copyTo(output)
                                     }
                                 }
-                                viewModel.submitBankakDeposit(amount, file)
+                                viewModel.submitBankakDeposit(amount, file, comment.takeIf { it.isNotBlank() })
                             }
                         },
                         modifier = Modifier

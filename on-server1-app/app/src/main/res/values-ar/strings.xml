@@ -207,10 +207,11 @@
     <string name="deposit_verify_and_submit">تحقق وإرسال</string>
     <string name="deposit_exchange_rate">سعر الصرف</string>
     <string name="deposit_amount_local">المبلغ المحلي</string>
-    <string name="deposit_bank_details">تفاصيل البنك</string>
-    <string name="deposit_bank_name">اسم البنك</string>
-    <string name="deposit_account_name">اسم الحساب</string>
+    <string name="deposit_bank_details">تفاصيل التحويل</string>
     <string name="deposit_account_number">رقم الحساب</string>
+    <string name="deposit_account_name">اسم الحساب</string>
+    <string name="deposit_comment">تعليق</string>
+    <string name="deposit_comment_hint">أضف تعليقاً (اختياري)</string>
     <string name="deposit_upload_receipt">رفع إيصال التحويل</string>
     <string name="deposit_tap_to_upload">اضغط لرفع صورة الإيصال</string>
     <string name="deposit_submit_request">إرسال طلب الإيداع</string>
