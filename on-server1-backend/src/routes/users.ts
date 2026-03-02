@@ -2,8 +2,41 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { authenticate } from '../middleware/auth';
 import { orderService } from '../services/orderService';
 import prisma from '../config/database';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 const router = Router();
+
+// ============================================
+// Multer config for avatar uploads
+// ============================================
+const avatarsDir = path.join(__dirname, '..', '..', 'uploads', 'avatars');
+if (!fs.existsSync(avatarsDir)) {
+  fs.mkdirSync(avatarsDir, { recursive: true });
+}
+
+const avatarStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, avatarsDir),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `avatar-${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`);
+  },
+});
+
+const avatarUpload = multer({
+  storage: avatarStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (_req, file, cb) => {
+    const allowed = ['.jpg', '.jpeg', '.png', '.webp'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (allowed.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'));
+    }
+  },
+});
 
 // GET /api/users/profile - Get current user profile
 router.get('/profile', authenticate, async (req: Request, res: Response, next: NextFunction) => {
@@ -35,6 +68,35 @@ router.put('/profile', authenticate, async (req: Request, res: Response, next: N
     const user = await prisma.user.update({
       where: { id: req.user!.userId },
       data: { name, phone, avatar },
+      select: { id: true, email: true, phone: true, name: true, avatar: true, balance: true },
+    });
+    res.json({ success: true, data: user });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// POST /api/users/avatar - Upload avatar image
+router.post('/avatar', authenticate, avatarUpload.single('avatar'), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.file) {
+      res.status(400).json({ success: false, message: 'No image file provided' });
+      return;
+    }
+
+    // Delete old avatar file if exists
+    const currentUser = await prisma.user.findUnique({ where: { id: req.user!.userId }, select: { avatar: true } });
+    if (currentUser?.avatar) {
+      const oldPath = path.join(__dirname, '..', '..', currentUser.avatar);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+
+    const avatarPath = `/uploads/avatars/${req.file.filename}`;
+    const user = await prisma.user.update({
+      where: { id: req.user!.userId },
+      data: { avatar: avatarPath },
       select: { id: true, email: true, phone: true, name: true, avatar: true, balance: true },
     });
     res.json({ success: true, data: user });

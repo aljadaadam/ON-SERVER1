@@ -14,6 +14,7 @@ data class EditProfileUiState(
     val user: User? = null,
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
+    val isUploadingAvatar: Boolean = false,
     val success: String? = null,
     val error: String? = null
 )
@@ -61,6 +62,18 @@ class EditProfileViewModel @Inject constructor(
                 _state.value = _state.value.copy(user = user, isSaving = false, success = "Profile updated")
             }.onFailure {
                 _state.value = _state.value.copy(isSaving = false, error = it.message)
+            }
+        }
+    }
+
+    fun uploadAvatar(file: java.io.File) {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isUploadingAvatar = true, error = null, success = null)
+            val result = productRepository.uploadAvatar(file)
+            result.onSuccess { user ->
+                _state.value = _state.value.copy(user = user, isUploadingAvatar = false, success = "Avatar updated")
+            }.onFailure {
+                _state.value = _state.value.copy(isUploadingAvatar = false, error = it.message)
             }
         }
     }

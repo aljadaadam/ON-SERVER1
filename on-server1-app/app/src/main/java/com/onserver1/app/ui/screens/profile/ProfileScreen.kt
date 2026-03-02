@@ -17,9 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import com.onserver1.app.BuildConfig
 import com.onserver1.app.R
 import com.onserver1.app.ui.components.BalanceCard
 import com.onserver1.app.ui.theme.*
@@ -74,18 +77,36 @@ fun ProfileScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Avatar
-            Surface(
-                modifier = Modifier.size(d.avatarSize),
-                shape = CircleShape,
-                color = AccentYellow
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        Icons.Default.Person,
-                        contentDescription = null,
-                        modifier = Modifier.size(d.icon40),
-                        tint = Color.Black
-                    )
+            val avatarUrl = remember(state.user?.avatar) {
+                state.user?.avatar?.let { path ->
+                    val base = BuildConfig.BASE_URL.removeSuffix("/api/").removeSuffix("/api")
+                    "$base$path"
+                }
+            }
+
+            if (avatarUrl != null) {
+                AsyncImage(
+                    model = avatarUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(d.avatarSize)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Surface(
+                    modifier = Modifier.size(d.avatarSize),
+                    shape = CircleShape,
+                    color = AccentYellow
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            Icons.Default.Person,
+                            contentDescription = null,
+                            modifier = Modifier.size(d.icon40),
+                            tint = Color.Black
+                        )
+                    }
                 }
             }
 

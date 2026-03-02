@@ -1,5 +1,10 @@
 package com.onserver1.app.ui.screens.settings
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -9,17 +14,25 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import com.onserver1.app.BuildConfig
 import com.onserver1.app.R
 import com.onserver1.app.ui.theme.*
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,9 +42,40 @@ fun EditProfileScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val d = LocalDimens.current
+    val context = LocalContext.current
 
     var name by remember(state.user) { mutableStateOf(state.user?.name ?: "") }
     var phone by remember(state.user) { mutableStateOf(state.user?.phone ?: "") }
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            selectedImageUri = it
+            // Copy to temp file and upload
+            try {
+                val inputStream = context.contentResolver.openInputStream(it)
+                val tempFile = File(context.cacheDir, "avatar_${System.currentTimeMillis()}.jpg")
+                inputStream?.use { input ->
+                    tempFile.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                viewModel.uploadAvatar(tempFile)
+            } catch (e: Exception) {
+                // ignore
+            }
+        }
+    }
+
+    // Build avatar URL from relative path
+    val avatarUrl = remember(state.user?.avatar) {
+        state.user?.avatar?.let { path ->
+            val base = BuildConfig.BASE_URL.removeSuffix("/api/").removeSuffix("/api")
+            "$base$path"
+        }
+    }
 
     LaunchedEffect(state.success) {
         if (state.success != null) {
@@ -82,18 +126,60 @@ fun EditProfileScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Surface(
-                        modifier = Modifier.size(d.avatarSize),
-                        shape = CircleShape,
-                        color = AccentYellow
+                    Box(
+                        modifier = Modifier
+                            .size(d.avatarSize)
+                            .clickable { imagePicker.launch("image/*") },
+                        contentAlignment = Alignment.Center
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                Icons.Outlined.Person,
+                        if (selectedImageUri != null || avatarUrl != null) {
+                            AsyncImage(
+                                model = selectedImageUri ?: avatarUrl,
                                 contentDescription = null,
-                                modifier = Modifier.size(d.icon40),
-                                tint = Color.Black
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
                             )
+                        } else {
+                            Surface(
+                                modifier = Modifier.fillMaxSize(),
+                                shape = CircleShape,
+                                color = AccentYellow
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        Icons.Outlined.Person,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(d.icon40),
+                                        tint = Color.Black
+                                    )
+                                }
+                            }
+                        }
+
+                        // Camera overlay
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .size(32.dp)
+                                .background(AccentYellow, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (state.isUploadingAvatar) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    color = Color.Black,
+                                    strokeWidth = 2.dp
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Filled.CameraAlt,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp),
+                                    tint = Color.Black
+                                )
+                            }
                         }
                     }
                 }

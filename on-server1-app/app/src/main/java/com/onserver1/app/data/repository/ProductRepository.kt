@@ -198,6 +198,25 @@ class ProductRepository @Inject constructor(
         }
     }
 
+    suspend fun uploadAvatar(avatarFile: java.io.File): Result<User> {
+        return try {
+            val avatarBody = okhttp3.RequestBody.create(
+                "image/*".toMediaType(), avatarFile
+            )
+            val avatarPart = okhttp3.MultipartBody.Part.createFormData(
+                "avatar", avatarFile.name, avatarBody
+            )
+            val response = apiService.uploadAvatar(avatarPart)
+            if (response.isSuccessful && response.body()?.success == true) {
+                Result.success(response.body()!!.data!!)
+            } else {
+                Result.failure(Exception(response.body()?.message ?: "Failed to upload avatar"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun changePassword(currentPassword: String, newPassword: String): Result<String> {
         return try {
             val response = apiService.changePassword(

@@ -86,6 +86,12 @@ interface ApiService {
     @PUT("users/profile")
     suspend fun updateProfile(@Body data: Map<String, String>): Response<ApiResponse<User>>
 
+    @Multipart
+    @POST("users/avatar")
+    suspend fun uploadAvatar(
+        @Part avatar: okhttp3.MultipartBody.Part
+    ): Response<ApiResponse<User>>
+
     @POST("users/balance")
     suspend fun addBalance(@Body data: Map<String, Double>): Response<ApiResponse<Map<String, Double>>>
 
