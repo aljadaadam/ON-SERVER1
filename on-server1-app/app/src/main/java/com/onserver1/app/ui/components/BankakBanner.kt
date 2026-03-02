@@ -2,7 +2,6 @@ package com.onserver1.app.ui.components
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -14,14 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.*
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.onserver1.app.R
+import coil.compose.AsyncImage
 import kotlin.math.*
 import kotlin.random.Random
 
@@ -31,10 +30,12 @@ private val BankakRedDark = Color(0xFFC01B20)
 private val BankakRedDeep = Color(0xFF8B1117)
 private val BankakGreen = Color(0xFFC8D900)
 private val BankakGreenLight = Color(0xFFDBED00)
+private val BankakCream = Color(0xFFFFF8E7)
+
+private const val BANKAK_LOGO_URL = "https://6990ab01681c79fa0bccfe99.imgix.net/"
 
 /**
- * Bankak payment banner — advertises direct charging via بنكك.
- * Animated with brand red/green colors and Bankak logo.
+ * Cinematic Bankak payment banner — rich animated background with brand identity.
  */
 @Composable
 fun BankakBanner(
@@ -45,242 +46,348 @@ fun BankakBanner(
 
     val infiniteTransition = rememberInfiniteTransition(label = "bankak")
 
-    // Logo entrance animation
+    // ═══ Logo entrance ═══
     val logoScale by animateFloatAsState(
         targetValue = if (started) 1f else 0f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
-        ), label = "logoScale"
+        ), label = "logoS"
     )
     val logoAlpha by animateFloatAsState(
         targetValue = if (started) 1f else 0f,
-        animationSpec = tween(600, delayMillis = 100), label = "logoAlpha"
+        animationSpec = tween(700, delayMillis = 100), label = "logoA"
     )
 
-    // Title slide
+    // ═══ Text animations ═══
     val titleAlpha by animateFloatAsState(
         targetValue = if (started) 1f else 0f,
-        animationSpec = tween(500, delayMillis = 300), label = "titA"
+        animationSpec = tween(500, delayMillis = 350), label = "tA"
     )
-    val titleOffset by animateFloatAsState(
-        targetValue = if (started) 0f else 30f,
-        animationSpec = tween(600, delayMillis = 300, easing = FastOutSlowInEasing), label = "titO"
+    val titleSlide by animateFloatAsState(
+        targetValue = if (started) 0f else 40f,
+        animationSpec = tween(700, delayMillis = 350, easing = FastOutSlowInEasing), label = "tS"
     )
-
-    // Subtitle slide
     val subAlpha by animateFloatAsState(
         targetValue = if (started) 1f else 0f,
-        animationSpec = tween(500, delayMillis = 500), label = "subA"
+        animationSpec = tween(500, delayMillis = 550), label = "sA"
     )
-    val subOffset by animateFloatAsState(
-        targetValue = if (started) 0f else 20f,
-        animationSpec = tween(600, delayMillis = 500, easing = FastOutSlowInEasing), label = "subO"
+    val subSlide by animateFloatAsState(
+        targetValue = if (started) 0f else 25f,
+        animationSpec = tween(600, delayMillis = 550, easing = FastOutSlowInEasing), label = "sS"
     )
-
-    // Badge pop
     val badgeScale by animateFloatAsState(
         targetValue = if (started) 1f else 0f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMediumLow
-        ), label = "badgeS"
+        ), label = "bS"
     )
 
-    // Glow shimmer
+    // ═══ Infinite animations ═══
+    // Shimmer sweep
     val shimmer by infiniteTransition.animateFloat(
-        initialValue = -0.3f,
-        targetValue = 1.3f,
+        initialValue = -0.5f, targetValue = 1.5f,
         animationSpec = infiniteRepeatable(
-            animation = tween(3000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Restart
-        ), label = "shimmer"
+            tween(4000, easing = FastOutSlowInEasing), RepeatMode.Restart
+        ), label = "shim"
     )
 
-    // Pulse ring around logo
-    val pulse by infiniteTransition.animateFloat(
-        initialValue = 0.8f,
-        targetValue = 1.4f,
+    // Subtle background wave
+    val wavePhase by infiniteTransition.animateFloat(
+        initialValue = 0f, targetValue = (2 * PI).toFloat(),
         animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
+            tween(8000, easing = LinearEasing)
+        ), label = "wave"
+    )
+
+    // Pulse glow around logo
+    val pulse by infiniteTransition.animateFloat(
+        initialValue = 0.85f, targetValue = 1.35f,
+        animationSpec = infiniteRepeatable(
+            tween(2200, easing = FastOutSlowInEasing), RepeatMode.Reverse
         ), label = "pulse"
     )
     val pulseAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.5f,
-        targetValue = 0f,
+        initialValue = 0.45f, targetValue = 0f,
         animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
+            tween(2200, easing = FastOutSlowInEasing), RepeatMode.Reverse
         ), label = "pulseA"
     )
 
-    // Floating particles
-    val particles = remember {
-        List(12) {
-            BankakParticle(
+    // Floating sparks
+    val sparkTime by infiniteTransition.animateFloat(
+        initialValue = 0f, targetValue = (2 * PI).toFloat(),
+        animationSpec = infiniteRepeatable(
+            tween(5000, easing = LinearEasing)
+        ), label = "sparkT"
+    )
+
+    // Energy ring rotation
+    val ringAngle by infiniteTransition.animateFloat(
+        initialValue = 0f, targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            tween(12000, easing = LinearEasing)
+        ), label = "ring"
+    )
+
+    val sparks = remember {
+        List(18) {
+            BankakSpark(
                 x = Random.nextFloat(),
                 y = Random.nextFloat(),
-                size = Random.nextFloat() * 4f + 2f,
-                speed = Random.nextFloat() * 0.4f + 0.2f,
+                size = Random.nextFloat() * 4f + 1.5f,
+                speed = Random.nextFloat() * 0.6f + 0.3f,
                 phase = Random.nextFloat() * 2f * PI.toFloat(),
-                isGreen = Random.nextBoolean()
+                type = Random.nextInt(3) // 0=green, 1=white, 2=red glow
             )
         }
     }
-
-    val particleTime by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = (2 * PI).toFloat(),
-        animationSpec = infiniteRepeatable(
-            animation = tween(6000, easing = LinearEasing)
-        ), label = "partTime"
-    )
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(
-                Brush.linearGradient(
-                    colors = listOf(BankakRedDeep, BankakRed, BankakRedDark),
-                    start = Offset(0f, 0f),
-                    end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
-                )
-            )
     ) {
-        // Animated background elements
+        // ═══ Rich cinematic background ═══
         Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
 
-            // Diagonal stripe pattern
-            for (i in 0..6) {
-                val offset = i * (w / 4f)
-                drawLine(
-                    color = Color.White.copy(alpha = 0.04f),
-                    start = Offset(offset - h, 0f),
-                    end = Offset(offset, h),
-                    strokeWidth = 40f
+            // Dark gradient base
+            drawRect(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF1A0508),
+                        Color(0xFF2D0A0E),
+                        Color(0xFF1A0508)
+                    )
+                )
+            )
+
+            // Animated wave curves
+            for (i in 0..2) {
+                val path = Path()
+                path.moveTo(0f, 0f)
+                for (x in 0..w.toInt() step 4) {
+                    val xf = x.toFloat()
+                    val yBase = h * (0.3f + i * 0.2f)
+                    val yOff = sin(xf / (w * 0.15f) + wavePhase + i * 1.2f) * (h * 0.08f)
+                    if (x == 0) path.moveTo(xf, yBase + yOff)
+                    else path.lineTo(xf, yBase + yOff)
+                }
+                path.lineTo(w, h)
+                path.lineTo(0f, h)
+                path.close()
+
+                val waveAlpha = 0.04f - i * 0.01f
+                drawPath(
+                    path,
+                    brush = Brush.verticalGradient(
+                        listOf(
+                            BankakRed.copy(alpha = waveAlpha),
+                            Color.Transparent
+                        )
+                    )
                 )
             }
 
-            // Shimmer wave
-            val shimmerX = shimmer * w * 1.3f
+            // Radial glow from the logo area (left side)
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        BankakRed.copy(alpha = 0.2f),
+                        BankakRedDeep.copy(alpha = 0.05f),
+                        Color.Transparent
+                    ),
+                    center = Offset(w * 0.15f, h * 0.5f),
+                    radius = h * 1.2f
+                )
+            )
+
+            // Secondary green glow from right
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        BankakGreen.copy(alpha = 0.06f),
+                        Color.Transparent
+                    ),
+                    center = Offset(w * 0.85f, h * 0.3f),
+                    radius = h * 0.8f
+                )
+            )
+
+            // Diagonal light streaks
+            for (i in 0..4) {
+                val startX = w * (-0.2f + i * 0.35f)
+                drawLine(
+                    color = BankakRed.copy(alpha = 0.06f),
+                    start = Offset(startX, 0f),
+                    end = Offset(startX + h * 0.7f, h),
+                    strokeWidth = 30f + i * 8f
+                )
+            }
+
+            // Shimmer sweep
+            val shimmerX = shimmer * w * 1.5f
             drawRect(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
                         Color.Transparent,
-                        Color.White.copy(alpha = 0.08f),
+                        Color.White.copy(alpha = 0.06f),
+                        BankakGreen.copy(alpha = 0.04f),
                         Color.Transparent
                     ),
-                    startX = shimmerX - 120f,
-                    endX = shimmerX + 120f
+                    startX = shimmerX - 100f,
+                    endX = shimmerX + 100f
                 )
             )
 
-            // Floating particles
-            particles.forEach { p ->
-                val px = p.x * w
-                val py = p.y * h + sin(particleTime * p.speed + p.phase) * 12f
-                val alpha = (sin(particleTime * p.speed + p.phase) * 0.3f + 0.4f)
-                val color = if (p.isGreen) BankakGreen.copy(alpha = alpha)
-                else Color.White.copy(alpha = alpha * 0.6f)
-                drawCircle(color, radius = p.size, center = Offset(px, py))
+            // Floating sparks
+            sparks.forEach { s ->
+                val px = s.x * w
+                val py = s.y * h + sin(sparkTime * s.speed + s.phase) * 15f
+                val driftX = cos(sparkTime * s.speed * 0.5f + s.phase) * 8f
+                val a = (sin(sparkTime * s.speed + s.phase) * 0.35f + 0.45f).coerceIn(0f, 1f)
+                val color = when (s.type) {
+                    0 -> BankakGreen.copy(alpha = a)
+                    1 -> Color.White.copy(alpha = a * 0.5f)
+                    else -> BankakRed.copy(alpha = a * 0.4f)
+                }
+                drawCircle(color, radius = s.size, center = Offset(px + driftX, py))
+                // Glow halo for green sparks
+                if (s.type == 0) {
+                    drawCircle(
+                        BankakGreen.copy(alpha = a * 0.15f),
+                        radius = s.size * 3f,
+                        center = Offset(px + driftX, py)
+                    )
+                }
             }
 
-            // Green accent line at bottom
-            drawLine(
+            // Energy arc fragments (rotating)
+            val arcCx = w * 0.14f
+            val arcCy = h * 0.5f
+            val arcR = 52f
+            for (i in 0..2) {
+                val startAngle = ringAngle + i * 120f
+                drawArc(
+                    color = BankakGreen.copy(alpha = 0.25f),
+                    startAngle = startAngle,
+                    sweepAngle = 40f,
+                    useCenter = false,
+                    topLeft = Offset(arcCx - arcR, arcCy - arcR),
+                    size = Size(arcR * 2, arcR * 2),
+                    style = Stroke(width = 2f, cap = StrokeCap.Round)
+                )
+            }
+
+            // Bottom gradient accent line
+            drawRect(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
                         Color.Transparent,
-                        BankakGreen.copy(alpha = 0.6f),
-                        BankakGreenLight.copy(alpha = 0.8f),
-                        BankakGreen.copy(alpha = 0.6f),
+                        BankakGreen.copy(alpha = 0.5f),
+                        BankakGreenLight.copy(alpha = 0.7f),
+                        BankakGreen.copy(alpha = 0.5f),
                         Color.Transparent
                     )
                 ),
-                start = Offset(w * 0.1f, h - 3f),
-                end = Offset(w * 0.9f, h - 3f),
-                strokeWidth = 3f
+                topLeft = Offset(w * 0.05f, h - 3f),
+                size = Size(w * 0.9f, 3f)
+            )
+
+            // Top subtle red edge
+            drawRect(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        Color.Transparent,
+                        BankakRed.copy(alpha = 0.3f),
+                        Color.Transparent
+                    )
+                ),
+                topLeft = Offset(0f, 0f),
+                size = Size(w, 2f)
             )
         }
 
-        // Content
+        // ═══ Content layer ═══
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 14.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Logo with pulse ring
+            // Logo with energy ring + pulse
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.size(80.dp)
+                modifier = Modifier.size(82.dp)
             ) {
-                // Pulse ring
+                // Outer pulse glow
                 Box(
                     modifier = Modifier
-                        .size(70.dp)
+                        .size(74.dp)
                         .scale(pulse)
                         .clip(CircleShape)
-                        .background(BankakGreen.copy(alpha = pulseAlpha))
+                        .background(
+                            Brush.radialGradient(
+                                listOf(
+                                    BankakGreen.copy(alpha = pulseAlpha),
+                                    Color.Transparent
+                                )
+                            )
+                        )
                 )
 
-                // White circle background
+                // White circle
                 Box(
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(58.dp)
                         .scale(logoScale)
                         .graphicsLayer { alpha = logoAlpha }
                         .clip(CircleShape)
                         .background(Color.White)
                 )
 
-                // Logo
-                Image(
-                    painter = painterResource(R.drawable.ic_bankak_logo),
+                // Logo from URL
+                AsyncImage(
+                    model = BANKAK_LOGO_URL,
                     contentDescription = "Bankak",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(52.dp)
+                        .size(54.dp)
                         .scale(logoScale)
                         .graphicsLayer { alpha = logoAlpha }
+                        .clip(CircleShape)
                 )
             }
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // Text content
+            // Text
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
-                // Title
                 Text(
                     text = "الشحن عبر بنكك",
                     color = Color.White.copy(alpha = titleAlpha),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.graphicsLayer {
-                        translationY = titleOffset
-                    }
+                    modifier = Modifier.graphicsLayer { translationY = titleSlide }
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Subtitle
                 Text(
                     text = "اشحن رصيدك مباشرة وبسهولة",
-                    color = Color.White.copy(alpha = subAlpha * 0.85f),
+                    color = BankakCream.copy(alpha = subAlpha * 0.9f),
                     fontSize = 13.sp,
-                    modifier = Modifier.graphicsLayer {
-                        translationY = subOffset
-                    }
+                    modifier = Modifier.graphicsLayer { translationY = subSlide }
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Badge
                 Box(
                     modifier = Modifier
                         .scale(badgeScale)
@@ -304,11 +411,11 @@ fun BankakBanner(
     }
 }
 
-private data class BankakParticle(
+private data class BankakSpark(
     val x: Float,
     val y: Float,
     val size: Float,
     val speed: Float,
     val phase: Float,
-    val isGreen: Boolean
+    val type: Int
 )
