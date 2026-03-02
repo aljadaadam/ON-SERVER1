@@ -101,7 +101,17 @@ class ProductRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.success == true) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.body()?.message ?: "Order failed"))
+                // Try to extract error message from errorBody (for non-2xx responses)
+                val errorMsg = try {
+                    val errorJson = response.errorBody()?.string()
+                    if (errorJson != null) {
+                        val jsonObj = org.json.JSONObject(errorJson)
+                        jsonObj.optString("message", "")
+                    } else null
+                } catch (_: Exception) { null }
+                Result.failure(Exception(errorMsg?.takeIf { it.isNotBlank() } 
+                    ?: response.body()?.message 
+                    ?: "Order failed"))
             }
         } catch (e: Exception) {
             Result.failure(e)

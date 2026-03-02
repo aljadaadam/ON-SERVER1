@@ -18,6 +18,9 @@ import depositRoutes from './routes/deposits';
 
 const app = express();
 
+// Trust first proxy (LiteSpeed reverse proxy)
+app.set('trust proxy', 1);
+
 // ============================================
 // Middleware
 // ============================================
