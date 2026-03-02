@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { authenticate, requireAdmin } from '../middleware/auth';
 import prisma from '../config/database';
 import { orderService } from '../services/orderService';
+import { sendDepositCreatedEmail, sendDepositApprovedEmail, sendDepositRejectedEmail } from '../services/emailService';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -222,6 +223,14 @@ router.post('/usdt', authenticate, async (req: Request, res: Response, next: Nex
       );
     }
 
+    // Send deposit email (fire-and-forget)
+    const depositUser = await prisma.user.findUnique({ where: { id: req.user!.userId }, select: { email: true, name: true } });
+    if (depositUser) {
+      sendDepositCreatedEmail(depositUser.email, depositUser.name, {
+        depositNumber, amount: verification.actualAmount || amount, gateway: 'USDT', status, txHash,
+      }).catch(() => {});
+    }
+
     res.status(201).json({
       success: true,
       data: {
@@ -281,6 +290,14 @@ router.post('/bankak', authenticate, upload.single('receipt'), async (req: Reque
         note: note || null,
       },
     });
+
+    // Send deposit email (fire-and-forget)
+    const bankakUser = await prisma.user.findUnique({ where: { id: req.user!.userId }, select: { email: true, name: true } });
+    if (bankakUser) {
+      sendDepositCreatedEmail(bankakUser.email, bankakUser.name, {
+        depositNumber, amount: parsedAmount, gateway: 'BANKAK', status: 'PENDING',
+      }).catch(() => {});
+    }
 
     res.status(201).json({
       success: true,
@@ -396,6 +413,13 @@ router.put('/admin/:id/approve', authenticate, requireAdmin, async (req: Request
       `${deposit.gateway} Deposit #${deposit.depositNumber} approved`
     );
 
+    // Send approval email (fire-and-forget)
+    if (updated.user) {
+      sendDepositApprovedEmail(updated.user.email, updated.user.name, {
+        depositNumber: deposit.depositNumber, amount: deposit.amount, gateway: deposit.gateway, adminNote,
+      }).catch(() => {});
+    }
+
     res.json({ success: true, data: updated });
   } catch (error) {
     next(error);
@@ -422,6 +446,13 @@ router.put('/admin/:id/reject', authenticate, requireAdmin, async (req: Request,
       data: { status: 'REJECTED', adminNote },
       include: { user: { select: { id: true, name: true, email: true } } },
     });
+
+    // Send rejection email (fire-and-forget)
+    if (updated.user) {
+      sendDepositRejectedEmail(updated.user.email, updated.user.name, {
+        depositNumber: deposit.depositNumber, amount: deposit.amount, gateway: deposit.gateway, adminNote,
+      }).catch(() => {});
+    }
 
     res.json({ success: true, data: updated });
   } catch (error) {

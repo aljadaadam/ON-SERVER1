@@ -1,5 +1,6 @@
 import prisma from '../config/database';
 import { externalProvider } from './externalProvider';
+import { sendOrderCreatedEmail, sendOrderRejectedEmail } from './emailService';
 
 export class OrderService {
   /**
@@ -123,6 +124,15 @@ export class OrderService {
 
       return newOrder;
     });
+
+    // Send order created email (fire-and-forget)
+    const orderUser = await prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true } });
+    if (orderUser) {
+      const productNames = order.items.map((i: any) => i.product?.name || 'منتج').filter(Boolean);
+      sendOrderCreatedEmail(orderUser.email, orderUser.name, {
+        orderNumber: order.orderNumber, totalAmount, productNames,
+      }).catch(() => {});
+    }
 
     // Submit to external provider and handle errors properly
     this.processWithExternalProvider(order).catch(err => {
@@ -258,6 +268,12 @@ export class OrderService {
     });
 
     console.log(`[OrderService] Order ${orderNumber} REJECTED — refunded ${totalAmount}. Reason: ${reason}`);
+
+    // Send rejection + refund email (fire-and-forget)
+    const rejUser = await prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true } });
+    if (rejUser) {
+      sendOrderRejectedEmail(rejUser.email, rejUser.name, { orderNumber, totalAmount, reason }).catch(() => {});
+    }
   }
 
   async getOrdersByUser(userId: string, page: number = 1, limit: number = 20) {

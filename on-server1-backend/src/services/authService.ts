@@ -4,6 +4,7 @@ import prisma from '../config/database';
 import { env } from '../config/env';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
 import { generateOtp, getOtpExpiry } from '../utils/otp';
+import { sendWelcomeEmail, sendOtpEmail, sendPasswordResetSuccessEmail } from './emailService';
 
 export class AuthService {
   async register(data: { email: string; password: string; name: string; phone?: string }) {
@@ -23,10 +24,8 @@ export class AuthService {
       },
     });
 
-    // TODO: Re-enable OTP verification
-    // const otpCode = generateOtp();
-    // await prisma.otpCode.create({ ... });
-    // console.log(`[OTP] Verification code for ${data.email}: ${otpCode}`);
+    // Send welcome email (fire-and-forget)
+    sendWelcomeEmail(data.email, data.name).catch(() => {});
 
     // Auto-login after registration (skip OTP temporarily)
     const tokenPayload = { userId: user.id, role: user.role };
@@ -146,6 +145,10 @@ export class AuthService {
     });
 
     console.log(`[OTP] New code for ${user.email}: ${otpCode}`);
+
+    // Send OTP via email (fire-and-forget)
+    sendOtpEmail(user.email, user.name, otpCode, type).catch(() => {});
+
     return { message: 'OTP sent successfully' };
   }
 
@@ -200,6 +203,10 @@ export class AuthService {
     });
 
     console.log(`[OTP] Password reset code for ${email}: ${otpCode}`);
+
+    // Send OTP via email (fire-and-forget)
+    sendOtpEmail(user.email, user.name, otpCode, 'PASSWORD_RESET').catch(() => {});
+
     return { message: 'Reset code sent to your email', userId: user.id };
   }
 
@@ -234,6 +241,10 @@ export class AuthService {
 
     // Invalidate all refresh tokens for security
     await prisma.refreshToken.deleteMany({ where: { userId } });
+
+    // Send confirmation email
+    const resetUser = await prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true } });
+    if (resetUser) sendPasswordResetSuccessEmail(resetUser.email, resetUser.name).catch(() => {});
 
     return { message: 'Password reset successfully' };
   }

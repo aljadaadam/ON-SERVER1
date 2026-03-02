@@ -1,5 +1,6 @@
 import prisma from '../config/database';
 import { externalProvider } from './externalProvider';
+import { sendOrderCompletedEmail, sendOrderRejectedEmail } from './emailService';
 
 /**
  * Cron Service
@@ -102,6 +103,13 @@ export class CronService {
             });
             completed++;
             console.log(`[Cron] Order ${order.orderNumber} COMPLETED${result.codes ? ' (codes: ' + result.codes.substring(0, 30) + '...)' : ''}`);
+
+            // Send completion email
+            if (order.user?.email) {
+              sendOrderCompletedEmail(order.user.email, order.user.name, {
+                orderNumber: order.orderNumber, totalAmount: order.totalAmount, resultCodes: result.codes,
+              }).catch(() => {});
+            }
           } else if (result.status === 'REJECTED') {
             // Order rejected — refund user
             await prisma.order.update({
@@ -116,6 +124,13 @@ export class CronService {
             await this.refundOrder(order);
             rejected++;
             console.log(`[Cron] Order ${order.orderNumber} REJECTED — refunded ${order.totalAmount}`);
+
+            // Send rejection + refund email
+            if (order.user?.email) {
+              sendOrderRejectedEmail(order.user.email, order.user.name, {
+                orderNumber: order.orderNumber, totalAmount: order.totalAmount, reason: 'مرفوض من المزود',
+              }).catch(() => {});
+            }
           } else {
             stillPending++;
           }
