@@ -199,8 +199,8 @@ router.post('/provider/sync', async (req: Request, res: Response, next: NextFunc
     const markup = typeof markupPercent === 'number' ? markupPercent : 0;
     const result = await syncService.syncProducts(markup);
     res.json({ success: true, data: result });
-  } catch (error) {
-    next(error);
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message || 'فشلت المزامنة' });
   }
 });
 

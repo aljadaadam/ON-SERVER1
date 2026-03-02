@@ -200,8 +200,10 @@ export default function Products() {
       toast.success(`تم المزامنة: ${result.created} جديد، ${result.updated} محدث`);
       loadProducts();
       loadCategories();
-    } catch (error) {
-      toast.error('فشلت المزامنة مع المزود');
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || 'فشلت المزامنة مع المزود';
+      setSyncResult({ error: msg });
+      toast.error(msg);
     } finally {
       setSyncing(false);
     }
@@ -499,12 +501,20 @@ export default function Products() {
           )}
 
           {syncResult && (
-            <div className="mt-2.5 p-2 bg-white/5 backdrop-blur-sm rounded-lg text-[11px] border border-white/10">
-              <p className="text-blue-200">
-                <strong>نتيجة المزامنة:</strong> إجمالي {syncResult.total} — جديد: {syncResult.created} — محدث: {syncResult.updated} — تخطي: {syncResult.skipped}
-              </p>
-              {syncResult.errors?.length > 0 && (
-                <p className="text-red-300 mt-0.5">أخطاء: {syncResult.errors.length}</p>
+            <div className={`mt-2.5 p-2 backdrop-blur-sm rounded-lg text-[11px] border ${syncResult.error ? 'bg-red-500/10 border-red-500/20' : 'bg-white/5 border-white/10'}`}>
+              {syncResult.error ? (
+                <p className="text-red-300 break-all">
+                  <strong>❌ خطأ:</strong> {syncResult.error}
+                </p>
+              ) : (
+                <>
+                  <p className="text-blue-200">
+                    <strong>نتيجة المزامنة:</strong> إجمالي {syncResult.total} — جديد: {syncResult.created} — محدث: {syncResult.updated} — تخطي: {syncResult.skipped}
+                  </p>
+                  {syncResult.errors?.length > 0 && (
+                    <p className="text-red-300 mt-0.5">أخطاء: {syncResult.errors.length}</p>
+                  )}
+                </>
               )}
             </div>
           )}
