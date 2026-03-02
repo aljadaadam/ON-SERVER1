@@ -33,6 +33,7 @@ fun ProfileScreen(
     onNavigateToSettings: () -> Unit,
     onNavigateToHelp: () -> Unit,
     onNavigateToAbout: () -> Unit,
+    onNavigateToAddBalance: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -109,7 +110,7 @@ fun ProfileScreen(
         // Balance Card
         BalanceCard(
             balance = state.user?.balance ?: 0.0,
-            onAddBalance = { /* Add balance */ },
+            onAddBalance = onNavigateToAddBalance,
             modifier = Modifier.padding(horizontal = d.screenPadding)
         )
 

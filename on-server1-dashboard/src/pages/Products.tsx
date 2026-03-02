@@ -51,7 +51,7 @@ export default function Products() {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [providerBalance, setProviderBalance] = useState<number | null>(null);
-  const [markupPercent, setMarkupPercent] = useState(50);
+  const [markupPercent, setMarkupPercent] = useState<number | ''>('');
   const [showForm, setShowForm] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [syncResult, setSyncResult] = useState<any>(null);
@@ -189,6 +189,10 @@ export default function Products() {
   useEffect(() => { setCurrentPage(1); }, [filterCategory, filterFeatured, filterServiceType, searchQuery]);
 
   const handleSync = async () => {
+    if (markupPercent === '' || markupPercent < 0) {
+      toast.error('يجب تحديد نسبة الربح أولاً');
+      return;
+    }
     setSyncing(true);
     setSyncResult(null);
     try {

@@ -24,9 +24,9 @@ export const env = {
   SMTP_PASS: process.env.SMTP_PASS || '',
 
   // External Provider (SD-Unlocker)
-  EXTERNAL_PROVIDER_URL: process.env.EXTERNAL_PROVIDER_URL || 'https://sd-unlocker.com/api/index.php',
-  EXTERNAL_PROVIDER_USERNAME: process.env.EXTERNAL_PROVIDER_USERNAME || 'aljadadm654',
-  EXTERNAL_PROVIDER_API_KEY: process.env.EXTERNAL_PROVIDER_API_KEY || 'Z4U-MIH-600-V7V-JNQ-ZTP-W3B-A7W',
+  EXTERNAL_PROVIDER_URL: process.env.EXTERNAL_PROVIDER_URL || '',
+  EXTERNAL_PROVIDER_USERNAME: process.env.EXTERNAL_PROVIDER_USERNAME || '',
+  EXTERNAL_PROVIDER_API_KEY: process.env.EXTERNAL_PROVIDER_API_KEY || '',
   EXTERNAL_PROVIDER_SECRET: process.env.EXTERNAL_PROVIDER_SECRET || '',
 
   // Admin

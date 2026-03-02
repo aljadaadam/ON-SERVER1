@@ -49,7 +49,7 @@ export const adminApi = {
   getSettings: () => apiClient.get('/admin/settings'),
   updateSettings: (data: Record<string, string>) => apiClient.put('/admin/settings', data),
   // Provider (DHRU FUSION)
-  syncProducts: (markupPercent?: number) => apiClient.post('/admin/provider/sync', { markupPercent }),
+  syncProducts: (markupPercent: number) => apiClient.post('/admin/provider/sync', { markupPercent }),
   getProviderBalance: () => apiClient.get('/admin/provider/balance'),
   getProviderSettings: () => apiClient.get('/admin/provider/settings'),
   updateProviderSettings: (data: { url?: string; username?: string; apiKey?: string }) =>

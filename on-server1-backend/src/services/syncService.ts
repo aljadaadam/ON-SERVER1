@@ -15,7 +15,7 @@ export class SyncService {
    * Sync all products from SD-Unlocker
    * Returns summary of created/updated/skipped
    */
-  async syncProducts(markupPercent: number = 50): Promise<{
+  async syncProducts(markupPercent: number): Promise<{
     created: number;
     updated: number;
     skipped: number;
