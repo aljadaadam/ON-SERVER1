@@ -825,7 +825,8 @@
             }
 
             .hero-stats {
-                gap: 30px;
+                gap: 24px;
+                flex-wrap: wrap;
             }
 
             .stat-number { font-size: 1.6rem; }
@@ -836,17 +837,100 @@
             }
 
             .cta-box { padding: 40px 24px; }
+
+            .hero h1 { font-size: 2rem; }
+            .hero-desc { font-size: 1rem; }
+
+            .features { padding: 60px 16px; }
+            .showcase { padding: 60px 16px; }
+            .services { padding: 60px 16px; }
+            .download-cta { padding: 60px 16px; }
+
+            .section-header h2 { font-size: 1.6rem; }
+            .section-header p { font-size: 0.95rem; }
+
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .service-item { padding: 20px 12px; }
+            .service-emoji { font-size: 32px; }
+            .service-name { font-size: 0.9rem; }
+            .service-desc { font-size: 0.75rem; }
+
+            .feature-card { padding: 28px 20px; }
         }
 
         @media (max-width: 480px) {
             .navbar { padding: 0.7rem 1rem; }
-            .nav-cta { padding: 8px 20px; font-size: 0.85rem; }
-            .hero { padding: 100px 16px 60px; }
-            .hero-app-icon { width: 90px; height: 90px; border-radius: 24px; }
-            .hero-app-icon svg { width: 50px; height: 50px; }
-            .btn-download { padding: 14px 28px; font-size: 1rem; }
-            .features-grid { grid-template-columns: 1fr; }
-            .phone-frame { width: 240px; height: 480px; }
+            .navbar.scrolled { padding: 0.5rem 1rem; }
+            .nav-logo-icon { width: 36px; height: 36px; font-size: 12px; border-radius: 10px; }
+            .nav-logo-text { font-size: 1rem; }
+            .nav-cta { padding: 8px 16px; font-size: 0.8rem; }
+
+            .hero { padding: 90px 16px 50px; min-height: auto; }
+            .hero-glow { width: 300px; height: 300px; }
+            .hero-app-icon { width: 85px; height: 85px; border-radius: 22px; }
+            .hero-app-icon svg { width: 48px; height: 48px; }
+            .hero-badge { font-size: 0.8rem; padding: 6px 14px; margin-bottom: 20px; }
+            .hero-logo-container { margin-bottom: 20px; }
+            .hero h1 { font-size: 1.7rem; margin-bottom: 14px; }
+            .hero-desc { font-size: 0.9rem; margin-bottom: 28px; }
+
+            .hero-actions { flex-direction: column; align-items: center; gap: 12px; }
+            .btn-download { padding: 14px 28px; font-size: 1rem; width: 100%; max-width: 300px; justify-content: center; }
+            .btn-secondary { padding: 12px 24px; font-size: 0.95rem; width: 100%; max-width: 300px; justify-content: center; }
+
+            .hero-stats { gap: 16px; margin-top: 40px; }
+            .stat-number { font-size: 1.4rem; }
+            .stat-label { font-size: 0.75rem; }
+
+            .features-grid { grid-template-columns: 1fr; gap: 16px; }
+            .feature-card { padding: 24px 18px; }
+            .feature-icon { width: 48px; height: 48px; font-size: 24px; margin-bottom: 14px; }
+            .feature-card h3 { font-size: 1.05rem; }
+            .feature-card p { font-size: 0.85rem; }
+
+            .phone-frame { width: 220px; height: 440px; border-radius: 32px; }
+            .phone-notch { width: 100px; height: 24px; }
+            .phone-screen { border-radius: 29px; }
+            .phone-screen-content { padding: 34px 12px 16px; }
+            .mock-name { font-size: 0.9rem; }
+            .mock-avatar { width: 30px; height: 30px; }
+            .mock-balance-card { padding: 14px; margin-bottom: 14px; }
+            .mock-balance-value { font-size: 1.3rem; }
+            .mock-product { padding: 10px 8px; border-radius: 10px; }
+            .mock-product-emoji { font-size: 22px; }
+
+            .showcase-info h2 { font-size: 1.5rem; }
+            .showcase-info p { font-size: 0.95rem; margin-bottom: 20px; }
+            .check-list li { font-size: 0.9rem; gap: 10px; }
+            .check-icon { width: 28px; height: 28px; font-size: 14px; border-radius: 8px; }
+
+            .services-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .service-item { padding: 18px 10px; border-radius: 14px; }
+            .service-emoji { font-size: 28px; margin-bottom: 10px; }
+            .service-name { font-size: 0.85rem; }
+            .service-desc { font-size: 0.7rem; }
+
+            .cta-box { padding: 32px 18px; border-radius: 22px; }
+            .cta-box h2 { font-size: 1.4rem; }
+            .cta-box p { font-size: 0.95rem; margin-bottom: 24px; }
+            .cta-buttons .btn-download { max-width: 100%; }
+            .cta-version { font-size: 0.75rem; }
+
+            .footer { padding: 30px 16px; }
+            .footer-copy { font-size: 0.75rem; }
+        }
+
+        @media (max-width: 360px) {
+            .hero h1 { font-size: 1.5rem; }
+            .hero-app-icon { width: 75px; height: 75px; }
+            .hero-app-icon svg { width: 42px; height: 42px; }
+            .nav-logo-text { font-size: 0.9rem; }
+            .services-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .stat-number { font-size: 1.2rem; }
         }
 
         /* ─── Floating Particles ─── */
