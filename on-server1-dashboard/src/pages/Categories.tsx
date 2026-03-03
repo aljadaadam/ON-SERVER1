@@ -102,7 +102,7 @@ export default function Categories() {
         gradient="from-sky-600 via-blue-600 to-indigo-500"
         pattern="triangles"
       />
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h1 className="page-title">التصنيفات</h1>
         <div className="flex items-center gap-2">
           <button onClick={loadCategories} className="p-2 rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-card transition-all duration-200">
@@ -120,7 +120,7 @@ export default function Categories() {
               {editCategory ? 'تعديل التصنيف' : 'إضافة تصنيف جديد'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الاسم (EN) *</label>
                   <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="input-field" placeholder="Games" required />
@@ -130,7 +130,7 @@ export default function Categories() {
                   <input value={form.nameAr} onChange={e => setForm({ ...form, nameAr: e.target.value })} className="input-field" placeholder="الألعاب" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الأيقونة (إيموجي)</label>
                   <input value={form.icon} onChange={e => setForm({ ...form, icon: e.target.value })} className="input-field" placeholder="🎮" />

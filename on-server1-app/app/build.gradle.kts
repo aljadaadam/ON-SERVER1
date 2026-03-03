@@ -11,6 +11,15 @@ android {
     namespace = "com.onserver1.app"
     compileSdk = 35
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("../onserver1-release.jks")
+            storePassword = "OnServer1@2026"
+            keyAlias = "onserver1"
+            keyPassword = "OnServer1@2026"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.onserver1.app"
         minSdk = 26
@@ -28,6 +37,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             buildConfigField("String", "BASE_URL", "\"https://on-server2.com/api/\"")
             buildConfigField("String", "WEB_URL", "\"https://on-server2.com/\"")

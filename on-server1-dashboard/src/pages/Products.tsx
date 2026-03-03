@@ -333,7 +333,7 @@ export default function Products() {
         gradient="from-orange-500 via-amber-500 to-yellow-400"
         pattern="grid"
       />
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
         <div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">المنتجات</h1>
           <p className="text-xs text-gray-400 mt-0.5">
@@ -368,7 +368,7 @@ export default function Products() {
 
         <div className="relative z-10 p-4">
           {/* Header */}
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
             <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/10">
                 <img src="https://6990ab01681c79fa0bccfe99.imgix.net/ic_logo.svg" alt="DHRU FUSION" className="w-5 h-5" />
@@ -552,9 +552,9 @@ export default function Products() {
 
       {/* Service Type Tabs */}
       <div className="card mb-3 !py-2.5 !px-3">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
           <span className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">نوع الخدمة:</span>
-          <div className="flex bg-gray-100 dark:bg-dark-surface rounded-lg p-0.5 gap-0.5">
+          <div className="flex flex-wrap bg-gray-100 dark:bg-dark-surface rounded-lg p-0.5 gap-0.5">
             {[
               { value: '', label: 'الكل', icon: CubeIcon, count: serviceTypeCounts.all },
               { value: 'IMEI', label: 'IMEI', icon: DevicePhoneMobileIcon, count: serviceTypeCounts.IMEI },
@@ -629,7 +629,7 @@ export default function Products() {
               {editProduct ? <><PencilSquareIcon className="w-5 h-5 text-blue-500" /> تعديل المنتج</> : <><PlusIcon className="w-5 h-5 text-emerald-500" /> إضافة منتج جديد</>}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الاسم (EN) *</label>
                   <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="input-field" required />
@@ -639,7 +639,7 @@ export default function Products() {
                   <input value={form.nameAr} onChange={e => setForm({...form, nameAr: e.target.value})} className="input-field" />
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">السعر *</label>
                   <input type="number" step="0.01" value={form.price} onChange={e => setForm({...form, price: e.target.value})} className="input-field" required />
@@ -783,11 +783,11 @@ export default function Products() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-dark-border">
+              <div className="flex flex-col sm:flex-row items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-dark-border gap-3">
                 <p className="text-sm text-gray-500">
                   عرض {(currentPage - 1) * perPage + 1} - {Math.min(currentPage * perPage, filteredProducts.length)} من {filteredProducts.length}
                 </p>
-                <div className="flex gap-1">
+                <div className="flex flex-wrap gap-1 justify-center">
                   <button
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}

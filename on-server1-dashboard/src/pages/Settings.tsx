@@ -258,7 +258,7 @@ export default function Settings() {
         gradient="from-gray-700 via-slate-600 to-zinc-500"
         pattern="dots"
       />
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
         <h1 className="text-base font-bold text-gray-900 dark:text-white">الإعدادات</h1>
         <div className="flex items-center gap-1.5">
           <button onClick={loadSettings} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-card transition-all">

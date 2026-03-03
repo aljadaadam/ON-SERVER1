@@ -73,13 +73,13 @@ export default function Orders() {
         gradient="from-emerald-600 via-teal-600 to-cyan-500"
         pattern="waves"
       />
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h1 className="page-title">الطلبات</h1>
         <div className="flex items-center gap-2">
           <button onClick={loadOrders} className="p-2 rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-card transition-all duration-200">
             <ArrowPathIcon className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
           </button>
-          <div className="flex gap-1 bg-gray-100 dark:bg-dark-card rounded-xl p-1">
+          <div className="flex flex-wrap gap-1 bg-gray-100 dark:bg-dark-card rounded-xl p-1">
             {statusOptions.map((opt) => (
               <button
                 key={opt.value}

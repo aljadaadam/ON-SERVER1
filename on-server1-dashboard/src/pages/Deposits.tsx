@@ -140,16 +140,16 @@ export default function Deposits() {
         gradient="from-green-600 via-emerald-600 to-teal-500"
         pattern="diamonds"
       />
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h1 className="page-title">إدارة الإيداعات</h1>
-        <button onClick={() => { loadDeposits(); loadStats(); }} className="p-2 rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-card transition-all duration-200">
+        <button onClick={() => { loadDeposits(); loadStats(); }} className="p-2 rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-card transition-all duration-200 self-start sm:self-auto">
           <ArrowPathIcon className="w-5 h-5" />
         </button>
       </div>
 
       {/* Stats Cards */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           <StatCard label="إجمالي الإيداعات" value={stats.total} icon={ChartBarIcon} color="blue" />
           <StatCard label="معلق" value={stats.pending} icon={ClockIcon} color="yellow" />
           <StatCard label="مؤكد" value={stats.confirmed} icon={CheckCircleIcon} color="green" />
@@ -164,9 +164,9 @@ export default function Deposits() {
       )}
 
       {/* Filter */}
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
         <label className="text-sm font-medium text-gray-500 dark:text-gray-400">تصفية:</label>
-        <div className="flex gap-1 bg-gray-100 dark:bg-dark-card rounded-xl p-1">
+        <div className="flex flex-wrap gap-1 bg-gray-100 dark:bg-dark-card rounded-xl p-1">
           {statusOptions.map((opt) => (
             <button
               key={opt.value}

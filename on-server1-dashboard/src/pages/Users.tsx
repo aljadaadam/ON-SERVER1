@@ -71,9 +71,9 @@ export default function Users() {
         gradient="from-violet-600 via-purple-600 to-fuchsia-500"
         pattern="circles"
       />
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h1 className="page-title">المستخدمين</h1>
-        <button onClick={loadUsers} className="p-2 rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-card transition-all duration-200">
+        <button onClick={loadUsers} className="p-2 rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-card transition-all duration-200 self-start sm:self-auto">
           <ArrowPathIcon className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
         </button>
       </div>

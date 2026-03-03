@@ -120,7 +120,7 @@ export default function Banners() {
         gradient="from-pink-600 via-rose-500 to-red-400"
         pattern="lines"
       />
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h1 className="page-title">البانرات</h1>
         <div className="flex items-center gap-2">
           <button onClick={loadBanners} className="p-2 rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-card transition-all duration-200">
@@ -155,7 +155,7 @@ export default function Banners() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">رابط الوجهة (اختياري)</label>
                 <input value={form.link} onChange={e => setForm({ ...form, link: e.target.value })} className="input-field" placeholder="https://example.com/page" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">الترتيب</label>
                   <input type="number" value={form.sortOrder} onChange={e => setForm({ ...form, sortOrder: e.target.value })} className="input-field" />
