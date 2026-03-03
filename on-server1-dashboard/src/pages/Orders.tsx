@@ -70,16 +70,6 @@ export default function Orders() {
     }
   };
 
-  const updateStatus = async (orderId: string, status: string, notes?: string) => {
-    try {
-      await ordersApi.updateStatus(orderId, status, notes);
-      toast.success('تم تحديث حالة الطلب');
-      loadOrders();
-    } catch (error) {
-      toast.error('فشل التحديث');
-    }
-  };
-
   const handleAction = async () => {
     if (!actionModal.order || !actionModal.type) return;
     setActionLoading(true);
