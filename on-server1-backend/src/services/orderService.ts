@@ -31,16 +31,16 @@ function validateAndFixImei(imei: string): { valid: boolean; imei: string; error
   }
   
   if (digits.length === 15) {
-    // Validate Luhn check digit
-    const base = digits.substring(0, 14);
-    const expected = luhnCheckDigit(base);
-    if (digits[14] !== expected) {
-      return { valid: false, imei: digits, error: `Invalid IMEI check digit: expected ${expected}, got ${digits[14]}` };
-    }
+    // Accept as-is (could be IMEI or SN — don't reject based on Luhn)
     return { valid: true, imei: digits };
   }
   
-  return { valid: false, imei: digits, error: `IMEI must be 14 or 15 digits, got ${digits.length}` };
+  // Accept any length >= 8 digits (some services accept SN, short codes etc.)
+  if (digits.length >= 8) {
+    return { valid: true, imei: digits };
+  }
+  
+  return { valid: false, imei: digits, error: `IMEI/SN must be at least 8 digits, got ${digits.length}` };
 }
 
 /** Parse product.fields from JSON string to array in order items */
