@@ -32,7 +32,7 @@ function PageTransition({ children }: { children: React.ReactNode }) {
 function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="flex min-h-screen bg-white dark:bg-dark-bg">
+    <div className="flex min-h-screen bg-white dark:bg-dark-bg overflow-x-hidden">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <main className="flex-1 overflow-auto bg-white dark:bg-dark-bg min-w-0">
         {/* Mobile header with hamburger */}
