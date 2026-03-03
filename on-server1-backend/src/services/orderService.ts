@@ -2,6 +2,47 @@ import prisma from '../config/database';
 import { externalProvider } from './externalProvider';
 import { sendOrderCreatedEmail, sendOrderRejectedEmail } from './emailService';
 
+/** Calculate Luhn check digit for IMEI */
+function luhnCheckDigit(digits: string): string {
+  let sum = 0;
+  for (let i = 0; i < digits.length; i++) {
+    let d = parseInt(digits[i], 10);
+    // Double every other digit from right (for 14-digit input, positions 1,3,5... from right = indices 13,11,9...)
+    if (i % 2 !== 0) {
+      d *= 2;
+      if (d > 9) d -= 9;
+    }
+    sum += d;
+  }
+  return String((10 - (sum % 10)) % 10);
+}
+
+/** Validate IMEI using Luhn algorithm. If 14 digits, auto-append check digit. */
+function validateAndFixImei(imei: string): { valid: boolean; imei: string; error?: string } {
+  // Remove any non-digit characters
+  const digits = imei.replace(/\D/g, '');
+  
+  if (digits.length === 14) {
+    // Auto-calculate check digit (15th digit)
+    const checkDigit = luhnCheckDigit(digits);
+    const fullImei = digits + checkDigit;
+    console.log(`[IMEI] Auto-calculated check digit: ${digits} + ${checkDigit} = ${fullImei}`);
+    return { valid: true, imei: fullImei };
+  }
+  
+  if (digits.length === 15) {
+    // Validate Luhn check digit
+    const base = digits.substring(0, 14);
+    const expected = luhnCheckDigit(base);
+    if (digits[14] !== expected) {
+      return { valid: false, imei: digits, error: `Invalid IMEI check digit: expected ${expected}, got ${digits[14]}` };
+    }
+    return { valid: true, imei: digits };
+  }
+  
+  return { valid: false, imei: digits, error: `IMEI must be 14 or 15 digits, got ${digits.length}` };
+}
+
 /** Parse product.fields from JSON string to array in order items */
 function parseOrderProducts(order: any) {
   if (!order) return order;
@@ -185,6 +226,16 @@ export class OrderService {
           await this.rejectOrderWithRefund(orderId, orderNumber, order.userId, order.totalAmount, 'IMEI مطلوب ولم يتم توفيره');
           return;
         }
+      }
+
+      // Validate and fix IMEI (auto-calculate check digit if 14 digits)
+      if (product.serviceType === 'IMEI') {
+        const imeiResult = validateAndFixImei(imei);
+        if (!imeiResult.valid) {
+          await this.rejectOrderWithRefund(orderId, orderNumber, order.userId, order.totalAmount, imeiResult.error || 'IMEI غير صالح');
+          return;
+        }
+        imei = imeiResult.imei;
       }
 
       // Parse custom field values from metadata
