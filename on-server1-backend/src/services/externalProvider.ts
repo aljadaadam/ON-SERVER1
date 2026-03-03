@@ -545,9 +545,20 @@ export class ExternalProviderService {
         xml += `<QNT>${quantity}</QNT>`;
       }
 
+      // Filter out IMEI-related keys from customFields to avoid duplication
+      // (IMEI is already sent in the <IMEI> XML tag)
       if (customFields && Object.keys(customFields).length > 0) {
-        const base64Fields = Buffer.from(JSON.stringify(customFields)).toString('base64');
-        xml += `<CUSTOMFIELD>${base64Fields}</CUSTOMFIELD>`;
+        const filtered: Record<string, string> = {};
+        for (const [key, val] of Object.entries(customFields)) {
+          const k = key.toUpperCase();
+          if (k === 'IMEI' || k === 'IME') continue; // Skip IMEI fields
+          filtered[key] = val;
+        }
+        if (Object.keys(filtered).length > 0) {
+          const base64Fields = Buffer.from(JSON.stringify(filtered)).toString('base64');
+          xml += `<CUSTOMFIELD>${base64Fields}</CUSTOMFIELD>`;
+          console.log(`[DHRU FUSION] Custom fields: ${JSON.stringify(filtered)}`);
+        }
       }
 
       xml += '</PARAMETERS>';
