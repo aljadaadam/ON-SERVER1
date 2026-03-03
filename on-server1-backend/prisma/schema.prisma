@@ -247,6 +247,7 @@ enum ProductType {
 
 enum OrderStatus {
   PENDING
+  WAITING
   PROCESSING
   COMPLETED
   REJECTED
