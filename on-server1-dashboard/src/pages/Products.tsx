@@ -403,12 +403,13 @@ export default function Products() {
               <h3 className="text-xs font-semibold text-white/80 mb-2 flex items-center gap-1"><Cog6ToothIcon className="w-3.5 h-3.5" /> إعدادات الاتصال بالمصدر</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div>
-                  <label className="block text-[10px] text-blue-200/60 mb-0.5 flex items-center gap-1"><GlobeAltIcon className="w-3 h-3" /> رابط API</label>
+                  <label className="block text-[10px] text-blue-200/60 mb-0.5 flex items-center gap-1"><GlobeAltIcon className="w-3 h-3" /> الدومين</label>
                   <input
                     value={providerForm.url}
                     onChange={e => setProviderForm({ ...providerForm, url: e.target.value })}
-                    placeholder={providerSettings.url || 'https://...'}
+                    placeholder={providerSettings.url || 'https://on-server2.com'}
                     className="w-full text-xs px-2.5 py-1.5 rounded-lg bg-white/10 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-blue-400/50"
+                    dir="ltr"
                   />
                 </div>
                 <div>

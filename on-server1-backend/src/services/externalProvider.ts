@@ -108,6 +108,13 @@ export class ExternalProviderService {
     await this.reloadConfig();
   }
 
+  /** Build full API endpoint URL from stored domain */
+  private getFullApiUrl(): string {
+    if (!this.apiUrl) return '';
+    const domain = this.apiUrl.replace(/\/+$/, ''); // remove trailing slashes
+    return `${domain}/api/index.php`;
+  }
+
   /** Build common form params for all SD-Unlocker requests */
   private buildParams(action: string, xmlParameters?: string): URLSearchParams {
     const params = new URLSearchParams();
@@ -156,7 +163,7 @@ export class ExternalProviderService {
 
     let response: Response;
     try {
-      response = await fetch(this.apiUrl, {
+      response = await fetch(this.getFullApiUrl(), {
         method: 'POST',
         headers,
         body: params.toString(),
@@ -246,7 +253,7 @@ export class ExternalProviderService {
         } catch {
           return { __error: true, status: resp.status, text: text.substring(0, 500) };
         }
-      }, this.apiUrl, params.toString());
+      }, this.getFullApiUrl(), params.toString());
 
       if (result && result.__error) {
         throw new Error(`SD-Unlocker API error via Puppeteer: HTTP ${result.status} — ${(result.text || '').substring(0, 200)}`);
