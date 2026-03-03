@@ -89,7 +89,7 @@ data class Product(
     val isFeatured: Boolean,
     val isActive: Boolean,
     val externalId: String?,
-    val fields: String?,
+    val fields: List<ProductField>?,
     val deliveryTime: String?,
     val supportsQnt: Boolean = false,
     val minQnt: Int = 0,

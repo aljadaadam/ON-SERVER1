@@ -2,6 +2,19 @@ import prisma from '../config/database';
 import { externalProvider } from './externalProvider';
 import { sendOrderCreatedEmail, sendOrderRejectedEmail } from './emailService';
 
+/** Parse product.fields from JSON string to array in order items */
+function parseOrderProducts(order: any) {
+  if (!order) return order;
+  if (order.items) {
+    for (const item of order.items) {
+      if (item.product && item.product.fields && typeof item.product.fields === 'string') {
+        try { item.product.fields = JSON.parse(item.product.fields); } catch { item.product.fields = null; }
+      }
+    }
+  }
+  return order;
+}
+
 export class OrderService {
   /**
    * Create order with DHRU FUSION integration
@@ -140,7 +153,7 @@ export class OrderService {
       console.error('[OrderService] External processing failed:', err.message);
     });
 
-    return order;
+    return parseOrderProducts(order);
   }
 
   /**
@@ -290,7 +303,7 @@ export class OrderService {
       prisma.order.count({ where: { userId } }),
     ]);
 
-    return { orders, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
+    return { orders: orders.map(parseOrderProducts), pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
   }
 
   async getOrderById(orderId: string, userId?: string) {
@@ -305,7 +318,7 @@ export class OrderService {
     if (!order) {
       throw Object.assign(new Error('Order not found'), { statusCode: 404 });
     }
-    return order;
+    return parseOrderProducts(order);
   }
 
   async getAllOrders(page: number = 1, limit: number = 20, status?: string) {
@@ -327,7 +340,7 @@ export class OrderService {
       prisma.order.count({ where }),
     ]);
 
-    return { orders, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
+    return { orders: orders.map(parseOrderProducts), pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
   }
 
   async updateOrderStatus(orderId: string, status: string) {

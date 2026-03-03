@@ -3,8 +3,6 @@ package com.onserver1.app.ui.screens.product
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.onserver1.app.data.model.CreateOrderItem
 import com.onserver1.app.data.model.Order
 import com.onserver1.app.data.model.Product
@@ -51,8 +49,7 @@ class ProductDetailViewModel @Inject constructor(
             _state.value = _state.value.copy(isLoading = true)
             val result = productRepository.getProduct(productId)
             result.onSuccess { product ->
-                // Parse fields JSON
-                val fields = parseFields(product.fields)
+                val fields = product.fields ?: emptyList()
                 _state.value = _state.value.copy(
                     product = product,
                     fields = fields,
@@ -70,16 +67,6 @@ class ProductDetailViewModel @Inject constructor(
             productRepository.getProfile().onSuccess { user ->
                 _state.value = _state.value.copy(userBalance = user.balance)
             }
-        }
-    }
-
-    private fun parseFields(fieldsJson: String?): List<ProductField> {
-        if (fieldsJson.isNullOrBlank()) return emptyList()
-        return try {
-            val type = object : TypeToken<List<ProductField>>() {}.type
-            Gson().fromJson<List<ProductField>>(fieldsJson, type) ?: emptyList()
-        } catch (e: Exception) {
-            emptyList()
         }
     }
 
