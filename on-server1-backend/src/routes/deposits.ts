@@ -3,6 +3,7 @@ import { authenticate, requireAdmin } from '../middleware/auth';
 import prisma from '../config/database';
 import { orderService } from '../services/orderService';
 import { sendDepositCreatedEmail, sendDepositApprovedEmail, sendDepositRejectedEmail } from '../services/emailService';
+import { telegramService } from '../services/telegramService';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -229,6 +230,9 @@ router.post('/usdt', authenticate, async (req: Request, res: Response, next: Nex
       sendDepositCreatedEmail(depositUser.email, depositUser.name, {
         depositNumber, amount: verification.actualAmount || amount, gateway: 'USDT', status, txHash,
       }).catch(() => {});
+
+      // Send Telegram notification
+      telegramService.notifyNewDeposit(deposit, depositUser.name, depositUser.email).catch(() => {});
     }
 
     res.status(201).json({
@@ -297,6 +301,9 @@ router.post('/bankak', authenticate, upload.single('receipt'), async (req: Reque
       sendDepositCreatedEmail(bankakUser.email, bankakUser.name, {
         depositNumber, amount: parsedAmount, gateway: 'BANKAK', status: 'PENDING',
       }).catch(() => {});
+
+      // Send Telegram notification with approve/reject buttons
+      telegramService.notifyNewDeposit(deposit, bankakUser.name, bankakUser.email).catch(() => {});
     }
 
     res.status(201).json({

@@ -107,10 +107,10 @@ fun RamadanBanner(
 
     // Ramadan colors
     val ramadanGreen = Color(0xFF1B5E20)
-    val ramadanGold = Color(0xFFFFD700)
+    val ramadanGold = Color(0xFF00D2FF)
     val ramadanDeepPurple = Color(0xFF1A0A3E)
     val ramadanNavy = Color(0xFF0D1B3E)
-    val warmWhite = Color(0xFFFFF8E1)
+    val warmWhite = Color(0xFFE0F7FA)
 
     Box(
         modifier = modifier
@@ -253,8 +253,8 @@ fun RamadanBanner(
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(
-                                Color(0xFFFFD700).copy(alpha = moonGlow * 0.25f * moonAlpha),
-                                Color(0xFFFFD700).copy(alpha = moonGlow * 0.08f * moonAlpha),
+                                Color(0xFF00D2FF).copy(alpha = moonGlow * 0.25f * moonAlpha),
+                                Color(0xFF00D2FF).copy(alpha = moonGlow * 0.08f * moonAlpha),
                                 Color.Transparent
                             ),
                             center = Offset(cx - 10f * s, cy - 20f * s),
@@ -274,8 +274,8 @@ fun RamadanBanner(
                         brush = Brush.radialGradient(
                             colors = listOf(
                                 Color(0xFFFFE082),
-                                Color(0xFFFFD700),
-                                Color(0xFFFFC107)
+                                Color(0xFF00D2FF),
+                                Color(0xFF0072FF)
                             ),
                             center = Offset(moonCx, moonCy),
                             radius = moonR
@@ -297,15 +297,15 @@ fun RamadanBanner(
                     val starAlpha = (moonAlpha * (0.6f + 0.4f * sin(starTwinkle * 0.05f))).coerceIn(0f, 1f)
                     // Star shape using lines
                     val starR = 6f * s
-                    drawCircle(Color(0xFFFFD700).copy(alpha = starAlpha), starR * 0.5f, Offset(starX, starY))
-                    drawLine(Color(0xFFFFD700).copy(alpha = starAlpha),
+                    drawCircle(Color(0xFF00D2FF).copy(alpha = starAlpha), starR * 0.5f, Offset(starX, starY))
+                    drawLine(Color(0xFF00D2FF).copy(alpha = starAlpha),
                         Offset(starX - starR, starY), Offset(starX + starR, starY), 1.5f)
-                    drawLine(Color(0xFFFFD700).copy(alpha = starAlpha),
+                    drawLine(Color(0xFF00D2FF).copy(alpha = starAlpha),
                         Offset(starX, starY - starR), Offset(starX, starY + starR), 1.5f)
-                    drawLine(Color(0xFFFFD700).copy(alpha = starAlpha),
+                    drawLine(Color(0xFF00D2FF).copy(alpha = starAlpha),
                         Offset(starX - starR * 0.7f, starY - starR * 0.7f),
                         Offset(starX + starR * 0.7f, starY + starR * 0.7f), 1f)
-                    drawLine(Color(0xFFFFD700).copy(alpha = starAlpha),
+                    drawLine(Color(0xFF00D2FF).copy(alpha = starAlpha),
                         Offset(starX + starR * 0.7f, starY - starR * 0.7f),
                         Offset(starX - starR * 0.7f, starY + starR * 0.7f), 1f)
 
@@ -317,7 +317,7 @@ fun RamadanBanner(
 
                     // Lantern rope / chain
                     drawLine(
-                        Color(0xFFFFD700).copy(alpha = lAlpha * 0.7f),
+                        Color(0xFF00D2FF).copy(alpha = lAlpha * 0.7f),
                         Offset(lanCx, lanCy - 35f * s),
                         Offset(lanCx + sin(swingRad) * 5f * s, lanCy - 20f * s),
                         strokeWidth = 2f * s
@@ -326,7 +326,7 @@ fun RamadanBanner(
                     // Lantern top knob
                     val topX = lanCx + sin(swingRad) * 5f * s
                     val topY = lanCy - 20f * s
-                    drawCircle(Color(0xFFFFD700).copy(alpha = lAlpha), 4f * s, Offset(topX, topY))
+                    drawCircle(Color(0xFF00D2FF).copy(alpha = lAlpha), 4f * s, Offset(topX, topY))
 
                     // Lantern body - rounded rectangle shape
                     val lbW = 22f * s
@@ -338,7 +338,7 @@ fun RamadanBanner(
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(
-                                Color(0xFFFFD700).copy(alpha = lanternGlowAnim * 0.3f * lAlpha),
+                                Color(0xFF00D2FF).copy(alpha = lanternGlowAnim * 0.3f * lAlpha),
                                 Color.Transparent
                             ),
                             center = Offset(topX, topY + lbH / 2f + 2f * s),
@@ -356,7 +356,7 @@ fun RamadanBanner(
                         lineTo(topX - lbW / 2f, topY + 8f * s)
                         close()
                     }
-                    drawPath(topPath, Color(0xFFFFD700).copy(alpha = lAlpha))
+                    drawPath(topPath, Color(0xFF00D2FF).copy(alpha = lAlpha))
 
                     // Main body
                     drawRoundRect(
@@ -374,19 +374,19 @@ fun RamadanBanner(
 
                     // Decorative golden lines on lantern
                     val lineAlpha = lAlpha * 0.8f
-                    drawLine(Color(0xFFFFD700).copy(alpha = lineAlpha),
+                    drawLine(Color(0xFF00D2FF).copy(alpha = lineAlpha),
                         Offset(lbX + lbW * 0.3f, lbY + 8f * s),
                         Offset(lbX + lbW * 0.3f, lbY + lbH - 2f * s), 1.2f * s)
-                    drawLine(Color(0xFFFFD700).copy(alpha = lineAlpha),
+                    drawLine(Color(0xFF00D2FF).copy(alpha = lineAlpha),
                         Offset(lbX + lbW * 0.5f, lbY + 8f * s),
                         Offset(lbX + lbW * 0.5f, lbY + lbH - 2f * s), 1.2f * s)
-                    drawLine(Color(0xFFFFD700).copy(alpha = lineAlpha),
+                    drawLine(Color(0xFF00D2FF).copy(alpha = lineAlpha),
                         Offset(lbX + lbW * 0.7f, lbY + 8f * s),
                         Offset(lbX + lbW * 0.7f, lbY + lbH - 2f * s), 1.2f * s)
 
                     // Inner glow / light from lantern
                     drawRoundRect(
-                        Color(0xFFFFD700).copy(alpha = lanternGlowAnim * 0.25f * lAlpha),
+                        Color(0xFF00D2FF).copy(alpha = lanternGlowAnim * 0.25f * lAlpha),
                         topLeft = Offset(lbX + 3f * s, lbY + 9f * s),
                         size = Size(lbW - 6f * s, lbH - 12f * s),
                         cornerRadius = CornerRadius(3f * s, 3f * s)
@@ -394,13 +394,13 @@ fun RamadanBanner(
 
                     // Bottom cap
                     drawRoundRect(
-                        Color(0xFFFFD700).copy(alpha = lAlpha),
+                        Color(0xFF00D2FF).copy(alpha = lAlpha),
                         topLeft = Offset(topX - 6f * s, lbY + lbH - 2f * s),
                         size = Size(12f * s, 4f * s),
                         cornerRadius = CornerRadius(2f * s, 2f * s)
                     )
                     // Bottom teardrop
-                    drawCircle(Color(0xFFFFD700).copy(alpha = lAlpha), 2.5f * s,
+                    drawCircle(Color(0xFF00D2FF).copy(alpha = lAlpha), 2.5f * s,
                         Offset(topX, lbY + lbH + 3f * s))
 
                     // === Cute smiley face on lantern ===
@@ -442,7 +442,7 @@ fun RamadanBanner(
                     text = "رمضان كريم 🌙",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Black,
-                    color = Color(0xFFFFD700).copy(alpha = titleAlpha),
+                    color = Color(0xFF00D2FF).copy(alpha = titleAlpha),
                     modifier = Modifier.offset(y = titleOffset.dp),
                     letterSpacing = 0.5.sp
                 )

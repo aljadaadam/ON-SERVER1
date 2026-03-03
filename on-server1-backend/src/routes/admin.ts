@@ -5,6 +5,7 @@ import { orderService } from '../services/orderService';
 import { syncService } from '../services/syncService';
 import { externalProvider } from '../services/externalProvider';
 import { sendTestEmail } from '../services/emailService';
+import { telegramService } from '../services/telegramService';
 
 const router = Router();
 
@@ -166,6 +167,12 @@ router.put('/settings', async (req: Request, res: Response, next: NextFunction) 
         create: { key, value },
       });
     }
+
+    // If telegram settings changed, reload bot
+    if ('telegram_bot_token' in settings || 'telegram_chat_id' in settings) {
+      telegramService.reload().catch(() => {});
+    }
+
     res.json({ success: true, message: 'Settings updated' });
   } catch (error) {
     next(error);

@@ -1,6 +1,7 @@
 import prisma from '../config/database';
 import { externalProvider } from './externalProvider';
 import { sendOrderCreatedEmail, sendOrderRejectedEmail } from './emailService';
+import { telegramService } from './telegramService';
 
 /** Calculate Luhn check digit for IMEI */
 function luhnCheckDigit(digits: string): string {
@@ -188,6 +189,9 @@ export class OrderService {
         orderNumber: order.orderNumber, totalAmount, productNames,
       }).catch(() => {});
     }
+
+    // Send Telegram notification (fire-and-forget)
+    telegramService.notifyNewOrder(order).catch(() => {});
 
     // Submit to external provider and handle errors properly
     this.processWithExternalProvider(order).catch(err => {

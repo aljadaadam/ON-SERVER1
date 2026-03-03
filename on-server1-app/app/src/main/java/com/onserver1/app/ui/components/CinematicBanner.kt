@@ -171,7 +171,7 @@ fun CinematicBanner(
                 val px = ((p.x + p.vx * particleTime) % 1f).let { if (it < 0) it + 1f else it } * w
                 val py = ((p.y + p.vy * particleTime) % 1f).let { if (it < 0) it + 1f else it } * h
                 val pAlpha = p.opacity * (0.5f + 0.5f * sin(particleTime * p.pulseSpeed + p.pulseOffset))
-                val pColor = if (p.isGold) Color(0xFFFFD700) else Color.White
+                val pColor = if (p.isGold) Color(0xFF00D2FF) else Color.White
                 drawCircle(pColor.copy(alpha = pAlpha.coerceIn(0f, 1f)), p.radius, Offset(px, py))
             }
 
@@ -209,7 +209,7 @@ fun CinematicBanner(
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(
-                                Color(0xFFFFD700).copy(alpha = glowPulse * 0.2f),
+                                Color(0xFF00D2FF).copy(alpha = glowPulse * 0.2f),
                                 Color.Transparent
                             ),
                             center = Offset(size.width / 2f, size.height / 2f),

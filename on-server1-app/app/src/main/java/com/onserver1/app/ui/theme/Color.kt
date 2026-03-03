@@ -7,8 +7,8 @@ import androidx.compose.ui.graphics.Color
 // ============================================
 val PrimaryLight = Color(0xFFF5F5F5)       // Light background
 val OnPrimaryLight = Color(0xFF1A1A2E)     // Dark text on light
-val SecondaryYellow = Color(0xFFFFD700)    // Golden Yellow - accent
-val SecondaryYellowDark = Color(0xFFFFC107) // Amber Yellow
+val SecondaryYellow = Color(0xFF00D2FF)    // Cyan - accent
+val SecondaryYellowDark = Color(0xFF0072FF) // Blue
 val SurfaceLight = Color(0xFFFFFFFF)       // White surface
 val BackgroundLight = Color(0xFFF8F9FA)    // Very light gray
 val CardLight = Color(0xFFFFFFFF)          // White cards
@@ -27,8 +27,8 @@ val DividerDark = Color(0xFF374151)
 // ============================================
 // Common Colors
 // ============================================
-val AccentYellow = Color(0xFFFFD700)
-val AccentYellowLight = Color(0xFFFFF8E1)
+val AccentYellow = Color(0xFF00D2FF)
+val AccentYellowLight = Color(0xFFE0F7FA)
 val SuccessGreen = Color(0xFF4CAF50)
 val ErrorRed = Color(0xFFEF5350)
 val WarningOrange = Color(0xFFFF9800)
@@ -39,4 +39,4 @@ val TextDarkGray = Color(0xFF616161)
 // Balance Card Gradient
 val BalanceGradientStart = Color(0xFF1A1A2E)
 val BalanceGradientEnd = Color(0xFF16213E)
-val BalanceGradientYellow = Color(0xFFFFD700)
+val BalanceGradientYellow = Color(0xFF00D2FF)

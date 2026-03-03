@@ -17,9 +17,9 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --gold: #FFD700;
-            --gold-dark: #FFC107;
-            --gold-light: #FFF8E1;
+            --gold: #00D2FF;
+            --gold-dark: #0072FF;
+            --gold-light: #E0F7FA;
             --bg-deep: #07071A;
             --bg-dark: #0F0F23;
             --bg-surface: #1A1A2E;
@@ -27,7 +27,7 @@
             --text-white: #FFFFFF;
             --text-gray: #9CA3AF;
             --success: #4CAF50;
-            --glow: rgba(255, 215, 0, 0.15);
+            --glow: rgba(0, 210, 255, 0.15);
         }
 
         html { scroll-behavior: smooth; }
@@ -67,7 +67,7 @@
         .navbar.scrolled {
             background: rgba(15, 15, 35, 0.95);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 210, 255, 0.1);
             padding: 0.7rem 2rem;
         }
 
@@ -83,7 +83,7 @@
             height: 42px;
             border-radius: 12px;
             background: linear-gradient(135deg, var(--bg-surface), var(--bg-card));
-            border: 1.5px solid rgba(255, 215, 0, 0.3);
+            border: 1.5px solid rgba(0, 210, 255, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -111,12 +111,12 @@
             font-weight: 700;
             font-size: 0.95rem;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25);
+            box-shadow: 0 4px 20px rgba(0, 210, 255, 0.25);
         }
 
         .nav-cta:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 8px 30px rgba(0, 210, 255, 0.4);
         }
 
         /* ─── Hero ─── */
@@ -136,7 +136,7 @@
             width: 600px;
             height: 600px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.08), transparent 70%);
+            background: radial-gradient(circle, rgba(0, 210, 255, 0.08), transparent 70%);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -158,8 +158,8 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.25);
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px solid rgba(0, 210, 255, 0.25);
             padding: 8px 20px;
             border-radius: 50px;
             font-size: 0.9rem;
@@ -193,12 +193,12 @@
             height: 120px;
             border-radius: 30px;
             background: linear-gradient(145deg, #111128, #1a1a3e);
-            border: 2px solid rgba(255, 215, 0, 0.2);
+            border: 2px solid rgba(0, 210, 255, 0.2);
             display: inline-flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 210, 255, 0.1);
         }
 
         .hero-app-icon svg {
@@ -273,7 +273,7 @@
             font-weight: 800;
             font-size: 1.15rem;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 30px rgba(0, 210, 255, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -294,7 +294,7 @@
 
         .btn-download:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.45);
+            box-shadow: 0 12px 40px rgba(0, 210, 255, 0.45);
         }
 
         .btn-download svg {
@@ -319,7 +319,7 @@
 
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 215, 0, 0.3);
+            border-color: rgba(0, 210, 255, 0.3);
             transform: translateY(-2px);
         }
 
@@ -365,8 +365,8 @@
 
         .section-tag {
             display: inline-block;
-            background: rgba(255, 215, 0, 0.08);
-            border: 1px solid rgba(255, 215, 0, 0.2);
+            background: rgba(0, 210, 255, 0.08);
+            border: 1px solid rgba(0, 210, 255, 0.2);
             color: var(--gold);
             padding: 6px 18px;
             border-radius: 50px;
@@ -417,8 +417,8 @@
 
         .feature-card:hover {
             transform: translateY(-6px);
-            border-color: rgba(255, 215, 0, 0.2);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.05);
+            border-color: rgba(0, 210, 255, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), 0 0 30px rgba(0, 210, 255, 0.05);
         }
 
         .feature-card::before {
@@ -446,7 +446,7 @@
             margin-bottom: 20px;
         }
 
-        .feature-icon.gold { background: rgba(255, 215, 0, 0.1); }
+        .feature-icon.gold { background: rgba(0, 210, 255, 0.1); }
         .feature-icon.green { background: rgba(76, 175, 80, 0.1); }
         .feature-icon.blue { background: rgba(33, 150, 243, 0.1); }
         .feature-icon.purple { background: rgba(156, 39, 176, 0.1); }
@@ -494,7 +494,7 @@
             background: linear-gradient(180deg, var(--bg-surface), var(--bg-dark));
             position: relative;
             overflow: hidden;
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.05);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(0, 210, 255, 0.05);
         }
 
         .phone-notch {
@@ -545,7 +545,7 @@
 
         .mock-balance-card {
             background: linear-gradient(135deg, var(--bg-surface), var(--bg-card));
-            border: 1px solid rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(0, 210, 255, 0.15);
             border-radius: 16px;
             padding: 18px;
             margin-bottom: 18px;
@@ -664,8 +664,8 @@
         }
 
         .service-item:hover {
-            background: rgba(255, 215, 0, 0.05);
-            border-color: rgba(255, 215, 0, 0.15);
+            background: rgba(0, 210, 255, 0.05);
+            border-color: rgba(0, 210, 255, 0.15);
             transform: translateY(-4px);
         }
 
@@ -698,7 +698,7 @@
             max-width: 700px;
             margin: 0 auto;
             background: linear-gradient(145deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.5));
-            border: 1px solid rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(0, 210, 255, 0.15);
             border-radius: 30px;
             padding: 60px 40px;
             position: relative;
@@ -709,7 +709,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.06), transparent 60%);
+            background: radial-gradient(circle at 50% 0%, rgba(0, 210, 255, 0.06), transparent 60%);
             pointer-events: none;
         }
 
@@ -771,7 +771,7 @@
             height: 32px;
             border-radius: 8px;
             background: var(--bg-surface);
-            border: 1px solid rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(0, 210, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -980,7 +980,7 @@
                         <path d="M25 50C25 36.2 36.2 25 50 25H30C30 25 18 30 18 50C18 70 30 75 30 75H50C36.2 75 25 63.8 25 50Z" fill="white" opacity="0.9"/>
                         <path d="M75 50C75 63.8 63.8 75 50 75H70C70 75 82 70 82 50C82 30 70 25 70 25H50C63.8 25 75 36.2 75 50Z" fill="white" opacity="0.9"/>
                         <!-- N letter -->
-                        <path d="M38 35V65H44V45L56 65H62V35H56V55L44 35H38Z" fill="#FFD700" opacity="0.85"/>
+                        <path d="M38 35V65H44V45L56 65H62V35H56V55L44 35H38Z" fill="#00D2FF" opacity="0.85"/>
                         <!-- Orbital ring -->
                         <ellipse cx="50" cy="50" rx="44" ry="14" stroke="white" stroke-width="2" opacity="0.3" transform="rotate(-25 50 50)"/>
                     </svg>
@@ -1188,7 +1188,7 @@
             <h2>حمّل التطبيق <span style="color: var(--gold)">مجاناً</span></h2>
             <p>ابدأ تجربتك الآن واستمتع بأفضل العروض على المنتجات الرقمية</p>
             <div class="cta-buttons">
-                <a href="/downloads/on-server1.apk" class="btn-download" id="downloadBtn">
+                <a href="/downloads/on-server1.apk?v=20260303" class="btn-download" id="downloadBtn">
                     <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
                         <path d="M17.523 2H6.477C5.768 2 5.413 2 5.118 2.076C4.085 2.339 3.28 3.144 3.017 4.177C2.941 4.472 2.941 4.827 2.941 5.536V18.464C2.941 19.173 2.941 19.528 3.017 19.823C3.28 20.856 4.085 21.661 5.118 21.924C5.413 22 5.768 22 6.477 22H17.523C18.232 22 18.587 22 18.882 21.924C19.915 21.661 20.72 20.856 20.983 19.823C21.059 19.528 21.059 19.173 21.059 18.464V5.536C21.059 4.827 21.059 4.472 20.983 4.177C20.72 3.144 19.915 2.339 18.882 2.076C18.587 2 18.232 2 17.523 2Z"/>
                         <path d="M12 7V14M12 14L9 11M12 14L15 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -1197,7 +1197,7 @@
                     تحميل APK للأندرويد
                 </a>
             </div>
-            <p class="cta-version">الإصدار 1.0.0 • حجم التطبيق ~15 MB • يتطلب أندرويد 8.0+</p>
+            <p class="cta-version">الإصدار 1.1.0 • حجم التطبيق ~3 MB • يتطلب أندرويد 8.0+</p>
         </div>
     </section>
 
@@ -1255,7 +1255,7 @@
                     ctx.beginPath();
                     ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
                     if (s.isGold) {
-                        ctx.fillStyle = `rgba(255, 215, 0, ${op})`;
+                        ctx.fillStyle = `rgba(0, 210, 255, ${op})`;
                     } else {
                         ctx.fillStyle = `rgba(255, 255, 255, ${op * 0.6})`;
                     }
@@ -1264,7 +1264,7 @@
                     if (s.isGold && s.r > 1) {
                         ctx.beginPath();
                         ctx.arc(s.x, s.y, s.r * 3, 0, Math.PI * 2);
-                        ctx.fillStyle = `rgba(255, 215, 0, ${op * 0.1})`;
+                        ctx.fillStyle = `rgba(0, 210, 255, ${op * 0.1})`;
                         ctx.fill();
                     }
                 });

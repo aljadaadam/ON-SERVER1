@@ -4,7 +4,7 @@ import { adminApi } from '../api/client';
 import {
   PhoneIcon, CurrencyDollarIcon,
   Cog6ToothIcon, DocumentTextIcon, BanknotesIcon,
-  CheckBadgeIcon, ArrowPathIcon
+  CheckBadgeIcon, ArrowPathIcon, PaperAirplaneIcon
 } from '@heroicons/react/24/outline';
 import PageBanner from '../components/PageBanner';
 
@@ -40,6 +40,9 @@ interface SettingsForm {
   provider_url: string;
   provider_username: string;
   provider_api_key: string;
+  // Telegram bot settings
+  telegram_bot_token: string;
+  telegram_chat_id: string;
 }
 
 const defaultSettings: SettingsForm = {
@@ -72,6 +75,8 @@ const defaultSettings: SettingsForm = {
   provider_url: '',
   provider_username: '',
   provider_api_key: '',
+  telegram_bot_token: '',
+  telegram_chat_id: '',
 };
 
 const groupIcons: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
@@ -79,6 +84,7 @@ const groupIcons: Record<string, React.ComponentType<React.SVGProps<SVGSVGElemen
   'بوابة USDT': CurrencyDollarIcon,
   'بوابة بنكك': BanknotesIcon,
   'الإيداع': CurrencyDollarIcon,
+  'بوت تليجرام': PaperAirplaneIcon,
   'السياسات': DocumentTextIcon,
   'عام': Cog6ToothIcon,
 };
@@ -88,6 +94,7 @@ const groupGradients: Record<string, string> = {
   'بوابة USDT': 'from-green-500 to-green-600',
   'بوابة بنكك': 'from-purple-500 to-purple-600',
   'الإيداع': 'from-amber-500 to-amber-600',
+  'بوت تليجرام': 'from-sky-500 to-blue-600',
   'السياسات': 'from-gray-500 to-gray-600',
   'عام': 'from-indigo-500 to-indigo-600',
 };
@@ -104,6 +111,10 @@ const settingGroups = [
   {
     title: 'بوابة بنكك',
     keys: ['bankak_account_name', 'bankak_account_number', 'bankak_bank_name', 'bankak_exchange_rate', 'bankak_min_amount', 'bankak_max_amount', 'bankak_transfer_note'],
+  },
+  {
+    title: 'بوت تليجرام',
+    keys: ['telegram_bot_token', 'telegram_chat_id'],
   },
   {
     title: 'الإيداع',
@@ -146,6 +157,8 @@ const settingLabels: Record<string, string> = {
   bankak_min_amount: 'الحد الأدنى',
   bankak_max_amount: 'الحد الأقصى',
   bankak_transfer_note: 'تعليق التحويل',
+  telegram_bot_token: 'توكن البوت',
+  telegram_chat_id: 'معرف المحادثة (Chat ID)',
 };
 
 export default function Settings() {
@@ -227,7 +240,7 @@ export default function Settings() {
     }
 
     const isNumber = key.includes('deposit') || key.includes('min_amount') || key.includes('max_amount');
-    const isLtr = key === 'usdt_wallet_address' || key === 'provider_url' || key === 'provider_api_key';
+    const isLtr = key === 'usdt_wallet_address' || key === 'provider_url' || key === 'provider_api_key' || key === 'telegram_bot_token' || key === 'telegram_chat_id';
 
     return (
       <input

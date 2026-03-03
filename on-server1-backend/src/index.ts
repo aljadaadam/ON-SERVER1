@@ -6,6 +6,7 @@ import path from 'path';
 import { env } from './config/env';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { cronService } from './services/cronService';
+import { telegramService } from './services/telegramService';
 
 // Routes
 import authRoutes from './routes/auth';
@@ -79,6 +80,11 @@ app.listen(env.PORT, () => {
 
   // Start cron job for checking order statuses (every 3 minutes)
   cronService.start(3 * 60 * 1000);
+
+  // Start Telegram bot
+  telegramService.init().catch(err => {
+    console.error('[Telegram] Init failed:', err.message);
+  });
 });
 
 export default app;

@@ -55,7 +55,7 @@ fun SplashScreenCinematic(
 ) {
     val categories = remember {
         listOf(
-            ServiceCategory(Icons.Outlined.PhoneAndroid, "تخطي ايكلاود", Color(0xFFFFD700), -95f, -150f),
+            ServiceCategory(Icons.Outlined.PhoneAndroid, "تخطي ايكلاود", Color(0xFF00D2FF), -95f, -150f),
             ServiceCategory(Icons.Outlined.Lock, "FRP", Color(0xFF4CAF50), 95f, -150f),
             ServiceCategory(Icons.Outlined.Star, "تفعيل ادوات", Color(0xFF2196F3), -95f, 20f),
             ServiceCategory(Icons.Outlined.Dns, "فتح شبكات", Color(0xFFFF9800), 95f, 20f),
