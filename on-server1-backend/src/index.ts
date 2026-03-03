@@ -55,6 +55,49 @@ app.use('/api/', limiter);
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // ============================================
+// Static files: Landing page & Downloads & Dashboard
+// Served via Express for no-cache headers (LiteSpeed ignores .htaccess Header directives)
+// ============================================
+const landingPath = path.join(__dirname, '..', '..', 'on-server1-landing');
+
+// Landing page
+app.get('/app/', (_req, res) => {
+  const fs = require('fs');
+  const filePath = path.join(landingPath, 'index.html');
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.sendFile('/home/www.on-server2.com/public_html/app/index.html');
+  }
+});
+app.get('/app', (_req, res) => {
+  res.redirect('/app/');
+});
+
+// APK downloads
+app.use('/downloads', express.static('/home/www.on-server2.com/public_html/downloads', {
+  setHeaders: (res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+  }
+}));
+
+// Dashboard (SPA) - served via Express for no-cache headers
+const dashboardPath = '/home/www.on-server2.com/public_html/ctrl-7x9a3k';
+app.use('/ctrl-7x9a3k', express.static(dashboardPath, {
+  setHeaders: (res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+  }
+}));
+// SPA fallback for dashboard
+app.get('/ctrl-7x9a3k/*', (_req, res) => {
+  res.sendFile(dashboardPath + '/index.html');
+});
+
+// ============================================
 // API Routes
 // ============================================
 app.use('/api/auth', authRoutes);
