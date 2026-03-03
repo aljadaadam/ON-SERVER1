@@ -242,7 +242,7 @@ router.delete('/provider/settings', async (_req: Request, res: Response, next: N
   }
 });
 
-// GET /api/admin/provider/balance - Get SD-Unlocker balance
+// GET /api/admin/provider/balance - Get DHRU FUSION balance
 router.get('/provider/balance', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await syncService.getProviderBalance();

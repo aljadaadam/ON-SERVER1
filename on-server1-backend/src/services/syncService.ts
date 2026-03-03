@@ -3,16 +3,16 @@ import { externalProvider, SDService } from './externalProvider';
 
 /**
  * Product Sync Service
- * Fetches services from SD-Unlocker and syncs them to the local database.
+ * Fetches services from DHRU FUSION and syncs them to the local database.
  * - Creates categories from group names
- * - Maps SD-Unlocker fields to Product model
+ * - Maps DHRU FUSION fields to Product model
  * - Updates existing products by externalId, creates new ones
  * - Does NOT delete local products missing from provider (admin may have custom products)
  */
 export class SyncService {
   
   /**
-   * Sync all products from SD-Unlocker
+   * Sync all products from DHRU FUSION
    * Returns summary of created/updated/skipped
    */
   async syncProducts(markupPercent: number): Promise<{
@@ -28,8 +28,8 @@ export class SyncService {
     let skipped = 0;
 
     try {
-      // Fetch services from SD-Unlocker
-      console.log('[Sync] Fetching services from SD-Unlocker...');
+      // Fetch services from DHRU FUSION
+      console.log('[Sync] Fetching services from DHRU FUSION...');
       const services = await externalProvider.fetchServiceList();
       console.log(`[Sync] Received ${services.length} services`);
 

@@ -124,7 +124,7 @@ model Order {
   status          OrderStatus  @default(PENDING)
   totalAmount     Float
   notes           String?
-  externalOrderId String?      // Reference ID from SD-Unlocker
+  externalOrderId String?      // Reference ID from DHRU FUSION
   responseData    String?      // JSON response from provider
   resultCodes     String?      // JSON: codes/keys returned
   items           OrderItem[]

@@ -8,10 +8,10 @@ let puppeteer: any = null;
 try {
   puppeteer = require('puppeteer');
 } catch {
-  console.log('[SD-Unlocker] puppeteer not installed — Cloudflare bypass unavailable');
+  console.log('[DHRU FUSION] puppeteer not installed — Cloudflare bypass unavailable');
 }
 
-/** Custom field definition from SD-Unlocker service */
+/** Custom field definition from DHRU FUSION service */
 export interface ServiceField {
   name: string;    // Display name
   key: string;     // Field identifier
@@ -19,7 +19,7 @@ export interface ServiceField {
   required: boolean;
 }
 
-/** Parsed service from SD-Unlocker API */
+/** Parsed service from DHRU FUSION API */
 export interface SDService {
   serviceId: string;
   serviceName: string;
@@ -55,8 +55,7 @@ export interface BalanceResult {
 }
 
 /**
- * SD-Unlocker External Provider Service
- * API: https://sd-unlocker.com/api/index.php
+ * DHRU FUSION External Provider Service
  * Format: POST with application/x-www-form-urlencoded
  * Actions: imeiservicelist, placeimeiorder, getimeiorder, getbalance
  */
@@ -115,7 +114,7 @@ export class ExternalProviderService {
     return `${domain}/api/index.php`;
   }
 
-  /** Build common form params for all SD-Unlocker requests */
+  /** Build common form params for all DHRU FUSION requests */
   private buildParams(action: string, xmlParameters?: string): URLSearchParams {
     const params = new URLSearchParams();
     params.append('username', this.username);
@@ -157,8 +156,8 @@ export class ExternalProviderService {
       'Accept': 'application/json, text/plain, */*',
       'Accept-Language': 'en-US,en;q=0.9',
       'Accept-Encoding': 'gzip, deflate, br',
-      'Origin': 'https://sd-unlocker.com',
-      'Referer': 'https://sd-unlocker.com/',
+      'Origin': this.apiUrl || 'https://localhost',
+      'Referer': (this.apiUrl || 'https://localhost') + '/',
     };
 
     let response: Response;
@@ -172,26 +171,26 @@ export class ExternalProviderService {
     } catch (err: any) {
       clearTimeout(timeout);
       if (err.name === 'AbortError') {
-        throw new Error('SD-Unlocker API request timed out (90s)');
+        throw new Error('DHRU FUSION API request timed out (90s)');
       }
-      throw new Error(`SD-Unlocker API connection failed: ${err.message}`);
+      throw new Error(`DHRU FUSION API connection failed: ${err.message}`);
     } finally {
       clearTimeout(timeout);
     }
 
     if (response.status === 403) {
-      throw new Error('SD-Unlocker API blocked by Cloudflare (403)');
+      throw new Error('DHRU FUSION API blocked by Cloudflare (403)');
     }
 
     if (!response.ok) {
-      throw new Error(`SD-Unlocker API HTTP error: ${response.status}`);
+      throw new Error(`DHRU FUSION API HTTP error: ${response.status}`);
     }
 
     const text = await response.text();
     try {
       return JSON.parse(text);
     } catch {
-      throw new Error(`SD-Unlocker API returned non-JSON: ${text.substring(0, 300)}`);
+      throw new Error(`DHRU FUSION API returned non-JSON: ${text.substring(0, 300)}`);
     }
   }
 
@@ -201,7 +200,7 @@ export class ExternalProviderService {
       throw new Error('Puppeteer not installed. Run: npm install puppeteer');
     }
 
-    console.log('[SD-Unlocker] Launching headless browser...');
+    console.log('[DHRU FUSION] Launching headless browser...');
     const browser = await puppeteer.launch({
       headless: 'new',
       args: [
@@ -221,8 +220,8 @@ export class ExternalProviderService {
       );
 
       // First navigate to homepage to pass Cloudflare challenge
-      console.log('[SD-Unlocker] Navigating to homepage to pass Cloudflare...');
-      await page.goto('https://sd-unlocker.com', { 
+      console.log('[DHRU FUSION] Navigating to homepage to pass Cloudflare...');
+      await page.goto(this.apiUrl || 'https://localhost', { 
         waitUntil: 'networkidle2', 
         timeout: 60_000 
       });
@@ -232,10 +231,10 @@ export class ExternalProviderService {
         () => !document.title.includes('Just a moment'),
         { timeout: 30_000 }
       ).catch(() => {
-        console.log('[SD-Unlocker] Cloudflare challenge may not have resolved, trying API anyway...');
+        console.log('[DHRU FUSION] Cloudflare challenge may not have resolved, trying API anyway...');
       });
 
-      console.log('[SD-Unlocker] Cloudflare passed, sending API request...');
+      console.log('[DHRU FUSION] Cloudflare passed, sending API request...');
 
       // Now make the actual API request using page.evaluate (keeps cookies/session)
       const result = await page.evaluate(async (apiUrl: string, body: string) => {
@@ -256,14 +255,14 @@ export class ExternalProviderService {
       }, this.getFullApiUrl(), params.toString());
 
       if (result && result.__error) {
-        throw new Error(`SD-Unlocker API error via Puppeteer: HTTP ${result.status} — ${(result.text || '').substring(0, 200)}`);
+        throw new Error(`DHRU FUSION API error via Puppeteer: HTTP ${result.status} — ${(result.text || '').substring(0, 200)}`);
       }
 
-      console.log('[SD-Unlocker] Puppeteer request successful!');
+      console.log('[DHRU FUSION] Puppeteer request successful!');
       return result;
     } finally {
       await browser.close();
-      console.log('[SD-Unlocker] Browser closed');
+      console.log('[DHRU FUSION] Browser closed');
     }
   }
 
@@ -285,11 +284,11 @@ export class ExternalProviderService {
       
       if (data.ERROR) {
         const errMsg = Array.isArray(data.ERROR) ? data.ERROR[0]?.MESSAGE : data.ERROR;
-        throw new Error(`SD-Unlocker error: ${errMsg}`);
+        throw new Error(`DHRU FUSION error: ${errMsg}`);
       }
 
       if (!data.SUCCESS) {
-        throw new Error('SD-Unlocker: No SUCCESS data in service list response');
+        throw new Error('DHRU FUSION: No SUCCESS data in service list response');
       }
 
       const services: SDService[] = [];
@@ -477,7 +476,7 @@ export class ExternalProviderService {
                 || k.toUpperCase().includes('REQUIRE') || k.toUpperCase().includes('INPUT')
               );
               if (svcKeys.length > 0) {
-                console.log(`[SD-Unlocker] SERVER service "${svc.SERVICENAME}" (${svc.SERVICEID}) has unhandled field keys: ${svcKeys.join(', ')}`);
+                console.log(`[DHRU FUSION] SERVER service "${svc.SERVICENAME}" (${svc.SERVICEID}) has unhandled field keys: ${svcKeys.join(', ')}`);
                 svcKeys.forEach(k => console.log(`  ${k}: ${JSON.stringify(svc[k]).substring(0, 200)}`));
               }
             }
@@ -521,10 +520,10 @@ export class ExternalProviderService {
         }
       }
 
-      console.log(`[SD-Unlocker] Fetched ${services.length} services`);
+      console.log(`[DHRU FUSION] Fetched ${services.length} services`);
       return services;
     } catch (error: any) {
-      console.error('[SD-Unlocker] fetchServiceList failed:', error.message);
+      console.error('[DHRU FUSION] fetchServiceList failed:', error.message);
       throw error;
     }
   }
@@ -553,12 +552,12 @@ export class ExternalProviderService {
 
       xml += '</PARAMETERS>';
 
-      console.log(`[SD-Unlocker] Placing order: serviceId=${serviceId}, imei=${imei}, qnt=${quantity || 1}`);
+      console.log(`[DHRU FUSION] Placing order: serviceId=${serviceId}, imei=${imei}, qnt=${quantity || 1}`);
       const data = await this.apiRequest('placeimeiorder', xml);
 
       if (data.ERROR) {
         const errMsg = Array.isArray(data.ERROR) ? data.ERROR[0]?.MESSAGE : String(data.ERROR);
-        console.error('[SD-Unlocker] placeOrder error:', errMsg);
+        console.error('[DHRU FUSION] placeOrder error:', errMsg);
         return {
           success: false,
           referenceId: '',
@@ -570,7 +569,7 @@ export class ExternalProviderService {
       if (data.SUCCESS) {
         const successArr = Array.isArray(data.SUCCESS) ? data.SUCCESS : [data.SUCCESS];
         const refId = successArr[0]?.REFERENCEID || successArr[0]?.ReferenceId || '';
-        console.log(`[SD-Unlocker] Order placed successfully. ReferenceId: ${refId}`);
+        console.log(`[DHRU FUSION] Order placed successfully. ReferenceId: ${refId}`);
         return {
           success: true,
           referenceId: String(refId),
@@ -585,7 +584,7 @@ export class ExternalProviderService {
         rawResponse: data,
       };
     } catch (error: any) {
-      console.error('[SD-Unlocker] placeOrder failed:', error.message);
+      console.error('[DHRU FUSION] placeOrder failed:', error.message);
       return {
         success: false,
         referenceId: '',
@@ -621,7 +620,7 @@ export class ExternalProviderService {
         // Get STATUS — DHRU returns numeric codes as strings ('0'-'5')
         const rawStatus = String(result.STATUS || result.Status || result.status || '').trim();
         
-        console.log(`[SD-Unlocker] getOrderStatus ref=${referenceId}: rawStatus="${rawStatus}", keys=${Object.keys(result).join(',')}`);
+        console.log(`[DHRU FUSION] getOrderStatus ref=${referenceId}: rawStatus="${rawStatus}", keys=${Object.keys(result).join(',')}`);
 
         // DHRU Fusion numeric status mapping
         const numericStatusMap: Record<string, string> = {
@@ -659,7 +658,7 @@ export class ExternalProviderService {
           || result.UNLOCKCODE || result.UnlockCode
           || result.KEY || result.Key || '';
 
-        console.log(`[SD-Unlocker] Order ref=${referenceId}: mapped=${mappedStatus}, codes=${codes ? String(codes).substring(0, 50) : 'none'}`);
+        console.log(`[DHRU FUSION] Order ref=${referenceId}: mapped=${mappedStatus}, codes=${codes ? String(codes).substring(0, 50) : 'none'}`);
 
         return {
           success: true,
@@ -676,7 +675,7 @@ export class ExternalProviderService {
         rawResponse: data,
       };
     } catch (error: any) {
-      console.error('[SD-Unlocker] getOrderStatus failed:', error.message);
+      console.error('[DHRU FUSION] getOrderStatus failed:', error.message);
       return {
         success: false,
         status: 'UNKNOWN',
@@ -708,7 +707,7 @@ export class ExternalProviderService {
 
       return { success: false, balance: 0, message: 'Unknown response format' };
     } catch (error: any) {
-      console.error('[SD-Unlocker] getBalance failed:', error.message);
+      console.error('[DHRU FUSION] getBalance failed:', error.message);
       return { success: false, balance: 0, message: error.message };
     }
   }

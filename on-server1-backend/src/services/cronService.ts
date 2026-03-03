@@ -4,7 +4,7 @@ import { sendOrderCompletedEmail, sendOrderRejectedEmail } from './emailService'
 
 /**
  * Cron Service
- * Periodically checks pending/processing order statuses with SD-Unlocker
+ * Periodically checks pending/processing order statuses with DHRU FUSION
  */
 export class CronService {
   private intervalId: NodeJS.Timeout | null = null;

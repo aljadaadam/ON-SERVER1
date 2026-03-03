@@ -46,7 +46,7 @@ output = stdout.read().decode()
 print("\n=== Recent Logs ===")
 for line in output.split('\n'):
     l = line.lower()
-    if 'cron' in l or 'sd-unlocker' in l or 'orderstatus' in l or 'status' in l or 'rawstatus' in l or 'mapped' in l or 'completed' in l or 'rejected' in l or 'error' in l:
+    if 'cron' in l or 'dhru fusion' in l or 'dhru' in l or 'orderstatus' in l or 'status' in l or 'rawstatus' in l or 'mapped' in l or 'completed' in l or 'rejected' in l or 'error' in l:
         print(line.strip())
 
 ssh.close()

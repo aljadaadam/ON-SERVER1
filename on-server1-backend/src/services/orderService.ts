@@ -4,7 +4,7 @@ import { sendOrderCreatedEmail, sendOrderRejectedEmail } from './emailService';
 
 export class OrderService {
   /**
-   * Create order with SD-Unlocker integration
+   * Create order with DHRU FUSION integration
    * items: [{ productId, quantity, metadata: { imei?, fieldValues? } }]
    * metadata.imei: required for IMEI type services  
    * metadata.fieldValues: { fieldKey: value } for custom fields
