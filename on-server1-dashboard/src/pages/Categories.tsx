@@ -129,7 +129,7 @@ export default function Categories() {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in-up" style={{ animationDuration: '0.2s' }}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in-up" style={{ zIndex: 60, animationDuration: '0.2s' }}>
           <div className="card max-w-lg w-full max-h-[90vh] overflow-y-auto animate-scale-in">
             <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
               {editCategory ? 'تعديل التصنيف' : 'إضافة تصنيف جديد'}

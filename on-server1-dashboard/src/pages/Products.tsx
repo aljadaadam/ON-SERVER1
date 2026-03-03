@@ -624,7 +624,7 @@ export default function Products() {
 
       {/* Product Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={e => { if (e.target === e.currentTarget) { setShowForm(false); setEditProduct(null); } }}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" style={{ zIndex: 60 }} onClick={e => { if (e.target === e.currentTarget) { setShowForm(false); setEditProduct(null); } }}>
           <div className="card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
               {editProduct ? <><PencilSquareIcon className="w-5 h-5 text-blue-500" /> تعديل المنتج</> : <><PlusIcon className="w-5 h-5 text-emerald-500" /> إضافة منتج جديد</>}

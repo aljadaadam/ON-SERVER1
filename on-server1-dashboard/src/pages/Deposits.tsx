@@ -308,7 +308,7 @@ export default function Deposits() {
 
       {/* Action Modal */}
       {showModal && selectedDeposit && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in-up" style={{ animationDuration: '0.2s' }}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in-up" style={{ zIndex: 60, animationDuration: '0.2s' }}>
           <div className="bg-white dark:bg-dark-surface rounded-2xl p-6 w-full max-w-md shadow-2xl animate-scale-in">
             <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
               {modalAction === 'approve'
@@ -373,7 +373,8 @@ export default function Deposits() {
       {/* Receipt Image Modal */}
       {showImageModal && (
         <div
-          className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/70 flex items-center justify-center p-4"
+          style={{ zIndex: 60 }}
           onClick={() => setShowImageModal(false)}
         >
           <div className="max-w-2xl max-h-[80vh] relative" onClick={(e) => e.stopPropagation()}>
