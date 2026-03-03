@@ -60,10 +60,11 @@ app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 // ============================================
 const landingPath = path.join(__dirname, '..', '..', 'on-server1-landing');
 
-// Landing page
+// Landing page (no helmet CSP - has inline scripts/styles/fonts)
 app.get('/app/', (_req, res) => {
   const fs = require('fs');
   const filePath = path.join(landingPath, 'index.html');
+  res.removeHeader('Content-Security-Policy');
   if (fs.existsSync(filePath)) {
     res.sendFile(filePath);
   } else {
