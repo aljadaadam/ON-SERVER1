@@ -1,5 +1,18 @@
 import prisma from '../config/database';
 
+/** Parse fields JSON string into array for API response */
+function parseProductFields(product: any) {
+  if (!product) return product;
+  if (product.fields && typeof product.fields === 'string') {
+    try { product.fields = JSON.parse(product.fields); } catch { product.fields = null; }
+  }
+  return product;
+}
+
+function parseProductsFields(products: any[]) {
+  return products.map(p => parseProductFields(p));
+}
+
 export class ProductService {
   async getAll(params: {
     page?: number;
@@ -42,7 +55,7 @@ export class ProductService {
     ]);
 
     return {
-      products,
+      products: parseProductsFields(products),
       pagination: {
         page,
         limit,
@@ -61,16 +74,17 @@ export class ProductService {
     if (!product) {
       throw Object.assign(new Error('Product not found'), { statusCode: 404 });
     }
-    return product;
+    return parseProductFields(product);
   }
 
   async getFeatured() {
-    return prisma.product.findMany({
+    const products = await prisma.product.findMany({
       where: { isFeatured: true, isActive: true },
       include: { category: { select: { id: true, name: true, icon: true } } },
       orderBy: { sortOrder: 'asc' },
       take: 10,
     });
+    return parseProductsFields(products);
   }
 
   async getCategories() {
