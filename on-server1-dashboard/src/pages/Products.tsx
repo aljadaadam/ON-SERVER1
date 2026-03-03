@@ -8,6 +8,7 @@ import {
   Cog6ToothIcon, EyeIcon, EyeSlashIcon, GlobeAltIcon, KeyIcon, UserIcon
 } from '@heroicons/react/24/outline';
 import PageBanner from '../components/PageBanner';
+import Modal from '../components/Modal';
 import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
 
 interface Category {
@@ -71,7 +72,7 @@ export default function Products() {
   const [filterServiceType, setFilterServiceType] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const perPage = 50;
+  const perPage = 20;
 
   // Form state
   const [form, setForm] = useState(emptyForm);
@@ -325,7 +326,7 @@ export default function Products() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <PageBanner
         title="إدارة المنتجات"
         subtitle="عرض وتعديل المنتجات والخدمات الرقمية"
@@ -623,12 +624,13 @@ export default function Products() {
       </div>
 
       {/* Product Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" style={{ zIndex: 60 }} onClick={e => { if (e.target === e.currentTarget) { setShowForm(false); setEditProduct(null); } }}>
-          <div className="card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-              {editProduct ? <><PencilSquareIcon className="w-5 h-5 text-blue-500" /> تعديل المنتج</> : <><PlusIcon className="w-5 h-5 text-emerald-500" /> إضافة منتج جديد</>}
-            </h2>
+      <Modal
+        open={showForm}
+        onClose={() => { setShowForm(false); setEditProduct(null); }}
+        title={editProduct ? 'تعديل المنتج' : 'إضافة منتج جديد'}
+        icon={editProduct ? <PencilSquareIcon className="w-5 h-5 text-blue-500" /> : <PlusIcon className="w-5 h-5 text-emerald-500" />}
+        size="lg"
+      >
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -686,12 +688,10 @@ export default function Products() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Products Table */}
-      <div className="card">
+      <div className="card flex-1 min-h-0 flex flex-col overflow-hidden">
         {loading ? (
           <div className="flex justify-center py-12">
             <div className="w-10 h-10 border-[3px] border-gray-200 dark:border-dark-border border-t-primary-500 rounded-full animate-spin"></div>
@@ -703,9 +703,9 @@ export default function Products() {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div className="overflow-auto flex-1 min-h-0">
               <table className="w-full text-sm">
-                <thead>
+                <thead className="sticky top-0 bg-white dark:bg-dark-card z-10">
                   <tr className="border-b border-gray-100 dark:border-dark-border">
                     <th className="table-header">المنتج</th>
                     <th className="table-header">التصنيف</th>
@@ -784,7 +784,7 @@ export default function Products() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex flex-col sm:flex-row items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-dark-border gap-3">
+              <div className="shrink-0 flex flex-col sm:flex-row items-center justify-between pt-3 pb-1 border-t border-gray-200 dark:border-dark-border gap-3 bg-white dark:bg-dark-card">
                 <p className="text-sm text-gray-500">
                   عرض {(currentPage - 1) * perPage + 1} - {Math.min(currentPage * perPage, filteredProducts.length)} من {filteredProducts.length}
                 </p>

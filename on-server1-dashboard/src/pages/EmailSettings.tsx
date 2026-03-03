@@ -132,7 +132,7 @@ export default function EmailSettings() {
   }
 
   return (
-    <div>
+    <div className="overflow-y-auto h-full">
       <PageBanner
         title="البريد الإلكتروني"
         subtitle="إعدادات SMTP لإرسال الإشعارات والتأكيدات"

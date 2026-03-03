@@ -101,7 +101,7 @@ export default function Dashboard() {
   })).reverse();
 
   return (
-    <div>
+    <div className="overflow-y-auto h-full">
       <PageBanner
         title="لوحة التحكم"
         subtitle="نظرة عامة على أداء المتجر والإحصائيات"

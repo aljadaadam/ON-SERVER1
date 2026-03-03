@@ -45,7 +45,7 @@ ssh_exec(ssh, "cd /opt/on-server1/on-server1-dashboard && npm run build", timeou
 print("\n=== Deploy dashboard ===")
 ssh_exec(ssh, f"rm -rf /home/www.on-server2.com/public_html/{ADMIN_SLUG}")
 ssh_exec(ssh, f"mkdir -p /home/www.on-server2.com/public_html/{ADMIN_SLUG}")
-ssh_exec(ssh, f"cp -r /opt/on-server1/on-server1-dashboard/dist/* /home/www.on-server2.com/public_html/{ADMIN_SLUG}/")
+ssh_exec(ssh, f"cp -r /opt/on-server1/on-server1-dashboard/dist/. /home/www.on-server2.com/public_html/{ADMIN_SLUG}/")
 ssh_exec(ssh, f"chmod -R 755 /home/www.on-server2.com/public_html/{ADMIN_SLUG}")
 ssh_exec(ssh, f"chown -R wwwon3882:wwwon3882 /home/www.on-server2.com/public_html/{ADMIN_SLUG}")
 

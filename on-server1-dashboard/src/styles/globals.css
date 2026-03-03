@@ -143,6 +143,31 @@
     animation: pulseDot 2s ease-in-out infinite;
   }
 
+  /* Modal animations */
+  @keyframes modalOverlayIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes modalPanelIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .animate-modal-overlay {
+    animation: modalOverlayIn 0.2s ease-out both;
+  }
+
+  .animate-modal-panel {
+    animation: modalPanelIn 0.25s ease-out both;
+  }
+
   /* Stagger delay utilities */
   .delay-75 { animation-delay: 75ms; }
   .delay-150 { animation-delay: 150ms; }

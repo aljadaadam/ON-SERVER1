@@ -43,7 +43,7 @@ const upload = multer({
 // Helper: Generate next deposit number (starts at 1000, increments by 70)
 // ============================================
 async function getNextDepositNumber(): Promise<number> {
-  const result = await prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx: any) => {
     const counter = await tx.depositCounter.update({
       where: { id: 'deposit_counter' },
       data: { counter: { increment: 70 } },
@@ -141,7 +141,7 @@ router.get('/gateway-info', authenticate, async (_req: Request, res: Response, n
     });
     
     const settingsMap: Record<string, string> = {};
-    settings.forEach(s => { settingsMap[s.key] = s.value; });
+    settings.forEach((s: any) => { settingsMap[s.key] = s.value; });
     
     res.json({
       success: true,

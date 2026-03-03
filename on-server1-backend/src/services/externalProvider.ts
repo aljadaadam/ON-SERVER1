@@ -76,7 +76,7 @@ export class ExternalProviderService {
       const settings = await prisma.setting.findMany({
         where: { key: { in: ['provider_url', 'provider_username', 'provider_api_key'] } },
       });
-      const map = new Map(settings.map(s => [s.key, s.value]));
+      const map = new Map<string, string>(settings.map((s: any) => [s.key, s.value]));
       this.apiUrl = map.get('provider_url') || '';
       this.username = map.get('provider_username') || '';
       this.apiKey = map.get('provider_api_key') || '';
@@ -228,6 +228,7 @@ export class ExternalProviderService {
 
       // Wait for Cloudflare challenge to resolve (up to 30s)
       await page.waitForFunction(
+        // @ts-ignore - document exists in browser context
         () => !document.title.includes('Just a moment'),
         { timeout: 30_000 }
       ).catch(() => {

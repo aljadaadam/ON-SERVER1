@@ -6,6 +6,7 @@ import {
   XCircleIcon, CurrencyDollarIcon, PhotoIcon, BanknotesIcon
 } from '@heroicons/react/24/outline';
 import PageBanner from '../components/PageBanner';
+import Modal from '../components/Modal';
 
 interface Deposit {
   id: string;
@@ -132,7 +133,7 @@ export default function Deposits() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-y-auto h-full">
       <PageBanner
         title="إدارة الإيداعات"
         subtitle="مراجعة وإدارة عمليات الإيداع والتحويلات المالية"
@@ -307,15 +308,15 @@ export default function Deposits() {
       </div>
 
       {/* Action Modal */}
-      {showModal && selectedDeposit && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in-up" style={{ zIndex: 60, animationDuration: '0.2s' }}>
-          <div className="bg-white dark:bg-dark-surface rounded-2xl p-6 w-full max-w-md shadow-2xl animate-scale-in">
-            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-              {modalAction === 'approve'
-                ? <><CheckCircleIcon className="w-5 h-5 text-emerald-500" /> قبول الإيداع</>
-                : <><XCircleIcon className="w-5 h-5 text-red-500" /> رفض الإيداع</>}
-            </h3>
-
+      <Modal
+        open={showModal && !!selectedDeposit}
+        onClose={() => setShowModal(false)}
+        title={modalAction === 'approve' ? 'قبول الإيداع' : 'رفض الإيداع'}
+        icon={modalAction === 'approve' ? <CheckCircleIcon className="w-5 h-5 text-emerald-500" /> : <XCircleIcon className="w-5 h-5 text-red-500" />}
+        size="sm"
+      >
+        {selectedDeposit && (
+          <div>
             <div className="bg-gray-50 dark:bg-dark-card rounded-lg p-4 mb-4 space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">رقم الإيداع:</span>
@@ -367,31 +368,25 @@ export default function Deposits() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
 
       {/* Receipt Image Modal */}
-      {showImageModal && (
-        <div
-          className="fixed inset-0 bg-black/70 flex items-center justify-center p-4"
-          style={{ zIndex: 60 }}
-          onClick={() => setShowImageModal(false)}
-        >
-          <div className="max-w-2xl max-h-[80vh] relative" onClick={(e) => e.stopPropagation()}>
-            <button
-              onClick={() => setShowImageModal(false)}
-              className="absolute -top-3 -right-3 bg-white dark:bg-dark-surface w-8 h-8 rounded-full flex items-center justify-center shadow-lg text-gray-600 hover:text-gray-800"
-            >
-              ✕
-            </button>
-            <img
-              src={imageUrl}
-              alt="إيصال التحويل"
-              className="max-w-full max-h-[75vh] rounded-xl shadow-2xl object-contain"
-            />
-          </div>
+      <Modal
+        open={showImageModal}
+        onClose={() => setShowImageModal(false)}
+        title="إيصال التحويل"
+        icon={<PhotoIcon className="w-5 h-5 text-blue-500" />}
+        size="lg"
+      >
+        <div className="flex justify-center">
+          <img
+            src={imageUrl}
+            alt="إيصال التحويل"
+            className="max-w-full max-h-[70vh] rounded-xl object-contain"
+          />
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

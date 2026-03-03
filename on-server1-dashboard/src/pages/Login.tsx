@@ -14,7 +14,9 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
+      console.log('[Login] Attempting login...');
       const response = await authApi.login(email, password);
+      console.log('[Login] Response:', JSON.stringify(response.data));
       const { data } = response.data;
       
       if (data.user.role !== 'ADMIN') {
@@ -22,10 +24,15 @@ export default function Login() {
         return;
       }
 
+      console.log('[Login] Storing token, length:', data.accessToken?.length);
       localStorage.setItem('admin_token', data.accessToken);
+      const verify = localStorage.getItem('admin_token');
+      console.log('[Login] Token stored & verified:', !!verify, 'length:', verify?.length);
       toast.success('تم تسجيل الدخول بنجاح');
+      console.log('[Login] Navigating to /');
       navigate('/');
     } catch (error: any) {
+      console.error('[Login] Error:', error);
       toast.error(error.response?.data?.message || 'فشل تسجيل الدخول');
     } finally {
       setLoading(false);

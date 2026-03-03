@@ -16,14 +16,18 @@ import { Bars3Icon } from '@heroicons/react/24/outline';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem('admin_token');
-  if (!token) return <Navigate to="/login" replace />;
+  console.log('[ProtectedRoute] Token exists:', !!token, 'length:', token?.length);
+  if (!token) {
+    console.log('[ProtectedRoute] No token — redirecting to /login');
+    return <Navigate to="/login" replace />;
+  }
   return <>{children}</>;
 }
 
 function PageTransition({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   return (
-    <div key={location.pathname} className="animate-page-in">
+    <div key={location.pathname} className="animate-page-in h-full flex flex-col">
       {children}
     </div>
   );
@@ -32,9 +36,9 @@ function PageTransition({ children }: { children: React.ReactNode }) {
 function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="flex min-h-screen bg-white dark:bg-dark-bg overflow-x-hidden">
+    <div className="flex h-screen bg-white dark:bg-dark-bg overflow-hidden">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <main className="flex-1 overflow-auto bg-white dark:bg-dark-bg min-w-0">
+      <main className="flex-1 flex flex-col bg-white dark:bg-dark-bg min-w-0 overflow-hidden">
         {/* Mobile header with hamburger */}
         <div className="sticky top-0 z-30 lg:hidden bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-gray-200 dark:border-dark-border px-4 py-3 flex items-center gap-3">
           <button
@@ -45,7 +49,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
           </button>
           <h1 className="text-sm font-bold text-gray-900 dark:text-white">ON-SERVER1</h1>
         </div>
-        <div className="p-3 sm:p-4 lg:p-6">
+        <div className="flex-1 p-3 sm:p-4 lg:p-6 min-h-0 flex flex-col overflow-hidden">
           <PageTransition>{children}</PageTransition>
         </div>
       </main>

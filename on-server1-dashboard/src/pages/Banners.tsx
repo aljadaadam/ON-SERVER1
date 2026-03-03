@@ -6,6 +6,7 @@ import {
   PhotoIcon, EyeSlashIcon, EyeIcon
 } from '@heroicons/react/24/outline';
 import PageBanner from '../components/PageBanner';
+import Modal from '../components/Modal';
 
 interface Banner {
   id: string;
@@ -112,7 +113,7 @@ export default function Banners() {
   };
 
   return (
-    <div>
+    <div className="overflow-y-auto h-full">
       <PageBanner
         title="إدارة البانرات"
         subtitle="إدارة إعلانات ولافتات الواجهة الرئيسية"
@@ -131,12 +132,13 @@ export default function Banners() {
       </div>
 
       {/* Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in-up" style={{ zIndex: 60, animationDuration: '0.2s' }}>
-          <div className="card max-w-lg w-full max-h-[90vh] overflow-y-auto animate-scale-in">
-            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
-              {editBanner ? 'تعديل البانر' : 'إضافة بانر جديد'}
-            </h2>
+      <Modal
+        open={showForm}
+        onClose={resetForm}
+        title={editBanner ? 'تعديل البانر' : 'إضافة بانر جديد'}
+        icon={editBanner ? <PencilSquareIcon className="w-5 h-5 text-blue-500" /> : <PlusIcon className="w-5 h-5 text-emerald-500" />}
+        size="md"
+      >
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">العنوان (اختياري)</label>
@@ -172,9 +174,7 @@ export default function Banners() {
                 <button type="button" onClick={resetForm} className="flex-1 py-2 px-4 rounded-lg border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-dark-card transition">إلغاء</button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Banners Grid */}
       <div className="card">

@@ -250,7 +250,7 @@ export default function Settings() {
   }
 
   return (
-    <div>
+    <div className="overflow-y-auto h-full">
       <PageBanner
         title="الإعدادات"
         subtitle="إعدادات المتجر وبوابات الدفع"

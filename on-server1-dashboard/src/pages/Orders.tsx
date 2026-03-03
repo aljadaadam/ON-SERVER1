@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { ordersApi } from '../api/client';
 import { ArrowPathIcon, ShoppingCartIcon, ChevronDownIcon, XMarkIcon, CheckCircleIcon, XCircleIcon, EyeIcon } from '@heroicons/react/24/outline';
 import PageBanner from '../components/PageBanner';
+import Modal from '../components/Modal';
 
 interface OrderItem {
   id: string;
@@ -25,19 +26,6 @@ interface Order {
   createdAt: string;
   user?: { name: string; email: string };
   items?: OrderItem[];
-}
-
-// Modal component
-function Modal({ open, onClose, children }: { open: boolean; onClose: () => void; children: React.ReactNode }) {
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 60 }}>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fade-in-up">
-        {children}
-      </div>
-    </div>
-  );
 }
 
 export default function Orders() {
@@ -139,7 +127,7 @@ export default function Orders() {
   };
 
   return (
-    <div>
+    <div className="overflow-y-auto h-full">
       <PageBanner
         title="إدارة الطلبات"
         subtitle="تتبع ومعالجة جميع طلبات العملاء"
@@ -341,16 +329,12 @@ export default function Orders() {
       </div>
 
       {/* Action Modal (Reject / Complete) */}
-      <Modal open={!!actionModal.type} onClose={() => setActionModal({ type: null, order: null })}>
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-              {actionModal.type === 'REJECTED' ? '🚫 رفض الطلب' : '✅ إكمال الطلب'}
-            </h3>
-            <button onClick={() => setActionModal({ type: null, order: null })} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-surface">
-              <XMarkIcon className="w-5 h-5 text-gray-400" />
-            </button>
-          </div>
+      <Modal
+        open={!!actionModal.type}
+        onClose={() => setActionModal({ type: null, order: null })}
+        title={actionModal.type === 'REJECTED' ? '🚫 رفض الطلب' : '✅ إكمال الطلب'}
+        size="md"
+      >
           {actionModal.order && (
             <div className="mb-4 p-3 bg-gray-50 dark:bg-dark-surface rounded-xl">
               <div className="flex items-center justify-between text-sm">
@@ -399,19 +383,17 @@ export default function Orders() {
               إلغاء
             </button>
           </div>
-        </div>
       </Modal>
 
       {/* Detail Modal */}
-      <Modal open={!!detailOrder} onClose={() => setDetailOrder(null)}>
+      <Modal
+        open={!!detailOrder}
+        onClose={() => setDetailOrder(null)}
+        title={detailOrder ? `تفاصيل الطلب #${detailOrder.orderNumber}` : ''}
+        size="md"
+      >
         {detailOrder && (
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">تفاصيل الطلب #{detailOrder.orderNumber}</h3>
-              <button onClick={() => setDetailOrder(null)} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-surface">
-                <XMarkIcon className="w-5 h-5 text-gray-400" />
-              </button>
-            </div>
+          <div>
             {/* Info */}
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="p-3 bg-gray-50 dark:bg-dark-surface rounded-xl">

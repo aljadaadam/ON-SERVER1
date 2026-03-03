@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { productsApi } from '../api/client';
 import { ArrowPathIcon, PlusIcon, FolderIcon, FolderOpenIcon, PencilSquareIcon, DocumentIcon, TrashIcon } from '@heroicons/react/24/outline';
 import PageBanner from '../components/PageBanner';
+import Modal from '../components/Modal';
 
 interface Category {
   id: string;
@@ -22,6 +23,8 @@ export default function Categories() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
 
   const [form, setForm] = useState({
     name: '',
@@ -108,8 +111,48 @@ export default function Categories() {
   // Flatten categories for parent selection (exclude current edit)
   const flatCategories = categories.filter(c => !editCategory || c.id !== editCategory.id);
 
+  // All IDs (parents + children) for select-all
+  const allIds: string[] = categories.flatMap(c => [c.id, ...(c.children?.map(ch => ch.id) || [])]);
+  const allSelected = allIds.length > 0 && allIds.every(id => selected.has(id));
+
+  const toggleSelect = (id: string) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(allIds));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selected.size === 0) return;
+    if (!confirm(`هل أنت متأكد من حذف ${selected.size} تصنيف؟`)) return;
+    setDeleting(true);
+    let ok = 0, fail = 0;
+    for (const id of selected) {
+      try {
+        await productsApi.deleteCategory(id);
+        ok++;
+      } catch {
+        fail++;
+      }
+    }
+    setDeleting(false);
+    setSelected(new Set());
+    if (ok > 0) toast.success(`تم حذف ${ok} تصنيف`);
+    if (fail > 0) toast.error(`فشل حذف ${fail} تصنيف`);
+    loadCategories();
+  };
+
   return (
-    <div>
+    <div className="overflow-y-auto h-full">
       <PageBanner
         title="إدارة التصنيفات"
         subtitle="تنظيم المنتجات في تصنيفات وفئات منظمة"
@@ -120,6 +163,16 @@ export default function Categories() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h1 className="page-title">التصنيفات</h1>
         <div className="flex items-center gap-2">
+          {selected.size > 0 && (
+            <button
+              onClick={handleBulkDelete}
+              disabled={deleting}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-white bg-red-500 hover:bg-red-600 disabled:opacity-50 transition-all duration-200"
+            >
+              <TrashIcon className="w-4 h-4" />
+              {deleting ? 'جاري الحذف...' : `حذف ${selected.size} محدد`}
+            </button>
+          )}
           <button onClick={loadCategories} className="p-2 rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-card transition-all duration-200">
             <ArrowPathIcon className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
           </button>
@@ -128,12 +181,13 @@ export default function Categories() {
       </div>
 
       {/* Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in-up" style={{ zIndex: 60, animationDuration: '0.2s' }}>
-          <div className="card max-w-lg w-full max-h-[90vh] overflow-y-auto animate-scale-in">
-            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
-              {editCategory ? 'تعديل التصنيف' : 'إضافة تصنيف جديد'}
-            </h2>
+      <Modal
+        open={showForm}
+        onClose={resetForm}
+        title={editCategory ? 'تعديل التصنيف' : 'إضافة تصنيف جديد'}
+        icon={editCategory ? <PencilSquareIcon className="w-5 h-5 text-blue-500" /> : <PlusIcon className="w-5 h-5 text-emerald-500" />}
+        size="md"
+      >
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -173,9 +227,7 @@ export default function Categories() {
                 <button type="button" onClick={resetForm} className="flex-1 py-2 px-4 rounded-lg border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-dark-card transition">إلغاء</button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Categories Table */}
       <div className="card">
@@ -193,6 +245,14 @@ export default function Categories() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100 dark:border-dark-border">
+                  <th className="table-header w-10">
+                    <input
+                      type="checkbox"
+                      checked={allSelected}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary-500 focus:ring-primary-500 cursor-pointer"
+                    />
+                  </th>
                   <th className="table-header">التصنيف</th>
                   <th className="table-header">الاسم EN</th>
                   <th className="table-header">المنتجات</th>
@@ -204,7 +264,15 @@ export default function Categories() {
               <tbody>
                 {categories.map((category) => (
                   <>
-                    <tr key={category.id} className="table-row animate-fade-in-up">
+                    <tr key={category.id} className={`table-row animate-fade-in-up ${selected.has(category.id) ? 'bg-primary-50/50 dark:bg-primary-500/5' : ''}`}>
+                      <td className="table-cell">
+                        <input
+                          type="checkbox"
+                          checked={selected.has(category.id)}
+                          onChange={() => toggleSelect(category.id)}
+                          className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary-500 focus:ring-primary-500 cursor-pointer"
+                        />
+                      </td>
                       <td className="table-cell">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
@@ -234,7 +302,15 @@ export default function Categories() {
                     </tr>
                     {/* Children */}
                     {category.children?.map((child) => (
-                      <tr key={child.id} className="border-b border-gray-100 dark:border-dark-border bg-gray-50/50 dark:bg-dark-surface/30">
+                      <tr key={child.id} className={`border-b border-gray-100 dark:border-dark-border ${selected.has(child.id) ? 'bg-primary-50/50 dark:bg-primary-500/5' : 'bg-gray-50/50 dark:bg-dark-surface/30'}`}>
+                        <td className="py-2.5 px-4">
+                          <input
+                            type="checkbox"
+                            checked={selected.has(child.id)}
+                            onChange={() => toggleSelect(child.id)}
+                            className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary-500 focus:ring-primary-500 cursor-pointer"
+                          />
+                        </td>
                         <td className="py-2.5 px-4 pr-10">
                           <div className="flex items-center gap-2">
                             <span className="text-gray-300 dark:text-gray-600">↳</span>

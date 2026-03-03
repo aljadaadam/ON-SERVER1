@@ -23,7 +23,7 @@ async function getSmtpConfig(): Promise<SmtpConfig | null> {
     where: { key: { in: ['smtp_host', 'smtp_port', 'smtp_user', 'smtp_pass', 'smtp_from_email', 'smtp_from_name', 'smtp_secure'] } },
   });
   const m: Record<string, string> = {};
-  rows.forEach(r => { m[r.key] = r.value; });
+  rows.forEach((r: any) => { m[r.key] = r.value; });
 
   if (!m.smtp_host || !m.smtp_user || !m.smtp_pass) return null;
 

@@ -178,7 +178,7 @@ export class CronService {
    */
   private async refundOrder(order: any) {
     try {
-      await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(async (tx: any) => {
         const user = await tx.user.update({
           where: { id: order.userId },
           data: { balance: { increment: order.totalAmount } },

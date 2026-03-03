@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { adminApi } from '../api/client';
 import { ArrowPathIcon, BanknotesIcon, MagnifyingGlassIcon, ShieldCheckIcon, UserIcon, UsersIcon } from '@heroicons/react/24/outline';
 import PageBanner from '../components/PageBanner';
+import Modal from '../components/Modal';
 
 interface User {
   id: string;
@@ -64,7 +65,7 @@ export default function Users() {
   };
 
   return (
-    <div>
+    <div className="overflow-y-auto h-full">
       <PageBanner
         title="إدارة المستخدمين"
         subtitle="عرض وإدارة حسابات المستخدمين والأرصدة"
@@ -92,17 +93,13 @@ export default function Users() {
       </div>
 
       {/* Balance Modal */}
-      {balanceModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center animate-fade-in-up" style={{ zIndex: 60, animationDuration: '0.2s' }}>
-          <div className="card max-w-sm w-full mx-4 animate-scale-in">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center">
-                <BanknotesIcon className="w-5 h-5 text-white" />
-              </div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-                إضافة رصيد لـ {balanceModal.name}
-              </h2>
-            </div>
+      <Modal
+        open={!!balanceModal}
+        onClose={() => setBalanceModal(null)}
+        title={balanceModal ? `إضافة رصيد لـ ${balanceModal.name}` : ''}
+        icon={<div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center"><BanknotesIcon className="w-4 h-4 text-white" /></div>}
+        size="sm"
+      >
             <input
               type="number"
               step="0.01"
@@ -117,9 +114,7 @@ export default function Users() {
                 إلغاء
               </button>
             </div>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       <div className="card">
         {loading ? (

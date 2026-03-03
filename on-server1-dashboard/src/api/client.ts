@@ -20,9 +20,12 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.log('[Interceptor] Error:', error.response?.status, error.config?.url);
     if (error.response?.status === 401) {
+      console.log('[Interceptor] 401 detected — clearing token and redirecting');
       localStorage.removeItem('admin_token');
-      window.location.href = '/login';
+      const base = import.meta.env.BASE_URL || '/';
+      window.location.href = `${base}login`;
     }
     return Promise.reject(error);
   }
