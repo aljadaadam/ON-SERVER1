@@ -1,7 +1,7 @@
 import { useEffect, useState, Fragment } from 'react';
 import toast from 'react-hot-toast';
 import { ordersApi } from '../api/client';
-import { ArrowPathIcon, ShoppingCartIcon, ChevronDownIcon, XMarkIcon, CheckCircleIcon, XCircleIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, ShoppingCartIcon, ChevronDownIcon, CheckCircleIcon, XCircleIcon, EyeIcon } from '@heroicons/react/24/outline';
 import PageBanner from '../components/PageBanner';
 import Modal from '../components/Modal';
 
