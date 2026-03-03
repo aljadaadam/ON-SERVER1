@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { adminApi } from '../api/client';
-import { ArrowPathIcon, BanknotesIcon, ShieldCheckIcon, UserIcon, UsersIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, BanknotesIcon, MagnifyingGlassIcon, ShieldCheckIcon, UserIcon, UsersIcon } from '@heroicons/react/24/outline';
 import PageBanner from '../components/PageBanner';
 
 interface User {
@@ -22,6 +22,7 @@ export default function Users() {
   const [loading, setLoading] = useState(true);
   const [balanceModal, setBalanceModal] = useState<{ userId: string; name: string } | null>(null);
   const [balanceAmount, setBalanceAmount] = useState('');
+  const [searchEmail, setSearchEmail] = useState('');
 
   useEffect(() => {
     loadUsers();
@@ -73,9 +74,21 @@ export default function Users() {
       />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h1 className="page-title">المستخدمين</h1>
-        <button onClick={loadUsers} className="p-2 rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-card transition-all duration-200 self-start sm:self-auto">
-          <ArrowPathIcon className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <MagnifyingGlassIcon className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              value={searchEmail}
+              onChange={(e) => setSearchEmail(e.target.value)}
+              placeholder="بحث بالبريد الإلكتروني..."
+              className="pr-9 pl-3 py-2 w-56 rounded-xl border border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-surface text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 outline-none transition"
+            />
+          </div>
+          <button onClick={loadUsers} className="p-2 rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-card transition-all duration-200">
+            <ArrowPathIcon className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
       </div>
 
       {/* Balance Modal */}
@@ -127,7 +140,7 @@ export default function Users() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user, i) => (
+                {users.filter(u => !searchEmail || u.email.toLowerCase().includes(searchEmail.toLowerCase())).map((user, i) => (
                   <tr key={user.id} className="table-row animate-fade-in-up" style={{ animationDelay: `${i * 30}ms` }}>
                     <td className="table-cell">
                       <div className="flex items-center gap-3">

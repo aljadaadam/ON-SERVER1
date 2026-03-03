@@ -394,10 +394,28 @@ export class OrderService {
     return { orders: orders.map(parseOrderProducts), pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
   }
 
-  async updateOrderStatus(orderId: string, status: string) {
+  async updateOrderStatus(orderId: string, status: string, notes?: string) {
+    const order = await prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) throw Object.assign(new Error('Order not found'), { statusCode: 404 });
+
+    // If admin is rejecting a non-rejected order → refund
+    if (status === 'REJECTED' && order.status !== 'REJECTED') {
+      const reason = notes || 'تم الرفض بواسطة الإدارة';
+      await this.rejectOrderWithRefund(orderId, order.orderNumber, order.userId, order.totalAmount, reason);
+      // Also save the notes field
+      if (notes) {
+        await prisma.order.update({ where: { id: orderId }, data: { notes } });
+      }
+      return prisma.order.findUnique({ where: { id: orderId }, include: { items: true } });
+    }
+
+    // For COMPLETED or other status, just update
     return prisma.order.update({
       where: { id: orderId },
-      data: { status: status as any },
+      data: { 
+        status: status as any,
+        ...(notes !== undefined ? { notes } : {}),
+      },
     });
   }
 

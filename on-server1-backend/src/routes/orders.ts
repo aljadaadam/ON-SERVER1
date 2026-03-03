@@ -62,8 +62,8 @@ router.get('/admin/all', authenticate, requireAdmin, async (req: Request, res: R
 // PUT /api/orders/:id/status - Update order status (Admin)
 router.put('/:id/status', authenticate, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { status } = req.body;
-    const order = await orderService.updateOrderStatus(req.params.id as string, status);
+    const { status, notes } = req.body;
+    const order = await orderService.updateOrderStatus(req.params.id as string, status, notes);
     res.json({ success: true, data: order });
   } catch (error) {
     next(error);

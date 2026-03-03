@@ -76,7 +76,7 @@ export const productsApi = {
 export const ordersApi = {
   getAll: (params?: any) => apiClient.get('/orders/admin/all', { params }),
   getById: (id: string) => apiClient.get(`/orders/${id}`),
-  updateStatus: (id: string, status: string) => apiClient.put(`/orders/${id}/status`, { status }),
+  updateStatus: (id: string, status: string, notes?: string) => apiClient.put(`/orders/${id}/status`, { status, notes }),
 };
 
 // Deposits
