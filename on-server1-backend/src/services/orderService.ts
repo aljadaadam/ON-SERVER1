@@ -70,6 +70,7 @@ export class OrderService {
       }
       return {
         productId: item.productId,
+        productName: product.name,
         quantity: item.quantity,
         price: product.price,
         metadata: item.metadata ? JSON.stringify(item.metadata) : null,

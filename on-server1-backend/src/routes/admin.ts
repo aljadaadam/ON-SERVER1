@@ -208,10 +208,35 @@ router.post('/provider/sync', async (req: Request, res: Response, next: NextFunc
 // DELETE /api/admin/provider/products - Delete all provider products
 router.delete('/provider/products', async (_req: Request, res: Response, next: NextFunction) => {
   try {
+    // Snapshot product names into order items before deleting
+    const products = await prisma.product.findMany({
+      where: { externalId: { not: null } },
+      select: { id: true, name: true },
+    });
+    for (const p of products) {
+      await prisma.orderItem.updateMany({
+        where: { productId: p.id, productName: null },
+        data: { productName: p.name },
+      });
+    }
+
     const result = await prisma.product.deleteMany({
       where: { externalId: { not: null } },
     });
     res.json({ success: true, data: { deleted: result.count }, message: `تم حذف ${result.count} منتج` });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/admin/provider/settings - Clear provider credentials
+router.delete('/provider/settings', async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    await prisma.setting.deleteMany({
+      where: { key: { in: ['provider_url', 'provider_username', 'provider_api_key'] } },
+    });
+    await externalProvider.reloadConfig();
+    res.json({ success: true, message: 'تم مسح إعدادات المصدر' });
   } catch (error) {
     next(error);
   }

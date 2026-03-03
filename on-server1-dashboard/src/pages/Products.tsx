@@ -436,7 +436,24 @@ export default function Products() {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-end mt-2">
+              <div className="flex justify-end gap-2 mt-2">
+                <button
+                  onClick={async () => {
+                    if (!confirm('هل أنت متأكد من مسح جميع إعدادات المصدر؟')) return;
+                    try {
+                      await adminApi.clearProviderSettings();
+                      toast.success('تم مسح إعدادات المصدر');
+                      setProviderSettings({ url: '', username: '', apiKey: '' });
+                      setProviderForm({ url: '', username: '', apiKey: '' });
+                    } catch {
+                      toast.error('فشل مسح الإعدادات');
+                    }
+                  }}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-300 hover:text-red-200 border border-red-500/20 transition-all duration-200 flex items-center gap-1"
+                >
+                  <TrashIcon className="w-3 h-3" />
+                  مسح الإعدادات
+                </button>
                 <button
                   onClick={handleSaveProviderSettings}
                   disabled={savingProvider}

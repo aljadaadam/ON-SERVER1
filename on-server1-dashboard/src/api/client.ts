@@ -55,6 +55,7 @@ export const adminApi = {
   updateProviderSettings: (data: { url?: string; username?: string; apiKey?: string }) =>
     apiClient.put('/admin/provider/settings', data),
   deleteAllProviderProducts: () => apiClient.delete('/admin/provider/products'),
+    clearProviderSettings: () => apiClient.delete('/admin/provider/settings'),
   testEmail: (to: string) => apiClient.post('/admin/test-email', { to }),
 };
 

@@ -11,7 +11,7 @@ interface Order {
   status: string;
   createdAt: string;
   user?: { name: string; email: string };
-  items?: { product: { name: string }; quantity: number; price: number }[];
+  items?: { product: { name: string } | null; productName: string | null; quantity: number; price: number }[];
 }
 
 export default function Orders() {
