@@ -223,7 +223,11 @@ router.delete('/provider/products', async (_req: Request, res: Response, next: N
     const result = await prisma.product.deleteMany({
       where: { externalId: { not: null } },
     });
-    res.json({ success: true, data: { deleted: result.count }, message: `تم حذف ${result.count} منتج` });
+
+    // Also delete all categories (they were created by sync)
+    await prisma.category.deleteMany({});
+
+    res.json({ success: true, data: { deleted: result.count }, message: `تم حذف ${result.count} منتج وجميع التصنيفات` });
   } catch (error) {
     next(error);
   }
