@@ -93,7 +93,7 @@ export default function Users() {
 
       {/* Balance Modal */}
       {balanceModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] animate-fade-in-up" style={{ animationDuration: '0.2s' }}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center animate-fade-in-up" style={{ zIndex: 60, animationDuration: '0.2s' }}>
           <div className="card max-w-sm w-full mx-4 animate-scale-in">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center">
