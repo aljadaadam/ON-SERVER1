@@ -115,4 +115,14 @@ router.put('/categories/:id', authenticate, requireAdmin, async (req: Request, r
   }
 });
 
+// DELETE /api/products/categories/:id (Admin only)
+router.delete('/categories/:id', authenticate, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await productService.deleteCategory(req.params.id as string);
+    res.json({ success: true, message: 'تم حذف التصنيف' });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

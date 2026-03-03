@@ -116,6 +116,12 @@ export class ProductService {
   async updateCategory(id: string, data: any) {
     return prisma.category.update({ where: { id }, data });
   }
+
+  async deleteCategory(id: string) {
+    // Delete children first, then the category
+    await prisma.category.deleteMany({ where: { parentId: id } });
+    return prisma.category.delete({ where: { id } });
+  }
 }
 
 export const productService = new ProductService();

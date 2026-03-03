@@ -69,6 +69,7 @@ export const productsApi = {
   getCategories: () => apiClient.get('/products/categories'),
   createCategory: (data: any) => apiClient.post('/products/categories', data),
   updateCategory: (id: string, data: any) => apiClient.put(`/products/categories/${id}`, data),
+  deleteCategory: (id: string) => apiClient.delete(`/products/categories/${id}`),
 };
 
 // Orders

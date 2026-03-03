@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { productsApi } from '../api/client';
-import { ArrowPathIcon, PlusIcon, FolderIcon, FolderOpenIcon, PencilSquareIcon, DocumentIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, PlusIcon, FolderIcon, FolderOpenIcon, PencilSquareIcon, DocumentIcon, TrashIcon } from '@heroicons/react/24/outline';
 import PageBanner from '../components/PageBanner';
 
 interface Category {
@@ -88,6 +88,21 @@ export default function Categories() {
       parentId: category.parentId || '',
     });
     setShowForm(true);
+  };
+
+  const handleDelete = async (category: Category) => {
+    const childCount = category.children?.length || 0;
+    const msg = childCount > 0
+      ? `هل أنت متأكد من حذف التصنيف "${category.nameAr || category.name}" و ${childCount} تصنيف فرعي؟`
+      : `هل أنت متأكد من حذف التصنيف "${category.nameAr || category.name}"؟`;
+    if (!confirm(msg)) return;
+    try {
+      await productsApi.deleteCategory(category.id);
+      toast.success('تم حذف التصنيف');
+      loadCategories();
+    } catch (error) {
+      toast.error('فشل حذف التصنيف');
+    }
   };
 
   // Flatten categories for parent selection (exclude current edit)
@@ -207,9 +222,14 @@ export default function Categories() {
                       <td className="table-cell text-gray-400">{category.sortOrder}</td>
                       <td className="table-cell text-gray-400">{category.children?.length || 0} فرعي</td>
                       <td className="table-cell">
-                        <button onClick={() => handleEdit(category)} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-all duration-200">
-                          <PencilSquareIcon className="w-3.5 h-3.5" /> تعديل
-                        </button>
+                        <div className="flex items-center gap-1.5">
+                          <button onClick={() => handleEdit(category)} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-all duration-200">
+                            <PencilSquareIcon className="w-3.5 h-3.5" /> تعديل
+                          </button>
+                          <button onClick={() => handleDelete(category)} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 transition-all duration-200">
+                            <TrashIcon className="w-3.5 h-3.5" /> حذف
+                          </button>
+                        </div>
                       </td>
                     </tr>
                     {/* Children */}
@@ -227,9 +247,14 @@ export default function Categories() {
                         <td className="py-2.5 px-4 text-gray-400">{child.sortOrder}</td>
                         <td className="py-2.5 px-4"></td>
                         <td className="py-2.5 px-4">
-                          <button onClick={() => handleEdit(child)} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-all duration-200">
-                            <PencilSquareIcon className="w-3.5 h-3.5" /> تعديل
-                          </button>
+                          <div className="flex items-center gap-1.5">
+                            <button onClick={() => handleEdit(child)} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-all duration-200">
+                              <PencilSquareIcon className="w-3.5 h-3.5" /> تعديل
+                            </button>
+                            <button onClick={() => handleDelete(child)} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 transition-all duration-200">
+                              <TrashIcon className="w-3.5 h-3.5" /> حذف
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
