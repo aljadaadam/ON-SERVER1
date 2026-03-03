@@ -16,9 +16,7 @@ import { Bars3Icon } from '@heroicons/react/24/outline';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem('admin_token');
-  console.log('[ProtectedRoute] Token exists:', !!token, 'length:', token?.length);
   if (!token) {
-    console.log('[ProtectedRoute] No token — redirecting to /login');
     return <Navigate to="/login" replace />;
   }
   return <>{children}</>;

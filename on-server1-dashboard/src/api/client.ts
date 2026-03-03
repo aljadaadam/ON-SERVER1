@@ -16,13 +16,13 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 errors
+// Handle 401 errors (skip auth endpoints like login)
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.log('[Interceptor] Error:', error.response?.status, error.config?.url);
-    if (error.response?.status === 401) {
-      console.log('[Interceptor] 401 detected — clearing token and redirecting');
+    const url = error.config?.url || '';
+    const isAuthRoute = url.includes('/auth/');
+    if (error.response?.status === 401 && !isAuthRoute) {
       localStorage.removeItem('admin_token');
       const base = import.meta.env.BASE_URL || '/';
       window.location.href = `${base}login`;
