@@ -70,7 +70,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Sidebar */}
       <aside className={`
         fixed top-0 right-0 z-50 h-full w-64 bg-gray-50 dark:bg-dark-bg border-l border-gray-200 dark:border-dark-border flex flex-col transition-all duration-300 ease-in-out
-        lg:static lg:translate-x-0 lg:z-auto lg:visible lg:opacity-100
+        lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:z-auto lg:visible lg:opacity-100
         ${isOpen ? 'translate-x-0 visible opacity-100' : 'translate-x-full invisible opacity-0 lg:translate-x-0 lg:visible lg:opacity-100'}
       `}>
         {/* Logo */}
