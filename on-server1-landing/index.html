@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ON-SERVER1 — حمّل التطبيق</title>
+    <meta name="description" content="ON-SERVER1 — منصة شحن الألعاب وبطاقات الهدايا والاشتراكات الرقمية. حمّل التطبيق الآن!">
+    <meta name="theme-color" content="#0F0F23">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS — ON-SERVER1 Landing Page
+           ═══════════════════════════════════════════ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #FFD700;
+            --gold-dark: #FFC107;
+            --gold-light: #FFF8E1;
+            --bg-deep: #07071A;
+            --bg-dark: #0F0F23;
+            --bg-surface: #1A1A2E;
+            --bg-card: #16213E;
+            --text-white: #FFFFFF;
+            --text-gray: #9CA3AF;
+            --success: #4CAF50;
+            --glow: rgba(255, 215, 0, 0.15);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-white);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* ─── Animated Background ─── */
+        .bg-stars {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-stars canvas { width: 100%; height: 100%; }
+
+        /* ─── Navbar ─── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(15, 15, 35, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            padding: 0.7rem 2rem;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--bg-surface), var(--bg-card));
+            border: 1.5px solid rgba(255, 215, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 14px;
+            color: var(--gold);
+            letter-spacing: -1px;
+        }
+
+        .nav-logo-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-white);
+            letter-spacing: 1px;
+        }
+
+        .nav-logo-text span { color: var(--gold); }
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #000;
+            padding: 10px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25);
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        /* ─── Hero ─── */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 20px 80px;
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.08), transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--gold);
+            margin-bottom: 30px;
+            animation: fadeSlideUp 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .hero-badge .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        .hero-logo-container {
+            margin-bottom: 30px;
+            animation: fadeSlideUp 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .hero-app-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 30px;
+            background: linear-gradient(145deg, #111128, #1a1a3e);
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.1);
+        }
+
+        .hero-app-icon svg {
+            width: 70px;
+            height: 70px;
+        }
+
+        .hero-app-icon::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 32px;
+            background: conic-gradient(from 0deg, transparent, var(--gold), transparent, transparent);
+            z-index: -1;
+            animation: rotateBorder 6s linear infinite;
+        }
+
+        @keyframes rotateBorder {
+            to { transform: rotate(360deg); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            animation: fadeSlideUp 0.8s ease 0.4s forwards;
+            opacity: 0;
+        }
+
+        .hero h1 .gold { color: var(--gold); }
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, var(--gold), #FF9800, var(--gold));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmerText 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmerText {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .hero-desc {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            animation: fadeSlideUp 0.8s ease 0.6s forwards;
+            opacity: 0;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeSlideUp 0.8s ease 0.8s forwards;
+            opacity: 0;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #000;
+            padding: 16px 36px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.15rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-download::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .btn-download:hover::before { transform: translateX(100%); }
+
+        .btn-download:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.45);
+        }
+
+        .btn-download svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-white);
+            padding: 16px 36px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 60px;
+            animation: fadeSlideUp 0.8s ease 1s forwards;
+            opacity: 0;
+        }
+
+        .stat-item { text-align: center; }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--gold);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── Features ─── */
+        .features {
+            position: relative;
+            z-index: 1;
+            padding: 100px 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            color: var(--gold);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+        }
+
+        .section-header p {
+            color: var(--text-gray);
+            font-size: 1.05rem;
+            margin-top: 12px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.6), rgba(22, 33, 62, 0.4));
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 36px 28px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255, 215, 0, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.05);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .feature-card:hover::before { opacity: 1; }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .feature-icon.gold { background: rgba(255, 215, 0, 0.1); }
+        .feature-icon.green { background: rgba(76, 175, 80, 0.1); }
+        .feature-icon.blue { background: rgba(33, 150, 243, 0.1); }
+        .feature-icon.purple { background: rgba(156, 39, 176, 0.1); }
+        .feature-icon.red { background: rgba(239, 83, 80, 0.1); }
+        .feature-icon.cyan { background: rgba(0, 188, 212, 0.1); }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* ─── App Showcase / Phone Mockup ─── */
+        .showcase {
+            position: relative;
+            z-index: 1;
+            padding: 100px 20px;
+            overflow: hidden;
+        }
+
+        .showcase-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .showcase-phone {
+            flex: 0 0 300px;
+            position: relative;
+        }
+
+        .phone-frame {
+            width: 280px;
+            height: 560px;
+            border-radius: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(180deg, var(--bg-surface), var(--bg-dark));
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.05);
+        }
+
+        .phone-notch {
+            width: 120px;
+            height: 28px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .phone-screen {
+            position: absolute;
+            inset: 3px;
+            border-radius: 37px;
+            overflow: hidden;
+            background: var(--bg-dark);
+        }
+
+        .phone-screen-content {
+            padding: 40px 16px 20px;
+        }
+
+        .mock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .mock-greeting {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+        }
+
+        .mock-name {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .mock-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+        }
+
+        .mock-balance-card {
+            background: linear-gradient(135deg, var(--bg-surface), var(--bg-card));
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .mock-balance-label {
+            font-size: 0.7rem;
+            color: var(--text-gray);
+        }
+
+        .mock-balance-value {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--gold);
+        }
+
+        .mock-product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .mock-product {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 12px 10px;
+            text-align: center;
+        }
+
+        .mock-product-emoji { font-size: 26px; margin-bottom: 6px; }
+        .mock-product-name { font-size: 0.65rem; color: var(--text-gray); }
+        .mock-product-price {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-top: 4px;
+        }
+
+        .showcase-info {
+            flex: 1;
+        }
+
+        .showcase-info h2 {
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .showcase-info p {
+            color: var(--text-gray);
+            font-size: 1.05rem;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .check-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .check-list li {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .check-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(76, 175, 80, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--success);
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        /* ─── Services Section ─── */
+        .services {
+            position: relative;
+            z-index: 1;
+            padding: 100px 20px;
+            background: linear-gradient(180deg, transparent, rgba(26, 26, 46, 0.3), transparent);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .service-item {
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .service-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .service-item:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .service-emoji {
+            font-size: 40px;
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .service-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .service-desc {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            margin-top: 6px;
+        }
+
+        /* ─── Download CTA ─── */
+        .download-cta {
+            position: relative;
+            z-index: 1;
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .cta-box {
+            max-width: 700px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.5));
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 30px;
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.06), transparent 60%);
+            pointer-events: none;
+        }
+
+        .cta-box h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 900;
+            margin-bottom: 16px;
+        }
+
+        .cta-box p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            margin-bottom: 36px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-version {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        /* ─── Footer ─── */
+        .footer {
+            position: relative;
+            z-index: 1;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--bg-surface);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 10px;
+            color: var(--gold);
+        }
+
+        .footer-copy {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover { color: var(--gold); }
+
+        /* ─── Scroll Animations ─── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 768px) {
+            .showcase-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .showcase-phone { flex: 0 0 auto; }
+
+            .check-list {
+                align-items: center;
+            }
+
+            .hero-stats {
+                gap: 30px;
+            }
+
+            .stat-number { font-size: 1.6rem; }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .cta-box { padding: 40px 24px; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .nav-cta { padding: 8px 20px; font-size: 0.85rem; }
+            .hero { padding: 100px 16px 60px; }
+            .hero-app-icon { width: 90px; height: 90px; border-radius: 24px; }
+            .hero-app-icon svg { width: 50px; height: 50px; }
+            .btn-download { padding: 14px 28px; font-size: 1rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .phone-frame { width: 240px; height: 480px; }
+        }
+
+        /* ─── Floating Particles ─── */
+        .floating-particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Stars Background -->
+    <div class="bg-stars">
+        <canvas id="starsCanvas"></canvas>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-logo">
+            <div class="nav-logo-icon">ON</div>
+            <div class="nav-logo-text">ON-<span>SERVER1</span></div>
+        </a>
+        <a href="#download" class="nav-cta">حمّل التطبيق</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                متوفر الآن للأندرويد
+            </div>
+
+            <div class="hero-logo-container">
+                <div class="hero-app-icon">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- O letter -->
+                        <path d="M25 50C25 36.2 36.2 25 50 25H30C30 25 18 30 18 50C18 70 30 75 30 75H50C36.2 75 25 63.8 25 50Z" fill="white" opacity="0.9"/>
+                        <path d="M75 50C75 63.8 63.8 75 50 75H70C70 75 82 70 82 50C82 30 70 25 70 25H50C63.8 25 75 36.2 75 50Z" fill="white" opacity="0.9"/>
+                        <!-- N letter -->
+                        <path d="M38 35V65H44V45L56 65H62V35H56V55L44 35H38Z" fill="#FFD700" opacity="0.85"/>
+                        <!-- Orbital ring -->
+                        <ellipse cx="50" cy="50" rx="44" ry="14" stroke="white" stroke-width="2" opacity="0.3" transform="rotate(-25 50 50)"/>
+                    </svg>
+                </div>
+            </div>
+
+            <h1>
+                كل ما تحتاجه في<br>
+                <span class="gradient-text">تطبيق واحد</span>
+            </h1>
+
+            <p class="hero-desc">
+                بطاقات ألعاب، هدايا رقمية، شحن رصيد، واشتراكات — كل شيء في مكان واحد مع أسرع خدمة وأفضل أسعار.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#download" class="btn-download">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.523 2H6.477C5.768 2 5.413 2 5.118 2.076C4.085 2.339 3.28 3.144 3.017 4.177C2.941 4.472 2.941 4.827 2.941 5.536V18.464C2.941 19.173 2.941 19.528 3.017 19.823C3.28 20.856 4.085 21.661 5.118 21.924C5.413 22 5.768 22 6.477 22H17.523C18.232 22 18.587 22 18.882 21.924C19.915 21.661 20.72 20.856 20.983 19.823C21.059 19.528 21.059 19.173 21.059 18.464V5.536C21.059 4.827 21.059 4.472 20.983 4.177C20.72 3.144 19.915 2.339 18.882 2.076C18.587 2 18.232 2 17.523 2Z"/>
+                        <path d="M12 7V14M12 14L9 11M12 14L15 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <path d="M9 17H15" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    تحميل APK
+                </a>
+                <a href="#features" class="btn-secondary">
+                    اكتشف المزيد ↓
+                </a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number" data-count="500">0</span>
+                    <span class="stat-label">منتج رقمي</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="24">0</span>
+                    <span class="stat-label">ساعة خدمة</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="99">0</span>
+                    <span class="stat-label">% رضا العملاء</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-header reveal">
+            <span class="section-tag">✨ المميزات</span>
+            <h2>لماذا ON-SERVER1؟</h2>
+            <p>نقدم لك تجربة فريدة في عالم المنتجات الرقمية</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon gold">⚡</div>
+                <h3>سرعة فائقة</h3>
+                <p>تسليم فوري لجميع المنتجات الرقمية خلال ثوانٍ معدودة بعد الشراء.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon green">🔒</div>
+                <h3>أمان تام</h3>
+                <p>تشفير متقدم لجميع المعاملات مع حماية كاملة لبياناتك الشخصية.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon blue">💳</div>
+                <h3>دفع سهل</h3>
+                <p>خيارات دفع متعددة تشمل بنكك والتحويل الرقمي USDT.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon purple">🎮</div>
+                <h3>تنوع المنتجات</h3>
+                <p>بطاقات ألعاب، هدايا، شحن رصيد، اشتراكات، وخدمات IMEI.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon red">🏷️</div>
+                <h3>أفضل الأسعار</h3>
+                <p>أسعار تنافسية مع عروض وخصومات حصرية لمستخدمي التطبيق.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon cyan">📱</div>
+                <h3>واجهة عصرية</h3>
+                <p>تصميم أنيق وسهل الاستخدام يدعم الوضع المظلم بالكامل.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Showcase -->
+    <section class="showcase" id="showcase">
+        <div class="showcase-inner">
+            <div class="showcase-phone reveal">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="phone-screen-content">
+                            <div class="mock-header">
+                                <div>
+                                    <div class="mock-greeting">مرحباً 👋</div>
+                                    <div class="mock-name">أحمد</div>
+                                </div>
+                                <div class="mock-avatar"></div>
+                            </div>
+                            <div class="mock-balance-card">
+                                <div class="mock-balance-label">رصيدك الحالي</div>
+                                <div class="mock-balance-value">$150.00</div>
+                            </div>
+                            <div class="mock-product-grid">
+                                <div class="mock-product">
+                                    <div class="mock-product-emoji">🎮</div>
+                                    <div class="mock-product-name">بطاقة ببجي</div>
+                                    <div class="mock-product-price">$9.99</div>
+                                </div>
+                                <div class="mock-product">
+                                    <div class="mock-product-emoji">🎁</div>
+                                    <div class="mock-product-name">آيتونز</div>
+                                    <div class="mock-product-price">$25.00</div>
+                                </div>
+                                <div class="mock-product">
+                                    <div class="mock-product-emoji">💎</div>
+                                    <div class="mock-product-name">فري فاير</div>
+                                    <div class="mock-product-price">$4.99</div>
+                                </div>
+                                <div class="mock-product">
+                                    <div class="mock-product-emoji">🔑</div>
+                                    <div class="mock-product-name">نتفلكس</div>
+                                    <div class="mock-product-price">$14.99</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="showcase-info reveal">
+                <span class="section-tag">📱 نظرة سريعة</span>
+                <h2>تجربة استخدام <span style="color: var(--gold)">استثنائية</span></h2>
+                <p>
+                    صُمم التطبيق ليكون سهل وبديهي — من تصفح المنتجات إلى إتمام الشراء في خطوات بسيطة.
+                </p>
+                <ul class="check-list">
+                    <li>
+                        <span class="check-icon">✓</span>
+                        تصميم داكن أنيق مريح للعين
+                    </li>
+                    <li>
+                        <span class="check-icon">✓</span>
+                        بحث سريع بين مئات المنتجات
+                    </li>
+                    <li>
+                        <span class="check-icon">✓</span>
+                        تتبع طلباتك لحظة بلحظة
+                    </li>
+                    <li>
+                        <span class="check-icon">✓</span>
+                        إشعارات فورية عند تغيّر حالة الطلب
+                    </li>
+                    <li>
+                        <span class="check-icon">✓</span>
+                        شحن الرصيد عبر بنكك أو USDT
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services">
+        <div class="section-header reveal">
+            <span class="section-tag">🛍️ خدماتنا</span>
+            <h2>منتجات متنوعة لكل احتياجاتك</h2>
+        </div>
+        <div class="services-grid">
+            <div class="service-item">
+                <span class="service-emoji">🎮</span>
+                <div class="service-name">بطاقات الألعاب</div>
+                <div class="service-desc">ببجي، فري فاير، فورتنايت والمزيد</div>
+            </div>
+            <div class="service-item">
+                <span class="service-emoji">🎁</span>
+                <div class="service-name">بطاقات الهدايا</div>
+                <div class="service-desc">آيتونز، قوقل بلاي، أمازون</div>
+            </div>
+            <div class="service-item">
+                <span class="service-emoji">📡</span>
+                <div class="service-name">شحن الرصيد</div>
+                <div class="service-desc">شحن مباشر لجميع الشبكات</div>
+            </div>
+            <div class="service-item">
+                <span class="service-emoji">🔑</span>
+                <div class="service-name">الاشتراكات</div>
+                <div class="service-desc">نتفلكس، سبوتيفاي، شاهد</div>
+            </div>
+            <div class="service-item">
+                <span class="service-emoji">📱</span>
+                <div class="service-name">خدمات IMEI</div>
+                <div class="service-desc">فك قفل وفحص الأجهزة</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download CTA -->
+    <section class="download-cta" id="download">
+        <div class="cta-box reveal">
+            <h2>حمّل التطبيق <span style="color: var(--gold)">مجاناً</span></h2>
+            <p>ابدأ تجربتك الآن واستمتع بأفضل العروض على المنتجات الرقمية</p>
+            <div class="cta-buttons">
+                <a href="/downloads/on-server1.apk" class="btn-download" id="downloadBtn">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                        <path d="M17.523 2H6.477C5.768 2 5.413 2 5.118 2.076C4.085 2.339 3.28 3.144 3.017 4.177C2.941 4.472 2.941 4.827 2.941 5.536V18.464C2.941 19.173 2.941 19.528 3.017 19.823C3.28 20.856 4.085 21.661 5.118 21.924C5.413 22 5.768 22 6.477 22H17.523C18.232 22 18.587 22 18.882 21.924C19.915 21.661 20.72 20.856 20.983 19.823C21.059 19.528 21.059 19.173 21.059 18.464V5.536C21.059 4.827 21.059 4.472 20.983 4.177C20.72 3.144 19.915 2.339 18.882 2.076C18.587 2 18.232 2 17.523 2Z"/>
+                        <path d="M12 7V14M12 14L9 11M12 14L15 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <path d="M9 17H15" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    تحميل APK للأندرويد
+                </a>
+            </div>
+            <p class="cta-version">الإصدار 1.0.0 • حجم التطبيق ~15 MB • يتطلب أندرويد 8.0+</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-brand-icon">ON</div>
+                <span style="font-weight: 700;">ON-SERVER1</span>
+            </div>
+            <div class="footer-copy">© 2026 ON-SERVER1. جميع الحقوق محفوظة.</div>
+            <div class="footer-links">
+                <a href="mailto:admin@onserver1.com">تواصل معنا</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ═══════════════════════════════
+        //  Stars Background
+        // ═══════════════════════════════
+        (function() {
+            const canvas = document.getElementById('starsCanvas');
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+            const STAR_COUNT = 120;
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            function init() {
+                resize();
+                stars = [];
+                for (let i = 0; i < STAR_COUNT; i++) {
+                    stars.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        r: Math.random() * 1.5 + 0.3,
+                        speed: Math.random() * 0.3 + 0.05,
+                        opacity: Math.random(),
+                        phase: Math.random() * Math.PI * 2,
+                        isGold: Math.random() > 0.85
+                    });
+                }
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const t = Date.now() / 1000;
+
+                stars.forEach(s => {
+                    const op = (Math.sin(t * s.speed + s.phase) * 0.4 + 0.5) * 0.8;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    if (s.isGold) {
+                        ctx.fillStyle = `rgba(255, 215, 0, ${op})`;
+                    } else {
+                        ctx.fillStyle = `rgba(255, 255, 255, ${op * 0.6})`;
+                    }
+                    ctx.fill();
+
+                    if (s.isGold && s.r > 1) {
+                        ctx.beginPath();
+                        ctx.arc(s.x, s.y, s.r * 3, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(255, 215, 0, ${op * 0.1})`;
+                        ctx.fill();
+                    }
+                });
+
+                requestAnimationFrame(draw);
+            }
+
+            window.addEventListener('resize', resize);
+            init();
+            draw();
+        })();
+
+        // ═══════════════════════════════
+        //  Navbar Scroll Effect
+        // ═══════════════════════════════
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            nav.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // ═══════════════════════════════
+        //  Scroll Reveal Animations
+        // ═══════════════════════════════
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.reveal, .feature-card, .service-item').forEach(el => {
+            revealObserver.observe(el);
+        });
+
+        // Stagger feature cards
+        document.querySelectorAll('.feature-card').forEach((card, i) => {
+            card.style.transitionDelay = `${i * 0.1}s`;
+        });
+
+        document.querySelectorAll('.service-item').forEach((item, i) => {
+            item.style.transitionDelay = `${i * 0.1}s`;
+        });
+
+        // ═══════════════════════════════
+        //  Counter Animation
+        // ═══════════════════════════════
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = parseInt(el.dataset.count);
+                    const suffix = el.dataset.count === '24' ? '/7' : '+';
+                    let current = 0;
+                    const step = Math.ceil(target / 40);
+                    const timer = setInterval(() => {
+                        current += step;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        el.textContent = current + suffix;
+                    }, 40);
+                    counterObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-number').forEach(el => {
+            counterObserver.observe(el);
+        });
+
+        // ═══════════════════════════════
+        //  Floating Particles on Hero
+        // ═══════════════════════════════
+        (function() {
+            const hero = document.getElementById('hero');
+            setInterval(() => {
+                const particle = document.createElement('div');
+                particle.className = 'floating-particle';
+                const size = Math.random() * 4 + 2;
+                const left = Math.random() * 100;
+                const duration = Math.random() * 8 + 6;
+                const isGold = Math.random() > 0.7;
+                particle.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${left}%;
+                    bottom: -10px;
+                    background: ${isGold ? 'rgba(255,215,0,0.6)' : 'rgba(255,255,255,0.3)'};
+                    animation-duration: ${duration}s;
+                    ${isGold ? 'box-shadow: 0 0 6px rgba(255,215,0,0.4);' : ''}
+                `;
+                hero.appendChild(particle);
+                setTimeout(() => particle.remove(), duration * 1000);
+            }, 400);
+        })();
+
+        // ═══════════════════════════════
+        //  Smooth Scroll
+        // ═══════════════════════════════
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
