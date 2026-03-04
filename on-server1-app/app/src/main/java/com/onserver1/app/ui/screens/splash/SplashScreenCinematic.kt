@@ -38,6 +38,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.onserver1.app.R
 import com.onserver1.app.ui.theme.AccentYellow
+import com.onserver1.app.util.IntegrityGuard
+import com.onserver1.app.util.LicenseChecker
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlin.math.PI
 import kotlin.math.cos
@@ -90,6 +93,11 @@ fun SplashScreenCinematic(
 
     // ── Timeline (~7.3s total) ──
     LaunchedEffect(Unit) {
+        // License + integrity check runs in parallel with splash animation
+        val licenseCheck = async {
+            IntegrityGuard.verify() && LicenseChecker.verify()
+        }
+
         delay(300)
         showBox = true       // 0.3s: Box fades in with bounce
         delay(1300)
@@ -105,6 +113,13 @@ fun SplashScreenCinematic(
         delay(1200)
         exitAnim = true      // 6.6s: Exit
         delay(700)
+
+        val isLicensed = licenseCheck.await()
+        if (!isLicensed) {
+            // License invalid — block navigation indefinitely
+            return@LaunchedEffect
+        }
+
         onSplashFinished()   // 7.3s: Navigate
     }
 
