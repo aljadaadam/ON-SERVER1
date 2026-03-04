@@ -138,7 +138,8 @@ export default function PaymentGateways() {
       <PageBanner
         title="بوابات الدفع"
         subtitle="إدارة طرق الدفع المتاحة للمستخدمين"
-        color="emerald"
+        icon={CreditCardIcon}
+        gradient="from-emerald-600 to-teal-700"
       />
 
       <div className="flex items-center justify-between mb-4 mt-2">
