@@ -608,19 +608,13 @@ export class ExternalProviderService {
         };
       }
 
-      return {
-        success: false,
-        referenceId: '',
-        message: 'Unknown response format',
-        rawResponse: data,
-      };
+      // Unknown response format — don't treat as rejection
+      console.error('[DHRU FUSION] placeOrder: unknown response format', JSON.stringify(data).substring(0, 200));
+      throw new Error(`DHRU unknown response format`);
     } catch (error: any) {
-      console.error('[DHRU FUSION] placeOrder failed:', error.message);
-      return {
-        success: false,
-        referenceId: '',
-        message: error.message,
-      };
+      // Connection errors, timeouts, unknown formats — THROW so outer handler keeps order PENDING
+      console.error('[DHRU FUSION] placeOrder failed (will stay PENDING):', error.message);
+      throw error;
     }
   }
 

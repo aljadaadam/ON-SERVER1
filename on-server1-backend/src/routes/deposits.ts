@@ -127,19 +127,26 @@ async function verifyBep20Transaction(txHash: string, expectedAmount: number, wa
 // GET /api/deposits/gateway-info - Get payment gateway info
 router.get('/gateway-info', authenticate, async (_req: Request, res: Response, next: NextFunction) => {
   try {
-    const settings = await prisma.setting.findMany({
-      where: {
-        key: {
-          in: [
-            'usdt_wallet_address', 'usdt_network', 'usdt_min_amount', 'usdt_max_amount',
-            'bankak_account_name', 'bankak_account_number', 'bankak_bank_name',
-            'bankak_exchange_rate', 'bankak_min_amount', 'bankak_max_amount',
-            'bankak_transfer_note',
-            'currency',
-          ],
+    const [settings, activeGateways] = await Promise.all([
+      prisma.setting.findMany({
+        where: {
+          key: {
+            in: [
+              'usdt_wallet_address', 'usdt_network', 'usdt_min_amount', 'usdt_max_amount',
+              'bankak_account_name', 'bankak_account_number', 'bankak_bank_name',
+              'bankak_exchange_rate', 'bankak_min_amount', 'bankak_max_amount',
+              'bankak_transfer_note',
+              'currency',
+            ],
+          },
         },
-      },
-    });
+      }),
+      prisma.paymentGateway.findMany({
+        where: { isActive: true },
+        orderBy: { sortOrder: 'asc' },
+        select: { id: true, name: true, nameEn: true, type: true, icon: true, color: true, sortOrder: true },
+      }),
+    ]);
     
     const settingsMap: Record<string, string> = {};
     settings.forEach((s: any) => { settingsMap[s.key] = s.value; });
@@ -156,13 +163,14 @@ router.get('/gateway-info', authenticate, async (_req: Request, res: Response, n
         bankak: {
           accountName: settingsMap['bankak_account_name'] || '',
           accountNumber: settingsMap['bankak_account_number'] || '',
-          bankName: settingsMap['bankak_bank_name'] || 'بنكك',
+          bankName: settingsMap['bankak_bank_name'] || '\u0628\u0646\u0643\u0643',
           transferNote: settingsMap['bankak_transfer_note'] || '',
           exchangeRate: parseFloat(settingsMap['bankak_exchange_rate'] || '600'),
           minAmount: parseFloat(settingsMap['bankak_min_amount'] || '5'),
           maxAmount: parseFloat(settingsMap['bankak_max_amount'] || '5000'),
         },
         currency: settingsMap['currency'] || 'USD',
+        gateways: activeGateways,
       },
     });
   } catch (error) {

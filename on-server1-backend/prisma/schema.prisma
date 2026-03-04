@@ -188,6 +188,25 @@ model Setting {
 }
 
 // ============================================
+// Payment Gateways
+// ============================================
+model PaymentGateway {
+  id          String   @id @default(uuid())
+  name        String                // e.g. "USDT", "بنكك", "فوري"
+  nameEn      String?               // English name
+  type        String                // CRYPTO, BANK, MOBILE_WALLET
+  icon        String?               // Icon URL or name
+  color       String?               // Hex color e.g. "#26A17B"
+  config      String?               // JSON config (wallet address, account info, etc.)
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("payment_gateways")
+}
+
+// ============================================
 // Deposits (Payment Gateways)
 // ============================================
 model Deposit {

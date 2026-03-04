@@ -30,8 +30,10 @@ import androidx.compose.ui.graphics.drawscope.*
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.onserver1.app.R
@@ -753,18 +755,20 @@ fun SplashScreenCinematic(
                 Spacer(modifier = Modifier.height(22.dp))
 
                 // ON-SERVER1
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .alpha(textAlpha)
-                        .offset(y = textOffset.dp)
-                ) {
-                    Text("ON", fontSize = 40.sp, fontWeight = FontWeight.Black, color = AccentYellow)
-                    Text("-", fontSize = 40.sp, fontWeight = FontWeight.Black, color = Color.White.copy(alpha = 0.5f))
-                    "SERVER".forEach { c ->
-                        Text(c.toString(), fontSize = 40.sp, fontWeight = FontWeight.Black, color = Color.White)
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .alpha(textAlpha)
+                            .offset(y = textOffset.dp)
+                    ) {
+                        Text("ON", fontSize = 40.sp, fontWeight = FontWeight.Black, color = AccentYellow)
+                        Text("-", fontSize = 40.sp, fontWeight = FontWeight.Black, color = Color.White.copy(alpha = 0.5f))
+                        "SERVER".forEach { c ->
+                            Text(c.toString(), fontSize = 40.sp, fontWeight = FontWeight.Black, color = Color.White)
+                        }
+                        Text("1", fontSize = 40.sp, fontWeight = FontWeight.Black, color = AccentYellow)
                     }
-                    Text("1", fontSize = 40.sp, fontWeight = FontWeight.Black, color = AccentYellow)
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))

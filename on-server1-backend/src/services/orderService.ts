@@ -309,11 +309,17 @@ export class OrderService {
    * Reject order: set REJECTED status, refund wallet, log transaction
    */
   private async rejectOrderWithRefund(orderId: string, orderNumber: string, userId: string, totalAmount: number, reason: string) {
+    // Filter out internal/connection error patterns — only show clean rejection reasons to user
+    const internalPatterns = ['CONNECTION_ERROR', 'ECONNREFUSED', 'ETIMEDOUT', 'ENOTFOUND', 'ESOCKETTIMEDOUT', 'socket hang up', 'fetch failed', 'network', 'timeout', 'Unknown response format', 'DHRU unknown'];
+    const isInternalError = internalPatterns.some(p => reason.toUpperCase().includes(p.toUpperCase()));
+    const userFacingReason = isInternalError ? 'تعذر تنفيذ الطلب — يرجى المحاولة لاحقاً' : reason;
+
     // Update order status to REJECTED
     await prisma.order.update({
       where: { id: orderId },
       data: {
         status: 'REJECTED',
+        resultCodes: `سبب الرفض: ${userFacingReason}`,
         responseData: JSON.stringify({ error: reason }),
       },
     });

@@ -1,11 +1,16 @@
 package com.onserver1.app.ui.screens.orders
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.outlined.Receipt
 import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material3.*
@@ -14,7 +19,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -233,6 +240,97 @@ fun OrderCard(order: Order, d: Dimens) {
                 }
             }
 
+            // Result codes section (for completed orders)
+            val cleanedResult = cleanResultCodes(order.resultCodes)
+            if (!cleanedResult.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(d.space8))
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                Spacer(modifier = Modifier.height(d.space8))
+
+                var expanded by remember { mutableStateOf(false) }
+                val clipboardManager = LocalClipboardManager.current
+                val snackbarHostState = remember { SnackbarHostState() }
+                val copiedText = stringResource(R.string.copied)
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateContentSize()
+                ) {
+                    // Header row with expand/collapse and copy
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.order_result),
+                                fontSize = d.font13,
+                                fontWeight = FontWeight.SemiBold,
+                                color = SuccessGreen
+                            )
+                            IconButton(
+                                onClick = { expanded = !expanded },
+                                modifier = Modifier.size(d.icon24)
+                            ) {
+                                Icon(
+                                    if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                    contentDescription = null,
+                                    tint = SuccessGreen,
+                                    modifier = Modifier.size(d.icon16)
+                                )
+                            }
+                        }
+
+                        var showCopied by remember { mutableStateOf(false) }
+                        LaunchedEffect(showCopied) {
+                            if (showCopied) {
+                                delay(1500)
+                                showCopied = false
+                            }
+                        }
+
+                        if (showCopied) {
+                            Text(
+                                text = copiedText,
+                                fontSize = d.font11,
+                                color = SuccessGreen
+                            )
+                        }
+
+                        IconButton(
+                            onClick = {
+                                clipboardManager.setText(AnnotatedString(cleanedResult))
+                                showCopied = true
+                            },
+                            modifier = Modifier.size(d.icon24)
+                        ) {
+                            Icon(
+                                Icons.Default.ContentCopy,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                                modifier = Modifier.size(d.icon16)
+                            )
+                        }
+                    }
+
+                    // Result content (collapsed = 2 lines, expanded = full)
+                    SelectionContainer {
+                        Text(
+                            text = cleanedResult,
+                            fontSize = d.font12,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
+                            maxLines = if (expanded) Int.MAX_VALUE else 2,
+                            modifier = Modifier.padding(top = d.space4)
+                        )
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(d.space10))
 
             // Footer: total + date
@@ -283,4 +381,23 @@ private fun extractFieldDisplay(imei: String?, metadata: String?): String? {
             if (value.isNotBlank()) value else null
         } else null
     } catch (_: Exception) { null }
+}
+
+/**
+ * Clean HTML tags from resultCodes and convert <br> to newlines.
+ * e.g. "IMEI Number: 365852564578543<br>Find My: <span style=\"color:green\">OFF</span><br>" 
+ *   → "IMEI Number: 365852564578543\nFind My: OFF"
+ */
+private fun cleanResultCodes(resultCodes: String?): String? {
+    if (resultCodes.isNullOrBlank()) return null
+    return resultCodes
+        .replace(Regex("<br\\s*/?>\\s*"), "\n")   // <br> → newline
+        .replace(Regex("<[^>]+>"), "")              // strip all other HTML tags
+        .replace(Regex("&amp;"), "&")
+        .replace(Regex("&lt;"), "<")
+        .replace(Regex("&gt;"), ">")
+        .replace(Regex("&quot;"), "\"")
+        .replace(Regex("&#39;"), "'")
+        .trim()
+        .ifBlank { null }
 }

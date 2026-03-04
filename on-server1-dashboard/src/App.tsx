@@ -11,6 +11,7 @@ import Categories from './pages/Categories';
 import Settings from './pages/Settings';
 import Deposits from './pages/Deposits';
 import EmailSettings from './pages/EmailSettings';
+import PaymentGateways from './pages/PaymentGateways';
 import Sidebar from './components/Sidebar';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 
@@ -77,6 +78,7 @@ export default function App() {
         <Route path="/categories" element={<WrappedRoute><Categories /></WrappedRoute>} />
         <Route path="/orders" element={<WrappedRoute><Orders /></WrappedRoute>} />
         <Route path="/deposits" element={<WrappedRoute><Deposits /></WrappedRoute>} />
+        <Route path="/payment-gateways" element={<WrappedRoute><PaymentGateways /></WrappedRoute>} />
         <Route path="/users" element={<WrappedRoute><Users /></WrappedRoute>} />
         <Route path="/banners" element={<WrappedRoute><Banners /></WrappedRoute>} />
         <Route path="/email" element={<WrappedRoute><EmailSettings /></WrappedRoute>} />

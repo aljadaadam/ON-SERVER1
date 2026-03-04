@@ -65,8 +65,8 @@ data class BottomNavItem(
 
 val bottomNavItems = listOf(
     BottomNavItem(Screen.Home, R.string.home, Icons.Filled.Home, Icons.Outlined.Home),
-    BottomNavItem(Screen.Services, R.string.server_services, Icons.Filled.Dns, Icons.Outlined.Dns),
-    BottomNavItem(Screen.RemoteServices, R.string.remote_services, Icons.Filled.Cloud, Icons.Outlined.Cloud),
+    BottomNavItem(Screen.Services, R.string.server_services, Icons.Filled.Inventory2, Icons.Outlined.Inventory2),
+    BottomNavItem(Screen.RemoteServices, R.string.remote_services, Icons.Filled.SupportAgent, Icons.Outlined.SupportAgent),
     BottomNavItem(Screen.Games, R.string.imei_services, Icons.Filled.PhoneAndroid, Icons.Outlined.PhoneAndroid),
     BottomNavItem(Screen.Profile, R.string.my_account, Icons.Filled.Person, Icons.Outlined.Person),
 )

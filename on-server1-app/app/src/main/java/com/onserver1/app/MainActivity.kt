@@ -1,5 +1,6 @@
 package com.onserver1.app
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -21,6 +22,7 @@ import com.onserver1.app.navigation.AppNavigation
 import com.onserver1.app.ui.screens.maintenance.MaintenanceScreen
 import com.onserver1.app.ui.screens.maintenance.MaintenanceViewModel
 import com.onserver1.app.ui.theme.OnServer1Theme
+import com.onserver1.app.util.LocaleHelper
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -29,6 +31,10 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var tokenManager: TokenManager
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Install splash screen and dismiss immediately (no icon)

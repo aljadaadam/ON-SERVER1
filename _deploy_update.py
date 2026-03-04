@@ -9,12 +9,12 @@ ADMIN_SLUG = "ctrl-7x9a3k"
 def ssh_exec(ssh, cmd, timeout=180):
     print(f"\n>>> {cmd}")
     stdin, stdout, stderr = ssh.exec_command(cmd, timeout=timeout)
-    out = stdout.read().decode()
-    err = stderr.read().decode()
+    out = stdout.read().decode('utf-8', errors='replace')
+    err = stderr.read().decode('utf-8', errors='replace')
     if out.strip():
-        print(out.strip())
+        print(out.strip().encode('ascii', errors='replace').decode())
     if err.strip():
-        print(f"STDERR: {err.strip()}")
+        print(f"STDERR: {err.strip().encode('ascii', errors='replace').decode()}")
     return out.strip()
 
 ssh = paramiko.SSHClient()

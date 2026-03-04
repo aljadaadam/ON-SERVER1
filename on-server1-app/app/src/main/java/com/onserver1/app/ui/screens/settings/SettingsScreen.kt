@@ -1,6 +1,8 @@
 package com.onserver1.app.ui.screens.settings
 
+import android.app.Activity
 import android.content.Context
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.onserver1.app.R
 import com.onserver1.app.ui.theme.*
+import com.onserver1.app.util.LocaleHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,6 +39,23 @@ fun SettingsScreen(
     val splashPrefs = context.getSharedPreferences("splash_prefs", Context.MODE_PRIVATE)
     var cinematicSplash by remember { mutableStateOf(splashPrefs.getBoolean("cinematic_splash", true)) }
     var notificationsEnabled by remember { mutableStateOf(true) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+    val currentLanguage = remember { LocaleHelper.getEffectiveLanguage(context) }
+    val currentLanguageLabel = if (currentLanguage == "ar") "العربية" else "English"
+
+    // Language picker dialog
+    if (showLanguageDialog) {
+        LanguagePickerDialog(
+            currentLanguage = currentLanguage,
+            onDismiss = { showLanguageDialog = false },
+            onLanguageSelected = { langCode ->
+                showLanguageDialog = false
+                LocaleHelper.saveLanguage(context, langCode)
+                // Recreate activity to apply new locale
+                (context as? Activity)?.recreate()
+            }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -82,8 +102,8 @@ fun SettingsScreen(
                 SettingsItem(
                     icon = Icons.Outlined.Language,
                     title = stringResource(R.string.settings_language),
-                    subtitle = stringResource(R.string.settings_language_value),
-                    onClick = { },
+                    subtitle = currentLanguageLabel,
+                    onClick = { showLanguageDialog = true },
                     d = d
                 )
                 HorizontalDivider(
@@ -301,4 +321,77 @@ fun SettingsToggleItem(
             )
         )
     }
+}
+
+@Composable
+fun LanguagePickerDialog(
+    currentLanguage: String,
+    onDismiss: () -> Unit,
+    onLanguageSelected: (String) -> Unit
+) {
+    val d = LocalDimens.current
+    val languages = listOf(
+        "ar" to "العربية",
+        "en" to "English"
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        title = {
+            Text(
+                text = stringResource(R.string.settings_language),
+                fontWeight = FontWeight.Bold,
+                fontSize = d.font18
+            )
+        },
+        text = {
+            Column {
+                languages.forEach { (code, label) ->
+                    val isSelected = code == currentLanguage
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(d.corner8),
+                        color = if (isSelected) AccentYellow.copy(alpha = 0.15f) else Color.Transparent
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    if (!isSelected) onLanguageSelected(code)
+                                }
+                                .padding(horizontal = d.space12, vertical = d.space12),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = isSelected,
+                                onClick = {
+                                    if (!isSelected) onLanguageSelected(code)
+                                },
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = AccentYellow,
+                                    unselectedColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                                )
+                            )
+                            Spacer(modifier = Modifier.width(d.space8))
+                            Text(
+                                text = label,
+                                fontSize = d.font16,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                color = if (isSelected) AccentYellow else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(
+                    text = stringResource(R.string.dialog_cancel),
+                    color = AccentYellow
+                )
+            }
+        }
+    )
 }

@@ -236,7 +236,18 @@ data class Deposit(
 data class GatewayInfo(
     val usdt: UsdtGateway,
     val bankak: BankakGateway,
-    val currency: String
+    val currency: String,
+    val gateways: List<PaymentGatewayItem>? = null
+)
+
+data class PaymentGatewayItem(
+    val id: String,
+    val name: String,
+    val nameEn: String? = null,
+    val type: String,
+    val icon: String? = null,
+    val color: String? = null,
+    val sortOrder: Int = 0
 )
 
 data class UsdtGateway(

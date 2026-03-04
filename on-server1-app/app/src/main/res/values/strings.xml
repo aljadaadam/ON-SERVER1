@@ -53,11 +53,16 @@
     <string name="games_label">Games</string>
     <string name="gifts">Gifts</string>
     <string name="subscriptions">Subscriptions</string>
-    <string name="programs_software">Programs &amp; Software</string>
+    <string name="programs_software">Diverse Services</string>
     <string name="tools_activations">Tools &amp;\nActivations</string>
     <string name="flash_firmware">Flash &amp;\nFirmware</string>
     <string name="licenses">Licenses</string>
     <string name="schematics">Schematics</string>
+    <string name="network_unlock">Network\nUnlock</string>
+    <string name="icloud_services">iCloud\nServices</string>
+    <string name="remote_services_short">Remote\nServices</string>
+    <string name="cards_games">Cards &amp;\nGames</string>
+    <string name="digital_subs">Digital\nSubscriptions</string>
     <string name="notifications">Notifications</string>
 
     <!-- Services -->
@@ -99,6 +104,8 @@
     <string name="no_orders">No orders yet</string>
     <string name="product">Product</string>
     <string name="more_items">+%d more items</string>
+    <string name="order_result">Result</string>
+    <string name="copied">Copied!</string>
     <string name="status_completed">Completed</string>
     <string name="status_delivered">Delivered</string>
     <string name="status_pending">Pending</string>
@@ -163,7 +170,7 @@
     <string name="about_description">ON-SERVER1 is your one-stop platform for digital services, game cards, gift cards, and mobile recharge. Fast, secure, and reliable.</string>
     <string name="about_rate_app">Rate App</string>
     <string name="about_share_app">Share App</string>
-    <string name="about_developer">Made with ❤ by ON-SERVER1 Team</string>
+    <string name="about_developer">Made with ❤ by nexiroflux.com</string>
 
     <!-- Dialog -->
     <string name="dialog_error_title">Error</string>

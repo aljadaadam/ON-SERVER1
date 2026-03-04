@@ -136,29 +136,65 @@ fun AddBalanceScreen(
 
             Spacer(modifier = Modifier.height(d.space12))
 
-            // USDT Gateway
-            GatewayCard(
-                title = "USDT",
-                subtitle = stringResource(R.string.deposit_usdt_desc),
-                icon = Icons.Default.CurrencyBitcoin,
-                isSelected = selectedGateway == "USDT",
-                gradientColors = listOf(Color(0xFF26A17B), Color(0xFF1A7A5C)),
-                onClick = { selectedGateway = "USDT" },
-                d = d
-            )
+            // USDT Gateway - show only if active in gateways list
+            val activeGateways = state.gatewayInfo?.gateways
+            val isUsdtActive = activeGateways == null || activeGateways.any {
+                it.nameEn.equals("USDT", ignoreCase = true) || it.name.equals("USDT", ignoreCase = true)
+            }
+            val isBankakActive = activeGateways == null || activeGateways.any {
+                it.nameEn.equals("Bankak", ignoreCase = true) || it.name.contains("بنك")
+            }
 
-            Spacer(modifier = Modifier.height(d.space12))
+            if (isUsdtActive) {
+                GatewayCard(
+                    title = "USDT",
+                    subtitle = stringResource(R.string.deposit_usdt_desc),
+                    icon = Icons.Default.CurrencyBitcoin,
+                    isSelected = selectedGateway == "USDT",
+                    gradientColors = listOf(Color(0xFF26A17B), Color(0xFF1A7A5C)),
+                    onClick = { selectedGateway = "USDT" },
+                    d = d
+                )
+                Spacer(modifier = Modifier.height(d.space12))
+            }
 
-            // Bankak Gateway
-            GatewayCard(
-                title = stringResource(R.string.deposit_bankak),
-                subtitle = stringResource(R.string.deposit_bankak_desc),
-                imageUrl = "https://6990ab01681c79fa0bccfe99.imgix.net/bank.png",
-                isSelected = selectedGateway == "BANKAK",
-                gradientColors = listOf(Color(0xFFE52228), Color(0xFFC41E22)),
-                onClick = { selectedGateway = "BANKAK" },
-                d = d
-            )
+            if (isBankakActive) {
+                // Bankak Gateway
+                GatewayCard(
+                    title = stringResource(R.string.deposit_bankak),
+                    subtitle = stringResource(R.string.deposit_bankak_desc),
+                    imageUrl = "https://6990ab01681c79fa0bccfe99.imgix.net/bank.png",
+                    isSelected = selectedGateway == "BANKAK",
+                    gradientColors = listOf(Color(0xFFE52228), Color(0xFFC41E22)),
+                    onClick = { selectedGateway = "BANKAK" },
+                    d = d
+                )
+                Spacer(modifier = Modifier.height(d.space12))
+            }
+
+            // Show any additional gateways from the API (non USDT/Bankak)
+            activeGateways?.filter { gw ->
+                !gw.nameEn.equals("USDT", ignoreCase = true) &&
+                !gw.name.equals("USDT", ignoreCase = true) &&
+                !gw.nameEn.equals("Bankak", ignoreCase = true) &&
+                !gw.name.contains("بنك")
+            }?.forEach { gw ->
+                val gwColor = try {
+                    Color(android.graphics.Color.parseColor(gw.color ?: "#6B7280"))
+                } catch (_: Exception) { Color(0xFF6B7280) }
+                val gwColorDark = gwColor.copy(alpha = 0.8f)
+
+                GatewayCard(
+                    title = gw.name,
+                    subtitle = gw.nameEn ?: gw.type,
+                    icon = Icons.Default.AccountBalance,
+                    isSelected = selectedGateway == gw.nameEn?.uppercase(),
+                    gradientColors = listOf(gwColor, gwColorDark),
+                    onClick = { selectedGateway = gw.nameEn?.uppercase() ?: gw.name },
+                    d = d
+                )
+                Spacer(modifier = Modifier.height(d.space12))
+            }
 
             Spacer(modifier = Modifier.height(d.space24))
 

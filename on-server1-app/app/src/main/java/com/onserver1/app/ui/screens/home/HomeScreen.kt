@@ -2,6 +2,7 @@ package com.onserver1.app.ui.screens.home
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -43,6 +44,7 @@ fun HomeScreen(
     onProductClick: (String) -> Unit,
     onViewAll: () -> Unit,
     onAddBalance: () -> Unit = {},
+    onNavigateToScreen: (String) -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -173,16 +175,16 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(d.space8))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = d.screenPadding),
-            horizontalArrangement = Arrangement.SpaceEvenly
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = d.screenPadding),
+            horizontalArrangement = Arrangement.spacedBy(d.space12)
         ) {
-            SoftwareItem(icon = Icons.Default.Build, label = stringResource(R.string.tools_activations), d = d)
-            SoftwareItem(icon = Icons.Default.PhoneAndroid, label = stringResource(R.string.flash_firmware), d = d)
-            SoftwareItem(icon = Icons.Default.VpnKey, label = stringResource(R.string.licenses), d = d)
-            SoftwareItem(icon = Icons.Default.Memory, label = stringResource(R.string.schematics), d = d)
+            item { SoftwareItem(icon = Icons.Default.Build, label = stringResource(R.string.tools_activations), d = d, onClick = { onNavigateToScreen("services") }) }
+            item { SoftwareItem(icon = Icons.Default.LockOpen, label = stringResource(R.string.network_unlock), d = d, onClick = { onNavigateToScreen("games") }) }
+            item { SoftwareItem(icon = Icons.Default.Cloud, label = stringResource(R.string.icloud_services), d = d, onClick = { onNavigateToScreen("games") }) }
+            item { SoftwareItem(icon = Icons.Default.SupportAgent, label = stringResource(R.string.remote_services_short), d = d, onClick = { onNavigateToScreen("remote_services") }) }
+            item { SoftwareItem(icon = Icons.Default.SportsEsports, label = stringResource(R.string.cards_games), d = d, onClick = { onNavigateToScreen("services") }) }
+            item { SoftwareItem(icon = Icons.Default.Subscriptions, label = stringResource(R.string.digital_subs), d = d, onClick = { onNavigateToScreen("services") }) }
         }
 
         Spacer(modifier = Modifier.height(d.space16))
@@ -246,11 +248,15 @@ fun HomeScreen(
 fun SoftwareItem(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
-    d: com.onserver1.app.ui.theme.Dimens
+    d: com.onserver1.app.ui.theme.Dimens,
+    onClick: () -> Unit = {}
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(d.quickActionSize + 8.dp)
+        modifier = Modifier
+            .width(d.quickActionSize + 8.dp)
+            .clip(RoundedCornerShape(d.corner12))
+            .clickable(onClick = onClick)
     ) {
         Card(
             shape = RoundedCornerShape(d.corner12),

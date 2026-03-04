@@ -115,10 +115,13 @@ export class CronService {
             }
           } else if (result.status === 'REJECTED') {
             // Order rejected — refund user
+            // Use result.codes (actual DHRU response text) as the rejection reason
+            const rejectionReason = result.codes || result.message || 'مرفوض من المزود';
             await prisma.order.update({
               where: { id: order.id },
               data: {
                 status: 'REJECTED',
+                resultCodes: `سبب الرفض: ${rejectionReason}`,
                 responseData: JSON.stringify(result.rawResponse),
               },
             });

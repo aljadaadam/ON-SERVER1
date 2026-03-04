@@ -54,11 +54,16 @@
     <string name="games_label">ألعاب</string>
     <string name="gifts">هدايا</string>
     <string name="subscriptions">اشتراكات</string>
-    <string name="programs_software">برامج وسوفت وير</string>
+    <string name="programs_software">خدمات متنوعة</string>
     <string name="tools_activations">أدوات\nوتفعيلات</string>
     <string name="flash_firmware">فلاش\nوفيرم وير</string>
     <string name="licenses">تراخيص</string>
     <string name="schematics">مخططات</string>
+    <string name="network_unlock">فك\nشبكات</string>
+    <string name="icloud_services">خدمات\niCloud</string>
+    <string name="remote_services_short">خدمات\nعن بعد</string>
+    <string name="cards_games">بطاقات\nوألعاب</string>
+    <string name="digital_subs">اشتراكات\nرقمية</string>
     <string name="notifications">الإشعارات</string>
 
     <!-- Services -->
@@ -100,6 +105,8 @@
     <string name="no_orders">لا توجد طلبات بعد</string>
     <string name="product">المنتج</string>
     <string name="more_items">+%d منتجات أخرى</string>
+    <string name="order_result">النتيجة</string>
+    <string name="copied">تم النسخ!</string>
     <string name="status_completed">مكتمل</string>
     <string name="status_delivered">تم التسليم</string>
     <string name="status_pending">في الانتظار</string>
@@ -164,7 +171,7 @@
     <string name="about_description">ON-SERVER1 منصتك المتكاملة للخدمات الرقمية وبطاقات الألعاب وبطاقات الهدايا وشحن الجوال. سريعة وآمنة وموثوقة.</string>
     <string name="about_rate_app">تقييم التطبيق</string>
     <string name="about_share_app">مشاركة التطبيق</string>
-    <string name="about_developer">صُنع بـ ❤ بواسطة فريق ON-SERVER1</string>
+    <string name="about_developer">صُنع بـ ❤ بواسطة nexiroflux.com</string>
 
     <!-- Dialog -->
     <string name="dialog_error_title">خطأ</string>

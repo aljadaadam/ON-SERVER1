@@ -33,6 +33,7 @@ import com.onserver1.app.ui.theme.AccentYellow
 import com.onserver1.app.ui.theme.ErrorRed
 import com.onserver1.app.ui.theme.LocalDimens
 import com.onserver1.app.ui.theme.SuccessGreen
+import com.onserver1.app.util.FieldTranslator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -216,7 +217,8 @@ fun ProductDetailScreen(
                         Spacer(Modifier.height(d.space8))
                         state.fields.forEach { field ->
                             // Determine label: trim name, fallback to key if blank
-                            val label = field.name.trim().ifBlank { field.key }
+                            val rawLabel = field.name.trim().ifBlank { field.key }
+                            val label = if (isArabic) FieldTranslator.translate(rawLabel) else rawLabel
                             val isNumberField = field.type.equals("NUMBER", ignoreCase = true)
                             val isTextArea = field.type.equals("TEXTAREA", ignoreCase = true)
 

@@ -281,4 +281,74 @@ router.post('/test-email', async (req: Request, res: Response, next: NextFunctio
   }
 });
 
+// ============================================
+// Payment Gateways CRUD
+// ============================================
+
+// GET /api/admin/payment-gateways - Get all gateways
+router.get('/payment-gateways', async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const gateways = await prisma.paymentGateway.findMany({ orderBy: { sortOrder: 'asc' } });
+    res.json({ success: true, data: gateways });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// POST /api/admin/payment-gateways - Create gateway
+router.post('/payment-gateways', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { name, nameEn, type, icon, color, config, sortOrder, isActive } = req.body;
+    const gateway = await prisma.paymentGateway.create({
+      data: {
+        name,
+        nameEn: nameEn || null,
+        type: type || 'BANK',
+        icon: icon || null,
+        color: color || null,
+        config: config ? (typeof config === 'string' ? config : JSON.stringify(config)) : null,
+        sortOrder: sortOrder || 0,
+        isActive: isActive !== undefined ? isActive : true,
+      },
+    });
+    res.status(201).json({ success: true, data: gateway });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// PUT /api/admin/payment-gateways/:id - Update gateway
+router.put('/payment-gateways/:id', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { name, nameEn, type, icon, color, config, sortOrder, isActive } = req.body;
+    const data: any = {};
+    if (name !== undefined) data.name = name;
+    if (nameEn !== undefined) data.nameEn = nameEn;
+    if (type !== undefined) data.type = type;
+    if (icon !== undefined) data.icon = icon;
+    if (color !== undefined) data.color = color;
+    if (config !== undefined) data.config = typeof config === 'string' ? config : JSON.stringify(config);
+    if (sortOrder !== undefined) data.sortOrder = sortOrder;
+    if (isActive !== undefined) data.isActive = isActive;
+
+    const gateway = await prisma.paymentGateway.update({
+      where: { id: req.params.id as string },
+      data,
+    });
+    res.json({ success: true, data: gateway });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/admin/payment-gateways/:id - Delete gateway
+router.delete('/payment-gateways/:id', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await prisma.paymentGateway.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'تم حذف بوابة الدفع' });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

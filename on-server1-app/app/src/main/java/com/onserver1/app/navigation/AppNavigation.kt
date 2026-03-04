@@ -174,6 +174,9 @@ fun AppNavigation(tokenManager: TokenManager) {
                     },
                     onAddBalance = {
                         navController.navigate(Screen.AddBalance.route)
+                    },
+                    onNavigateToScreen = { route ->
+                        navController.navigate(route)
                     }
                 )
             }

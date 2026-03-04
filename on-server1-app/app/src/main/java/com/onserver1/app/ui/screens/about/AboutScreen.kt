@@ -1,5 +1,8 @@
 package com.onserver1.app.ui.screens.about
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -15,9 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.onserver1.app.BuildConfig
 import com.onserver1.app.R
 import com.onserver1.app.ui.theme.*
 
@@ -88,7 +93,7 @@ fun AboutScreen(
             )
 
             Text(
-                text = stringResource(R.string.about_version, "1.0.0"),
+                text = stringResource(R.string.about_version, BuildConfig.VERSION_NAME),
                 fontSize = d.font13,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
             )
@@ -159,14 +164,19 @@ fun AboutScreen(
         Spacer(modifier = Modifier.height(d.space24))
 
         // Developer info
+        val context = LocalContext.current
         Text(
             text = stringResource(R.string.about_developer),
             fontSize = d.font12,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.35f),
+            color = AccentYellow.copy(alpha = 0.7f),
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = d.screenPadding)
+                .clickable {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://nexiroflux.com"))
+                    context.startActivity(intent)
+                }
         )
 
         Spacer(modifier = Modifier.height(d.space16))

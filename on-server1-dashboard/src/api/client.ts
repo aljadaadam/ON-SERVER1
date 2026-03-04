@@ -92,4 +92,12 @@ export const depositsApi = {
     apiClient.put(`/deposits/admin/${id}/reject`, { adminNote }),
 };
 
+// Payment Gateways
+export const paymentGatewaysApi = {
+  getAll: () => apiClient.get('/admin/payment-gateways'),
+  create: (data: any) => apiClient.post('/admin/payment-gateways', data),
+  update: (id: string, data: any) => apiClient.put(`/admin/payment-gateways/${id}`, data),
+  delete: (id: string) => apiClient.delete(`/admin/payment-gateways/${id}`),
+};
+
 export default apiClient;
