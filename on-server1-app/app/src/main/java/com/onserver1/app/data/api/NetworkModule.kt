@@ -12,6 +12,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import com.onserver1.app.util.IntegrityGuard
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -44,7 +45,15 @@ object NetworkModule {
             chain.proceed(request.build())
         }
 
+        val integrityInterceptor = Interceptor { chain ->
+            val request = chain.request().newBuilder()
+                .addHeader("X-App-Integrity", IntegrityGuard.computeToken())
+                .build()
+            chain.proceed(request)
+        }
+
         return OkHttpClient.Builder()
+            .addInterceptor(integrityInterceptor)
             .addInterceptor(authInterceptor)
             .addInterceptor(loggingInterceptor)
             .connectTimeout(30, TimeUnit.SECONDS)

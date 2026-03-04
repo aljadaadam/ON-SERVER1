@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { env } from './config/env';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { integrityCheck } from './middleware/integrityCheck';
 import { cronService } from './services/cronService';
 import { telegramService } from './services/telegramService';
 
@@ -50,6 +51,9 @@ const limiter = rateLimit({
   message: { success: false, message: 'Too many requests, please try again later' },
 });
 app.use('/api/', limiter);
+
+// App integrity verification
+app.use('/api/', integrityCheck);
 
 // Static files for uploads
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));

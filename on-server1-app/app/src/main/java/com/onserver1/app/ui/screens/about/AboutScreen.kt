@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import com.onserver1.app.BuildConfig
 import com.onserver1.app.R
 import com.onserver1.app.ui.theme.*
+import com.onserver1.app.util.IntegrityGuard
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -163,10 +165,13 @@ fun AboutScreen(
 
         Spacer(modifier = Modifier.height(d.space24))
 
-        // Developer info
+        // Developer info — integrity-protected credit
         val context = LocalContext.current
+        val isArabic = Locale.getDefault().language == "ar"
+        val creditText = if (isArabic) IntegrityGuard.resolveCreditAr() else IntegrityGuard.resolveCreditEn()
+        val creditUrl = IntegrityGuard.resolveUrl()
         Text(
-            text = stringResource(R.string.about_developer),
+            text = creditText,
             fontSize = d.font12,
             color = AccentYellow.copy(alpha = 0.7f),
             textAlign = TextAlign.Center,
@@ -174,7 +179,7 @@ fun AboutScreen(
                 .fillMaxWidth()
                 .padding(horizontal = d.screenPadding)
                 .clickable {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://nexiroflux.com"))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(creditUrl))
                     context.startActivity(intent)
                 }
         )

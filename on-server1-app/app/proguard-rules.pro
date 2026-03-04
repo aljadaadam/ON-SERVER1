@@ -13,3 +13,22 @@
 
 # Keep Hilt generated 
 -keep class dagger.hilt.** { *; }
+
+# Obfuscate IntegrityGuard aggressively
+-keepclassmembers class com.onserver1.app.util.IntegrityGuard {
+    public static java.lang.String computeToken();
+    public static java.lang.String resolveCreditEn();
+    public static java.lang.String resolveCreditAr();
+    public static java.lang.String resolveDomain();
+    public static java.lang.String resolveUrl();
+    public static boolean verify();
+}
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+}
+
+# Optimize and obfuscate
+-optimizationpasses 5
+-repackageclasses ''
+-allowaccessmodification
