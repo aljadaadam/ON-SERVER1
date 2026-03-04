@@ -73,6 +73,10 @@
     <string name="select_group">المجموعة</string>
     <string name="all_groups">الكل</string>
 
+    <!-- Remote -->
+    <string name="remote_services">خدمات</string>
+    <string name="search_remote">بحث في الخدمات...</string>
+
     <!-- IMEI -->
     <string name="imei_services">IMEI</string>
     <string name="search_imei">بحث في خدمات IMEI...</string>

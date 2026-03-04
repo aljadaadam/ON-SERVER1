@@ -1,0 +1,102 @@
+Script started
+Paramiko imported OK
+Connecting to SSH...
+Connected!
+=== 1. Color hex codes (gold/cyan/#hex) ===
+8:    <meta name="theme-color" content="#0F0F23">
+21:            --gold: #00D2FF; 
+22:            --gold-dark: #0072FF;
+23:            --gold-light: #E0F7FA;
+24:            --bg-deep: #07071A;
+25:            --bg-dark: #0F0F23;
+26:            --bg-surface: #1A1A2E;
+27:            --bg-card: #16213E;
+28:            --text-white: #FFFFFF;
+29:            --text-gray: #9CA3AF;
+30:            --success: #4CAF50;
+93:            color: var(--gold);
+104:        .nav-logo-text span { color: var(--gold); }
+107:            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+108:            color: #fff;
+167:            color: var(--gold);
+196:            background: linear-gradient(145deg, #111128, #1a1a3e);
+215:            background: conic-gradient(from 0deg, transparent, var(--gold), transparent, transparent);
+233:        .hero h1 .gold { color: var(--gold); }
+235:            background: linear-gradient(135deg, var(--gold), var(--gold-dark), var(--gold));
+269:            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+270:            color: #fff;
+339:            color: var(--gold);
+369:            color: var(--gold);
+430:            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+448:        .feature-icon.gold { background: rgba(0, 210, 255, 0.1); color: var(--gold); }
+453:        .feature-icon.cyan { background: rgba(0, 188, 212, 0.1); }
+502:            background: #000;
+542:            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+561:            color: var(--gold);
+583:            color: var(--gold);
+779:            color: var(--gold);
+799:        .footer-links a:hover { color: var(--gold); }
+855:                        <path d="M38 35V65H44V45L56 65H62V35H56V55L44 35H38Z" fill="#00D2FF" opacity="0.85"/>
+877:                <a href="#features" class="btn-secondary">اكتشف المزيد ↓</a>
+904:                <div class="feature-icon gold">⚡</div>
+929:                <div class="feature-icon cyan">📱</div>
+982:                <h2>تجربة استخدام <span style="color: var(--gold)">استثنائية</span></h2>
+1031:            <h2>حمّل التطبيق <span style="color: var(--gold)">مجاناً</span></h2>
+
+STDERR: TERM environment variable not set.
+
+
+=== 2. :root CSS variables (lines 15-35) ===
+           CSS — ON-SERVER1 Landing Page (Blue Edition)
+           ═══════════════════════════════════════════ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            /* تم تغيير درجات الأصفر والذهبي إلى الأزرق الاحترافي */
+            --gold: #00D2FF; 
+            --gold-dark: #0072FF;
+            --gold-light: #E0F7FA;
+            --bg-deep: #07071A;
+            --bg-dark: #0F0F23;
+            --bg-surface: #1A1A2E;
+            --bg-card: #16213E;
+            --text-white: #FFFFFF;
+            --text-gray: #9CA3AF;
+            --success: #4CAF50;
+            --glow: rgba(0, 210, 255, 0.15);
+        }
+
+        html { scroll-behavior: smooth; }
+
+
+STDERR: TERM environment variable not set.
+
+
+=== 3. stat-number references ===
+336:        .stat-number {
+881:                    <span class="stat-number" data-count="1730">0</span>
+885:                    <span class="stat-number" data-count="24">0</span>
+889:                    <span class="stat-number" data-count="99">0</span>
+1137:        document.querySelectorAll('.stat-number').forEach(el => counterObserver.observe(el));
+
+STDERR: TERM environment variable not set.
+
+
+=== 4. gradient-text / hero h1 ===
+224:        .hero h1 {
+233:        .hero h1 .gold { color: var(--gold); }
+234:        .hero h1 .gradient-text {
+863:                <span class="gradient-text">تطبيق واحد</span>
+
+STDERR: TERM environment variable not set.
+
+
+=== 5. btn-primary / btn-secondary ===
+305:        .btn-secondary {
+320:        .btn-secondary:hover {
+877:                <a href="#features" class="btn-secondary">اكتشف المزيد ↓</a>
+
+STDERR: TERM environment variable not set.
+
+
+Done.

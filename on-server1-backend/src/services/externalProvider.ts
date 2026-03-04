@@ -509,6 +509,25 @@ export class ExternalProviderService {
                   }
                 }
 
+                // For REMOTE-type services, add default remote access fields if none from API
+                if (svcType === 'REMOTE' && fields.length === 0) {
+                  const nameLower = (svc.SERVICENAME || '').toLowerCase();
+                  if (nameLower.includes('frp') || nameLower.includes('unlock') || nameLower.includes('flash') || nameLower.includes('fix') || nameLower.includes('remove') || nameLower.includes('reset')) {
+                    // FRP / unlock / flash services need IMEI + TeamViewer
+                    allFields.push(
+                      { name: 'IMEI', key: 'IMEI', type: 'TEXT', required: true },
+                      { name: 'TeamViewer ID', key: 'TeamViewer ID', type: 'TEXT', required: true },
+                      { name: 'Password', key: 'Password', type: 'TEXT', required: true },
+                    );
+                  } else {
+                    // Tool rental / generic remote services need TeamViewer + Password
+                    allFields.push(
+                      { name: 'TeamViewer ID', key: 'TeamViewer ID', type: 'TEXT', required: true },
+                      { name: 'Password', key: 'Password', type: 'TEXT', required: true },
+                    );
+                  }
+                }
+
                 // Only use actual custom fields from the API response
                 // Do NOT fabricate default fields for SERVER products
                 // If the API doesn't define custom fields, the product doesn't need any input

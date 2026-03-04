@@ -1,23 +1,27 @@
-import paramiko, json, time
+import paramiko
 
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 ssh.connect('153.92.208.129', username='root', password='Mahe1000amd@')
 
-# Test OPTIONS preflight
-cmd1 = 'curl -s -X OPTIONS https://on-server2.com/api/auth/login -H "Origin: https://on-server2.com" -H "Access-Control-Request-Method: POST" -H "Access-Control-Request-Headers: Content-Type" -D - -o /dev/null'
-stdin, stdout, stderr = ssh.exec_command(cmd1)
-print("=== OPTIONS preflight ===")
+# Check stat-number styles on deployed page
+stdin, stdout, stderr = ssh.exec_command('grep -n "stat-number" /home/www.on-server2.com/public_html/app/index.html')
+print("=== stat-number lines ===")
 print(stdout.read().decode())
 
-# Test POST with Origin header like browser
-cmd2 = """curl -s -X POST https://on-server2.com/api/auth/login -H "Content-Type: application/json" -H "Origin: https://on-server2.com" -D - -d '{"email":"admin@onserver1.com","password":"admin123456"}'"""
-stdin, stdout, stderr = ssh.exec_command(cmd2)
-print("=== POST with Origin (response headers + body) ===")
-print(stdout.read().decode()[:800])
+# Check for any cyan/blue color codes
+stdin, stdout, stderr = ssh.exec_command("grep -in 'cyan\\|00BCD4\\|22D3EE\\|06B6D4\\|0EA5E9\\|38BDF8\\|00D4FF\\|00BFFF\\|1CC7D0\\|0891b2\\|67E8F9' /home/www.on-server2.com/public_html/app/index.html")
+print("=== Cyan/blue colors ===")
+print(stdout.read().decode())
 
-# Also flush logs and check after this test
-stdin, stdout, stderr = ssh.exec_command('pm2 flush on-server1-backend 2>&1')
-stdout.read()
+# Get the stat-number CSS block context
+stdin, stdout, stderr = ssh.exec_command("grep -n -A5 'stat-number' /home/www.on-server2.com/public_html/app/index.html | head -30")
+print("=== stat-number with context ===")
+print(stdout.read().decode())
+
+# Check what --gold resolves to
+stdin, stdout, stderr = ssh.exec_command("grep -n 'gold' /home/www.on-server2.com/public_html/app/index.html | head -10")
+print("=== gold variable ===")
+print(stdout.read().decode())
 
 ssh.close()

@@ -5,14 +5,14 @@ USER = "root"
 PASS = "Mahe1000amd@"
 
 LOCAL_APK = r"c:\Users\Eng-adam\ON-SERVER1\on-server1-app\app\build\outputs\apk\release\app-release.apk"
-REMOTE_APK = "/home/on-server2.com/public_html/downloads/on-server1.apk"
+REMOTE_APK = "/home/www.on-server2.com/public_html/downloads/on-server1.apk"
 
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 print("Connecting...")
 ssh.connect(HOST, username=USER, password=PASS)
 print("Connected. Ensuring directory exists...")
-ssh.exec_command("mkdir -p /home/on-server2.com/public_html/downloads")
+ssh.exec_command("mkdir -p /home/www.on-server2.com/public_html/downloads")
 import time; time.sleep(1)
 print("Uploading APK...")
 sftp = ssh.open_sftp()

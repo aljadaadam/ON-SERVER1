@@ -25,6 +25,7 @@ sealed class Screen(val route: String) {
     // Main
     data object Home : Screen("home")
     data object Services : Screen("services")
+    data object RemoteServices : Screen("remote_services")
     data object Games : Screen("games")
     data object Profile : Screen("profile")
 
@@ -65,6 +66,7 @@ data class BottomNavItem(
 val bottomNavItems = listOf(
     BottomNavItem(Screen.Home, R.string.home, Icons.Filled.Home, Icons.Outlined.Home),
     BottomNavItem(Screen.Services, R.string.server_services, Icons.Filled.Dns, Icons.Outlined.Dns),
+    BottomNavItem(Screen.RemoteServices, R.string.remote_services, Icons.Filled.Cloud, Icons.Outlined.Cloud),
     BottomNavItem(Screen.Games, R.string.imei_services, Icons.Filled.PhoneAndroid, Icons.Outlined.PhoneAndroid),
     BottomNavItem(Screen.Profile, R.string.my_account, Icons.Filled.Person, Icons.Outlined.Person),
 )

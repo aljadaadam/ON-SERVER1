@@ -22,6 +22,7 @@ import com.onserver1.app.ui.screens.splash.SplashScreen
 import com.onserver1.app.ui.screens.home.HomeScreen
 import com.onserver1.app.ui.screens.services.ServicesScreen
 import com.onserver1.app.ui.screens.games.GamesScreen
+import com.onserver1.app.ui.screens.remote.RemoteServicesScreen
 import com.onserver1.app.ui.screens.profile.ProfileScreen
 import com.onserver1.app.ui.screens.orders.OrdersScreen
 import com.onserver1.app.ui.screens.transactions.TransactionsScreen
@@ -187,6 +188,14 @@ fun AppNavigation(tokenManager: TokenManager) {
 
             composable(Screen.Games.route) {
                 GamesScreen(
+                    onProductClick = { productId ->
+                        navController.navigate(Screen.ProductDetail.createRoute(productId))
+                    }
+                )
+            }
+
+            composable(Screen.RemoteServices.route) {
+                RemoteServicesScreen(
                     onProductClick = { productId ->
                         navController.navigate(Screen.ProductDetail.createRoute(productId))
                     }

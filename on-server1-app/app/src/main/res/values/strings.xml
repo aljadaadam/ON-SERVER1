@@ -72,6 +72,10 @@
     <string name="select_group">Group</string>
     <string name="all_groups">All</string>
 
+    <!-- Remote -->
+    <string name="remote_services">Services</string>
+    <string name="search_remote">Search remote services…</string>
+
     <!-- IMEI -->
     <string name="imei_services">IMEI</string>
     <string name="search_imei">Search IMEI services…</string>
