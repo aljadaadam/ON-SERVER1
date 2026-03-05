@@ -17,6 +17,7 @@ export interface ServiceField {
   key: string;     // Field identifier
   type: string;    // "text", "textarea", etc.
   required: boolean;
+  isImplicit?: boolean;  // true = built-in IMEI field (needs Luhn validation)
 }
 
 /** Parsed service from DHRU FUSION API */
@@ -492,48 +493,13 @@ export class ExternalProviderService {
               maxQnt: parseInt(svc.MAXQNT || '0', 10),
               deliveryTime: svc.TIME || '',
               groupName,
+              // IMEI-type services always need an IMEI input field for the <IMEI> XML tag.
+              // Only add it if no existing field already serves as the IMEI input.
               fields: (() => {
-                const allFields: ServiceField[] = [];
-                // For IMEI-type services, add IMEI field only if no custom field already contains "IMEI"
-                if (svcType === 'IMEI') {
-                  const hasImeiField = fields.some(f =>
-                    f.name.toUpperCase().includes('IMEI') || f.key.toUpperCase().includes('IMEI')
-                  );
-                  if (!hasImeiField) {
-                    allFields.push({
-                      name: 'IMEI',
-                      key: 'IMEI',
-                      type: 'NUMBER',
-                      required: true,
-                    });
-                  }
+                if (svcType === 'IMEI' && fields.length === 0) {
+                  return [{ name: 'IMEI', key: 'IMEI', type: 'NUMBER', required: true }];
                 }
-
-                // For REMOTE-type services, add default remote access fields if none from API
-                if (svcType === 'REMOTE' && fields.length === 0) {
-                  const nameLower = (svc.SERVICENAME || '').toLowerCase();
-                  if (nameLower.includes('frp') || nameLower.includes('unlock') || nameLower.includes('flash') || nameLower.includes('fix') || nameLower.includes('remove') || nameLower.includes('reset')) {
-                    // FRP / unlock / flash services need IMEI + TeamViewer
-                    allFields.push(
-                      { name: 'IMEI', key: 'IMEI', type: 'TEXT', required: true },
-                      { name: 'TeamViewer ID', key: 'TeamViewer ID', type: 'TEXT', required: true },
-                      { name: 'Password', key: 'Password', type: 'TEXT', required: true },
-                    );
-                  } else {
-                    // Tool rental / generic remote services need TeamViewer + Password
-                    allFields.push(
-                      { name: 'TeamViewer ID', key: 'TeamViewer ID', type: 'TEXT', required: true },
-                      { name: 'Password', key: 'Password', type: 'TEXT', required: true },
-                    );
-                  }
-                }
-
-                // Only use actual custom fields from the API response
-                // Do NOT fabricate default fields for SERVER products
-                // If the API doesn't define custom fields, the product doesn't need any input
-
-                allFields.push(...fields);
-                return allFields;
+                return fields;
               })(),
             });
           }
@@ -561,7 +527,7 @@ export class ExternalProviderService {
       // Build XML parameters
       let xml = `<PARAMETERS><ID>${serviceId}</ID><IMEI>${imei}</IMEI>`;
       
-      if (quantity && quantity > 1) {
+      if (quantity !== undefined && quantity !== null) {
         xml += `<QNT>${quantity}</QNT>`;
       }
 

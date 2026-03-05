@@ -46,3 +46,6 @@ local.properties
 *.apk
 *.aab
 *.keystore
+
+# Deployment scripts
+_*.py

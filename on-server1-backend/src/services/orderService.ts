@@ -258,7 +258,7 @@ export class OrderService {
         const result = await externalProvider.placeOrder(
           product.externalId,
           imei,
-          item.quantity > 1 ? item.quantity : undefined,
+          product.supportsQnt ? item.quantity : undefined,
           customFields
         );
 

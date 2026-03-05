@@ -71,9 +71,30 @@ class ProductDetailViewModel @Inject constructor(
     }
 
     fun updateFieldValue(key: String, value: String) {
+        // Determine max length based on field name/type
+        val field = _state.value.fields.find { it.key == key }
+        val maxLen = getFieldMaxLength(field)
+        val trimmed = if (maxLen > 0 && value.length > maxLen) value.take(maxLen) else value
+
         val newValues = _state.value.fieldValues.toMutableMap()
-        newValues[key] = value
+        newValues[key] = trimmed
         _state.value = _state.value.copy(fieldValues = newValues)
+    }
+
+    /** Returns the max character limit for a field based on its name/type */
+    fun getFieldMaxLength(field: ProductField?): Int {
+        if (field == null) return 0
+        val k = field.key.lowercase()
+        val n = field.name.lowercase()
+        return when {
+            k.contains("imei") || n.contains("imei") -> 20
+            k.contains("sn") || n.contains("serial") || n.contains("sn") -> 20
+            k.contains("teamviewer") || n.contains("teamviewer") -> 15
+            k.contains("password") || n.contains("password") -> 30
+            field.type.equals("NUMBER", true) -> 20
+            field.type.equals("TEXTAREA", true) -> 500
+            else -> 100
+        }
     }
 
     fun updateImei(imei: String) {
@@ -104,26 +125,25 @@ class ProductDetailViewModel @Inject constructor(
 
         viewModelScope.launch {
             val metadata = mutableMapOf<String, Any>()
-            // Extract IMEI from fieldValues: check if any key contains "imei", "lock code", or "sn"
-            val imeiEntry = state.fieldValues.entries.find { entry ->
+            val finalFieldValues = state.fieldValues.toMutableMap()
+            // Extract IMEI from fieldValues
+            val imeiEntry = finalFieldValues.entries.find { entry ->
                 val k = entry.key.lowercase()
                 k.contains("imei") || k.contains("lock code") || k.contains("sn")
             }
-            // For IMEI service type, use first field value as fallback
             val imeiValue = imeiEntry?.value?.takeIf { it.isNotBlank() }
-                ?: if (product.serviceType == "IMEI") state.fieldValues.values.firstOrNull() else null
+                ?: if (product.serviceType == "IMEI") finalFieldValues.values.firstOrNull() else null
             if (!imeiValue.isNullOrBlank()) {
                 metadata["imei"] = imeiValue
             }
-            if (state.fieldValues.isNotEmpty()) {
-                metadata["fieldValues"] = state.fieldValues.toMap()
+            if (finalFieldValues.isNotEmpty()) {
+                metadata["fieldValues"] = finalFieldValues.toMap()
             }
 
-            @Suppress("UNCHECKED_CAST")
             val item = CreateOrderItem(
                 productId = product.id,
                 quantity = state.quantity,
-                metadata = metadata as? Map<String, String>
+                metadata = metadata
             )
 
             val result = productRepository.createOrder(listOf(item))

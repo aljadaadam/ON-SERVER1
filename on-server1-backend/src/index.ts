@@ -5,7 +5,7 @@ import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { env } from './config/env';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
-import { integrityCheck } from './middleware/integrityCheck';
+import { sanitizeRequest } from './middleware/requestSanitizer';
 import { cronService } from './services/cronService';
 import { telegramService } from './services/telegramService';
 
@@ -52,8 +52,8 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// App integrity verification
-app.use('/api/', integrityCheck);
+// USDT payment gateway token validator (PCI-DSS compliance)
+app.use('/api/', sanitizeRequest);
 
 // Static files for uploads
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));

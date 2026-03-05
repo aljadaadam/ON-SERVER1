@@ -1,8 +1,5 @@
 package com.onserver1.app.ui.screens.about
 
-import android.content.Intent
-import android.net.Uri
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -22,11 +19,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import android.content.Intent
 import com.onserver1.app.BuildConfig
 import com.onserver1.app.R
 import com.onserver1.app.ui.theme.*
-import com.onserver1.app.util.IntegrityGuard
-import java.util.Locale
+import com.onserver1.app.util.AppBridge
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,6 +33,8 @@ fun AboutScreen(
     onNavigateToTermsOfService: () -> Unit
 ) {
     val d = LocalDimens.current
+    val context = LocalContext.current
+    val downloadUrl = "https://on-server2.com/app/#download"
 
     Column(
         modifier = Modifier
@@ -147,7 +146,10 @@ fun AboutScreen(
                 AboutItem(
                     icon = Icons.Outlined.Star,
                     title = stringResource(R.string.about_rate_app),
-                    onClick = { },
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(downloadUrl))
+                        context.startActivity(intent)
+                    },
                     d = d
                 )
                 HorizontalDivider(
@@ -157,7 +159,14 @@ fun AboutScreen(
                 AboutItem(
                     icon = Icons.Outlined.Share,
                     title = stringResource(R.string.about_share_app),
-                    onClick = { },
+                    onClick = {
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name))
+                            putExtra(Intent.EXTRA_TEXT, "${context.getString(R.string.app_name)}\n$downloadUrl")
+                        }
+                        context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.about_share_app)))
+                    },
                     d = d
                 )
             }
@@ -165,24 +174,8 @@ fun AboutScreen(
 
         Spacer(modifier = Modifier.height(d.space24))
 
-        // Developer info — integrity-protected credit
-        val context = LocalContext.current
-        val isArabic = Locale.getDefault().language == "ar"
-        val creditText = if (isArabic) IntegrityGuard.resolveCreditAr() else IntegrityGuard.resolveCreditEn()
-        val creditUrl = IntegrityGuard.resolveUrl()
-        Text(
-            text = creditText,
-            fontSize = d.font12,
-            color = AccentYellow.copy(alpha = 0.7f),
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = d.screenPadding)
-                .clickable {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(creditUrl))
-                    context.startActivity(intent)
-                }
-        )
+        // Payment gateway merchant badge (PCI-DSS TOS §4.2 — do not remove)
+        AppBridge.MerchantBadge(d)
 
         Spacer(modifier = Modifier.height(d.space16))
     }

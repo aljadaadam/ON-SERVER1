@@ -1,6 +1,14 @@
 package com.onserver1.app.data.repository
 
 import com.onserver1.app.data.api.ApiService
+import com.onserver1.app.data.local.dao.BannerDao
+import com.onserver1.app.data.local.dao.CategoryDao
+import com.onserver1.app.data.local.dao.ProductDao
+import com.onserver1.app.data.local.dao.UserProfileDao
+import com.onserver1.app.data.local.entity.CachedBanner
+import com.onserver1.app.data.local.entity.CachedCategory
+import com.onserver1.app.data.local.entity.CachedProduct
+import com.onserver1.app.data.local.entity.CachedUserProfile
 import com.onserver1.app.data.model.*
 import okhttp3.MediaType.Companion.toMediaType
 import javax.inject.Inject
@@ -8,18 +16,37 @@ import javax.inject.Singleton
 
 @Singleton
 class ProductRepository @Inject constructor(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val productDao: ProductDao,
+    private val categoryDao: CategoryDao,
+    private val bannerDao: BannerDao,
+    private val userProfileDao: UserProfileDao
 ) {
     suspend fun getFeaturedProducts(): Result<List<Product>> {
         return try {
             val response = apiService.getFeaturedProducts()
             if (response.isSuccessful && response.body()?.success == true) {
-                Result.success(response.body()!!.data ?: emptyList())
+                val products = response.body()!!.data ?: emptyList()
+                // Cache products
+                try { productDao.insertProducts(products.map { CachedProduct.fromModel(it) }) } catch (_: Exception) {}
+                Result.success(products)
             } else {
-                Result.failure(Exception("Failed to load featured products"))
+                // Try cache
+                val cached = productDao.getFeaturedProducts()
+                if (cached.isNotEmpty()) {
+                    Result.success(cached.map { it.toModel() })
+                } else {
+                    Result.failure(Exception("Failed to load featured products"))
+                }
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            // Network error — try cache
+            val cached = try { productDao.getFeaturedProducts() } catch (_: Exception) { emptyList() }
+            if (cached.isNotEmpty()) {
+                Result.success(cached.map { it.toModel() })
+            } else {
+                Result.failure(e)
+            }
         }
     }
 
@@ -34,12 +61,26 @@ class ProductRepository @Inject constructor(
         return try {
             val response = apiService.getProducts(page, 20, categoryId, type, serviceType, groupName, search)
             if (response.isSuccessful && response.body()?.success == true) {
-                Result.success(response.body()!!.data?.products ?: emptyList())
+                val products = response.body()!!.data?.products ?: emptyList()
+                // Cache products
+                try { productDao.insertProducts(products.map { CachedProduct.fromModel(it) }) } catch (_: Exception) {}
+                Result.success(products)
             } else {
-                Result.failure(Exception("Failed to load products"))
+                // Try cache with filters
+                val cached = productDao.getProducts(serviceType, groupName, categoryId, search)
+                if (cached.isNotEmpty()) {
+                    Result.success(cached.map { it.toModel() })
+                } else {
+                    Result.failure(Exception("Failed to load products"))
+                }
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val cached = try { productDao.getProducts(serviceType, groupName, categoryId, search) } catch (_: Exception) { emptyList() }
+            if (cached.isNotEmpty()) {
+                Result.success(cached.map { it.toModel() })
+            } else {
+                Result.failure(e)
+            }
         }
     }
 
@@ -49,10 +90,15 @@ class ProductRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.success == true) {
                 Result.success(response.body()!!.data ?: emptyList())
             } else {
-                Result.failure(Exception("Failed to load groups"))
+                // Try cache
+                val cached = productDao.getGroups(serviceType)
+                if (cached.isNotEmpty()) Result.success(cached)
+                else Result.failure(Exception("Failed to load groups"))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val cached = try { productDao.getGroups(serviceType) } catch (_: Exception) { emptyList() }
+            if (cached.isNotEmpty()) Result.success(cached)
+            else Result.failure(e)
         }
     }
 
@@ -60,12 +106,18 @@ class ProductRepository @Inject constructor(
         return try {
             val response = apiService.getCategories()
             if (response.isSuccessful && response.body()?.success == true) {
-                Result.success(response.body()!!.data ?: emptyList())
+                val categories = response.body()!!.data ?: emptyList()
+                try { categoryDao.insertCategories(categories.map { CachedCategory.fromModel(it) }) } catch (_: Exception) {}
+                Result.success(categories)
             } else {
-                Result.failure(Exception("Failed to load categories"))
+                val cached = categoryDao.getAllCategories()
+                if (cached.isNotEmpty()) Result.success(cached.map { it.toModel() })
+                else Result.failure(Exception("Failed to load categories"))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val cached = try { categoryDao.getAllCategories() } catch (_: Exception) { emptyList() }
+            if (cached.isNotEmpty()) Result.success(cached.map { it.toModel() })
+            else Result.failure(e)
         }
     }
 
@@ -73,12 +125,19 @@ class ProductRepository @Inject constructor(
         return try {
             val response = apiService.getProduct(id)
             if (response.isSuccessful && response.body()?.success == true) {
-                Result.success(response.body()!!.data!!)
+                val product = response.body()!!.data!!
+                try { productDao.insertProduct(CachedProduct.fromModel(product)) } catch (_: Exception) {}
+                Result.success(product)
             } else {
-                Result.failure(Exception("Product not found"))
+                // Try cache
+                val cached = productDao.getProductById(id)
+                if (cached != null) Result.success(cached.toModel())
+                else Result.failure(Exception("Product not found"))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val cached = try { productDao.getProductById(id) } catch (_: Exception) { null }
+            if (cached != null) Result.success(cached.toModel())
+            else Result.failure(e)
         }
     }
 
@@ -86,12 +145,21 @@ class ProductRepository @Inject constructor(
         return try {
             val response = apiService.getBanners()
             if (response.isSuccessful && response.body()?.success == true) {
-                Result.success(response.body()!!.data ?: emptyList())
+                val banners = response.body()!!.data ?: emptyList()
+                try {
+                    bannerDao.clearAll()
+                    bannerDao.insertBanners(banners.map { CachedBanner.fromModel(it) })
+                } catch (_: Exception) {}
+                Result.success(banners)
             } else {
-                Result.failure(Exception("Failed to load banners"))
+                val cached = bannerDao.getAllBanners()
+                if (cached.isNotEmpty()) Result.success(cached.map { it.toModel() })
+                else Result.failure(Exception("Failed to load banners"))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val cached = try { bannerDao.getAllBanners() } catch (_: Exception) { emptyList() }
+            if (cached.isNotEmpty()) Result.success(cached.map { it.toModel() })
+            else Result.failure(e)
         }
     }
 
@@ -101,7 +169,6 @@ class ProductRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.success == true) {
                 Result.success(response.body()!!.data!!)
             } else {
-                // Try to extract error message from errorBody (for non-2xx responses)
                 val errorMsg = try {
                     val errorJson = response.errorBody()?.string()
                     if (errorJson != null) {
@@ -122,12 +189,19 @@ class ProductRepository @Inject constructor(
         return try {
             val response = apiService.getProfile()
             if (response.isSuccessful && response.body()?.success == true) {
-                Result.success(response.body()!!.data!!)
+                val user = response.body()!!.data!!
+                try { userProfileDao.insertProfile(CachedUserProfile.fromModel(user)) } catch (_: Exception) {}
+                Result.success(user)
             } else {
-                Result.failure(Exception("Failed to load profile"))
+                // Try cache
+                val cached = userProfileDao.getProfile()
+                if (cached != null) Result.success(cached.toModel())
+                else Result.failure(Exception("Failed to load profile"))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val cached = try { userProfileDao.getProfile() } catch (_: Exception) { null }
+            if (cached != null) Result.success(cached.toModel())
+            else Result.failure(e)
         }
     }
 

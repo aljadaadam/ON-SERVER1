@@ -60,7 +60,7 @@
     <string name="licenses">تراخيص</string>
     <string name="schematics">مخططات</string>
     <string name="network_unlock">فك\nشبكات</string>
-    <string name="icloud_services">خدمات\niCloud</string>
+    <string name="icloud_services">فك\niCloud</string>
     <string name="remote_services_short">خدمات\nعن بعد</string>
     <string name="cards_games">بطاقات\nوألعاب</string>
     <string name="digital_subs">اشتراكات\nرقمية</string>
@@ -171,7 +171,7 @@
     <string name="about_description">ON-SERVER1 منصتك المتكاملة للخدمات الرقمية وبطاقات الألعاب وبطاقات الهدايا وشحن الجوال. سريعة وآمنة وموثوقة.</string>
     <string name="about_rate_app">تقييم التطبيق</string>
     <string name="about_share_app">مشاركة التطبيق</string>
-    <string name="about_developer">صُنع بـ ❤ بواسطة nexiroflux.com</string>
+    <string name="about_developer">صُنع بـ ❤</string>
 
     <!-- Dialog -->
     <string name="dialog_error_title">خطأ</string>
@@ -228,6 +228,12 @@
     <string name="deposit_tap_to_upload">اضغط لرفع صورة الإيصال</string>
     <string name="deposit_submit_request">إرسال طلب الإيداع</string>
     <string name="deposit_scan_qr">امسح رمز QR لنسخ العنوان</string>
+
+    <!-- Validation -->
+    <string name="invalid_imei">رقم IMEI غير صالح. يجب أن يكون 15 رقم صحيح</string>
+    <string name="invalid_imei_short">IMEI يجب أن يكون 14 رقم على الأقل</string>
+    <string name="field_max_digits">%1$s: الحد الأقصى %2$d رقم</string>
+    <string name="field_max_chars">%1$s: الحد الأقصى %2$d حرف</string>
 
     <!-- Maintenance -->
     <string name="maintenance_title">تحت الصيانة</string>

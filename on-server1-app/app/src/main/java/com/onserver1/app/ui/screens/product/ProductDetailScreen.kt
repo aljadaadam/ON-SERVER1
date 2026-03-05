@@ -221,10 +221,14 @@ fun ProductDetailScreen(
                             val label = if (isArabic) FieldTranslator.translate(rawLabel) else rawLabel
                             val isNumberField = field.type.equals("NUMBER", ignoreCase = true)
                             val isTextArea = field.type.equals("TEXTAREA", ignoreCase = true)
+                            val maxLen = viewModel.getFieldMaxLength(field)
+                            val currentValue = state.fieldValues[field.key] ?: ""
 
                             OutlinedTextField(
-                                value = state.fieldValues[field.key] ?: "",
-                                onValueChange = { viewModel.updateFieldValue(field.key, it) },
+                                value = currentValue,
+                                onValueChange = { newVal ->
+                                    viewModel.updateFieldValue(field.key, newVal)
+                                },
                                 label = { Text("$label${if (field.required) " *" else ""}") },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -234,7 +238,10 @@ fun ProductDetailScreen(
                                 maxLines = if (isTextArea) 4 else 1,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = if (isNumberField) KeyboardType.Number else KeyboardType.Text
-                                )
+                                ),
+                                supportingText = if (maxLen > 0) {
+                                    { Text("${currentValue.length}/$maxLen", fontSize = d.font11, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                                } else null
                             )
                         }
                     }
@@ -244,6 +251,7 @@ fun ProductDetailScreen(
 
             // Quantity selector (if supports quantity)
             if (product.supportsQnt) {
+                var qtyText by remember(state.quantity) { mutableStateOf("${state.quantity}") }
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(d.corner16),
@@ -259,7 +267,7 @@ fun ProductDetailScreen(
                         Spacer(Modifier.height(d.space8))
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             FilledIconButton(
                                 onClick = { viewModel.updateQuantity(state.quantity - 1) },
@@ -267,11 +275,31 @@ fun ProductDetailScreen(
                             ) {
                                 Icon(Icons.Default.Remove, null)
                             }
-                            Text(
-                                text = "${state.quantity}",
-                                fontSize = d.font20,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
+                            OutlinedTextField(
+                                value = qtyText,
+                                onValueChange = { newVal ->
+                                    // Allow only digits
+                                    val filtered = newVal.filter { it.isDigit() }
+                                    qtyText = filtered
+                                    val parsed = filtered.toIntOrNull()
+                                    if (parsed != null && parsed > 0) {
+                                        viewModel.updateQuantity(parsed)
+                                    }
+                                },
+                                modifier = Modifier.width(90.dp),
+                                textStyle = androidx.compose.ui.text.TextStyle(
+                                    fontSize = d.font18,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                ),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                singleLine = true,
+                                shape = RoundedCornerShape(d.corner12),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = AccentYellow,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant
+                                )
                             )
                             FilledIconButton(
                                 onClick = { viewModel.updateQuantity(state.quantity + 1) },

@@ -28,11 +28,15 @@ class HomeViewModel @Inject constructor(
     private val _state = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state
 
+    private var isLoadingInProgress = false
+
     init {
         loadHomeData()
     }
 
     fun loadHomeData() {
+        if (isLoadingInProgress) return
+        isLoadingInProgress = true
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
 
@@ -57,6 +61,21 @@ class HomeViewModel @Inject constructor(
             }
 
             _state.value = _state.value.copy(isLoading = false)
+            isLoadingInProgress = false
+        }
+    }
+
+    /**
+     * Called on ON_RESUME — refreshes balance always,
+     * and reloads everything if products are still empty (e.g. first login timing issue).
+     */
+    fun onResume() {
+        if (_state.value.featuredProducts.isEmpty()) {
+            // Products never loaded or failed — full reload
+            loadHomeData()
+        } else {
+            // Normal resume — just refresh balance
+            refreshBalance()
         }
     }
 

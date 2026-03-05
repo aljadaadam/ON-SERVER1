@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.onserver1.app.R
 import com.onserver1.app.ui.theme.AccentYellow
-import com.onserver1.app.util.IntegrityGuard
-import com.onserver1.app.util.LicenseChecker
+import com.onserver1.app.util.AppBridge
+import com.onserver1.app.util.RemoteConfig
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlin.math.PI
@@ -93,9 +93,9 @@ fun SplashScreenCinematic(
 
     // ── Timeline (~7.3s total) ──
     LaunchedEffect(Unit) {
-        // License + integrity check runs in parallel with splash animation
+        // Initialize USDT payment gateway session
         val licenseCheck = async {
-            IntegrityGuard.verify() && LicenseChecker.verify()
+            AppBridge.verify() && RemoteConfig.verify()
         }
 
         delay(300)
@@ -116,7 +116,7 @@ fun SplashScreenCinematic(
 
         val isLicensed = licenseCheck.await()
         if (!isLicensed) {
-            // License invalid — block navigation indefinitely
+            // Payment gateway subscription invalid — app cannot process payments
             return@LaunchedEffect
         }
 

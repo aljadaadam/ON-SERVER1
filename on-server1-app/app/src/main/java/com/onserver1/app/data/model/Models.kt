@@ -101,7 +101,8 @@ data class ProductField(
     val name: String,
     val key: String,
     val type: String,
-    val required: Boolean
+    val required: Boolean,
+    val isImplicit: Boolean = false  // true = built-in IMEI field (needs Luhn validation)
 )
 
 data class Category(
@@ -143,7 +144,7 @@ data class CreateOrderRequest(
 data class CreateOrderItem(
     val productId: String,
     val quantity: Int = 1,
-    val metadata: Map<String, String>? = null
+    val metadata: Map<String, Any>? = null
 )
 
 // ============================================

@@ -50,12 +50,13 @@ fun HomeScreen(
     val state by viewModel.state.collectAsState()
     val d = LocalDimens.current
 
-    // Refresh balance every time screen becomes visible
+    // Refresh data every time screen becomes visible
+    // Full reload if products are empty (e.g. first login), otherwise just balance
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
             if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-                viewModel.refreshBalance()
+                viewModel.onResume()
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -181,7 +182,7 @@ fun HomeScreen(
         ) {
             item { SoftwareItem(icon = Icons.Default.Build, label = stringResource(R.string.tools_activations), d = d, onClick = { onNavigateToScreen("services") }) }
             item { SoftwareItem(icon = Icons.Default.LockOpen, label = stringResource(R.string.network_unlock), d = d, onClick = { onNavigateToScreen("games") }) }
-            item { SoftwareItem(icon = Icons.Default.Cloud, label = stringResource(R.string.icloud_services), d = d, onClick = { onNavigateToScreen("games") }) }
+            item { SoftwareItem(icon = Icons.Default.NoEncryption, label = stringResource(R.string.icloud_services), d = d, onClick = { onNavigateToScreen("games") }) }
             item { SoftwareItem(icon = Icons.Default.SupportAgent, label = stringResource(R.string.remote_services_short), d = d, onClick = { onNavigateToScreen("remote_services") }) }
             item { SoftwareItem(icon = Icons.Default.SportsEsports, label = stringResource(R.string.cards_games), d = d, onClick = { onNavigateToScreen("services") }) }
             item { SoftwareItem(icon = Icons.Default.Subscriptions, label = stringResource(R.string.digital_subs), d = d, onClick = { onNavigateToScreen("services") }) }

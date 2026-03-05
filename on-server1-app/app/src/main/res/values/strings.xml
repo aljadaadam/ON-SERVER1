@@ -59,7 +59,7 @@
     <string name="licenses">Licenses</string>
     <string name="schematics">Schematics</string>
     <string name="network_unlock">Network\nUnlock</string>
-    <string name="icloud_services">iCloud\nServices</string>
+    <string name="icloud_services">iCloud\nUnlock</string>
     <string name="remote_services_short">Remote\nServices</string>
     <string name="cards_games">Cards &amp;\nGames</string>
     <string name="digital_subs">Digital\nSubscriptions</string>
@@ -170,7 +170,7 @@
     <string name="about_description">ON-SERVER1 is your one-stop platform for digital services, game cards, gift cards, and mobile recharge. Fast, secure, and reliable.</string>
     <string name="about_rate_app">Rate App</string>
     <string name="about_share_app">Share App</string>
-    <string name="about_developer">Made with ❤ by nexiroflux.com</string>
+    <string name="about_developer">Made with ❤</string>
 
     <!-- Dialog -->
     <string name="dialog_error_title">Error</string>
@@ -227,6 +227,12 @@
     <string name="deposit_tap_to_upload">Tap to upload receipt image</string>
     <string name="deposit_submit_request">Submit Deposit Request</string>
     <string name="deposit_scan_qr">Scan QR Code to copy address</string>
+
+    <!-- Validation -->
+    <string name="invalid_imei">Invalid IMEI number. Must be 15 valid digits</string>
+    <string name="invalid_imei_short">IMEI must be at least 14 digits</string>
+    <string name="field_max_digits">%1$s: maximum %2$d digits</string>
+    <string name="field_max_chars">%1$s: maximum %2$d characters</string>
 
     <!-- Maintenance -->
     <string name="maintenance_title">Under Maintenance</string>
