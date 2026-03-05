@@ -80,7 +80,7 @@ app.get('/app', (_req, res) => {
 });
 
 // APK downloads
-app.use('/downloads', express.static('/home/www.on-server2.com/public_html/downloads', {
+app.use('/downloads', express.static('/home/on-server2.com/public_html/downloads', {
   setHeaders: (res) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     res.set('Pragma', 'no-cache');
