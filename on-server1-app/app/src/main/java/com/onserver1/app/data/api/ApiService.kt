@@ -108,6 +108,12 @@ interface ApiService {
     suspend fun getBanners(): Response<ApiResponse<List<Banner>>>
 
     // ============================================
+    // Server Time
+    // ============================================
+    @GET("health")
+    suspend fun getServerTime(): Response<Map<String, Any>>
+
+    // ============================================
     // App Settings (public)
     // ============================================
     @GET("users/app-settings")

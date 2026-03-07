@@ -11,6 +11,7 @@ import com.onserver1.app.data.local.entity.CachedProduct
 import com.onserver1.app.data.local.entity.CachedUserProfile
 import com.onserver1.app.data.model.*
 import okhttp3.MediaType.Companion.toMediaType
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,7 +23,24 @@ class ProductRepository @Inject constructor(
     private val bannerDao: BannerDao,
     private val userProfileDao: UserProfileDao
 ) {
+    suspend fun getServerTime(): Result<String> {
+        return try {
+            val response = apiService.getServerTime()
+            if (response.isSuccessful) {
+                val timestamp = response.body()?.get("timestamp")?.toString() ?: ""
+                // Extract date part (YYYY-MM-DD) from ISO timestamp
+                val date = timestamp.substringBefore("T")
+                Result.success(date)
+            } else {
+                Result.failure(Exception("Failed to get server time"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun getFeaturedProducts(): Result<List<Product>> {
+
         return try {
             val response = apiService.getFeaturedProducts()
             if (response.isSuccessful && response.body()?.success == true) {

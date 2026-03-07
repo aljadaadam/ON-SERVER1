@@ -20,28 +20,30 @@ function luhnCheckDigit(digits: string): string {
 
 /** Validate IMEI using Luhn algorithm. If 14 digits, auto-append check digit. */
 function validateAndFixImei(imei: string): { valid: boolean; imei: string; error?: string } {
-  // Remove any non-digit characters
-  const digits = imei.replace(/\D/g, '');
-  
-  if (digits.length === 14) {
-    // Auto-calculate check digit (15th digit)
-    const checkDigit = luhnCheckDigit(digits);
-    const fullImei = digits + checkDigit;
-    console.log(`[IMEI] Auto-calculated check digit: ${digits} + ${checkDigit} = ${fullImei}`);
-    return { valid: true, imei: fullImei };
+  const trimmed = imei.trim();
+  // Check if input is purely numeric (IMEI)
+  const digits = trimmed.replace(/\D/g, '');
+  const isNumericOnly = digits.length === trimmed.length;
+
+  if (isNumericOnly) {
+    // Pure numeric input — apply IMEI logic
+    if (digits.length === 14) {
+      const checkDigit = luhnCheckDigit(digits);
+      const fullImei = digits + checkDigit;
+      console.log(`[IMEI] Auto-calculated check digit: ${digits} + ${checkDigit} = ${fullImei}`);
+      return { valid: true, imei: fullImei };
+    }
+    if (digits.length >= 8) {
+      return { valid: true, imei: digits };
+    }
+    return { valid: false, imei: digits, error: `IMEI/SN must be at least 8 characters, got ${digits.length}` };
   }
-  
-  if (digits.length === 15) {
-    // Accept as-is (could be IMEI or SN — don't reject based on Luhn)
-    return { valid: true, imei: digits };
+
+  // Alphanumeric input (SN, FRP codes, etc.) — accept as-is if long enough
+  if (trimmed.length >= 4) {
+    return { valid: true, imei: trimmed };
   }
-  
-  // Accept any length >= 8 digits (some services accept SN, short codes etc.)
-  if (digits.length >= 8) {
-    return { valid: true, imei: digits };
-  }
-  
-  return { valid: false, imei: digits, error: `IMEI/SN must be at least 8 digits, got ${digits.length}` };
+  return { valid: false, imei: trimmed, error: `IMEI/SN must be at least 4 characters, got ${trimmed.length}` };
 }
 
 /** Parse product.fields from JSON string to array in order items */
@@ -232,8 +234,14 @@ export class OrderService {
         }
       }
 
-      // Validate and fix IMEI (auto-calculate check digit if 14 digits)
-      if (product.serviceType === 'IMEI') {
+      // Parse product fields to determine input type (IMEI vs SN vs other)
+      let productFields: any[] = [];
+      try { productFields = product.fields ? JSON.parse(product.fields as string) : []; } catch {}
+      const primaryFieldKey = productFields[0]?.key?.toUpperCase() || 'IMEI';
+      const isImeiField = primaryFieldKey === 'IMEI';
+
+      // Validate and fix IMEI only for actual IMEI-type fields
+      if (product.serviceType === 'IMEI' && isImeiField) {
         const imeiResult = validateAndFixImei(imei);
         if (!imeiResult.valid) {
           await this.rejectOrderWithRefund(orderId, orderNumber, order.userId, order.totalAmount, imeiResult.error || 'IMEI غير صالح');
@@ -253,11 +261,23 @@ export class OrderService {
         } catch {}
       }
 
+      // For non-IMEI fields (SN, etc.), send value via CUSTOMFIELD only
+      // and use a dummy IMEI for the <IMEI> XML tag
+      let imeiForApi = imei;
+      if (!isImeiField) {
+        if (!customFields) customFields = {};
+        if (!customFields[productFields[0]?.key]) {
+          customFields[productFields[0]?.key] = imei;
+        }
+        imeiForApi = externalProvider.generateRandomImei();
+        console.log(`[OrderService] SN-type field (${primaryFieldKey}): sending via CUSTOMFIELD, dummy IMEI for tag`);
+      }
+
       try {
         // Call external provider
         const result = await externalProvider.placeOrder(
           product.externalId,
-          imei,
+          imeiForApi,
           product.supportsQnt ? item.quantity : undefined,
           customFields
         );

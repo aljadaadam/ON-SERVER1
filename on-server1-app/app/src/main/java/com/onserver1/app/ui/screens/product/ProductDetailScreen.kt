@@ -1,12 +1,17 @@
 package com.onserver1.app.ui.screens.product
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -15,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -101,7 +107,7 @@ fun ProductDetailScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(d.screenPadding)
         ) {
-            // Product Info Card
+            // Product Info Card - Header (Name + Price always visible)
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(d.corner16),
@@ -184,15 +190,71 @@ fun ProductDetailScreen(
                         }
                     }
 
-                    // Description
-                    product.description?.let { desc ->
-                        if (desc.isNotBlank()) {
-                            Spacer(Modifier.height(d.space12))
-                            Text(
-                                text = if (isArabic) (product.descriptionAr ?: desc) else desc,
-                                fontSize = d.font14,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                    // Collapsible Details Section
+                    val hasDescription = product.description?.isNotBlank() == true
+                    if (hasDescription) {
+                        var detailsExpanded by remember { mutableStateOf(false) }
+                        val arrowRotation by animateFloatAsState(
+                            targetValue = if (detailsExpanded) 180f else 0f,
+                            animationSpec = tween(300),
+                            label = "arrow"
+                        )
+
+                        Spacer(Modifier.height(d.space8))
+
+                        // Toggle row
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable { detailsExpanded = !detailsExpanded }
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.Info,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = AccentYellow
                             )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = stringResource(R.string.product_details),
+                                fontSize = d.font14,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Icon(
+                                Icons.Default.KeyboardArrowDown,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .rotate(arrowRotation),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        // Expandable content
+                        AnimatedVisibility(
+                            visible = detailsExpanded,
+                            enter = expandVertically(animationSpec = tween(300)),
+                            exit = shrinkVertically(animationSpec = tween(300))
+                        ) {
+                            val descText = if (isArabic) (product.descriptionAr ?: product.description!!) else product.description!!
+                            SelectionContainer {
+                                Text(
+                                    text = descText.replace("\\n", "\n"),
+                                    fontSize = d.font14,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    lineHeight = 22.sp,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+                                        .padding(12.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -219,7 +281,6 @@ fun ProductDetailScreen(
                             // Determine label: trim name, fallback to key if blank
                             val rawLabel = field.name.trim().ifBlank { field.key }
                             val label = if (isArabic) FieldTranslator.translate(rawLabel) else rawLabel
-                            val isNumberField = field.type.equals("NUMBER", ignoreCase = true)
                             val isTextArea = field.type.equals("TEXTAREA", ignoreCase = true)
                             val maxLen = viewModel.getFieldMaxLength(field)
                             val currentValue = state.fieldValues[field.key] ?: ""
@@ -237,7 +298,18 @@ fun ProductDetailScreen(
                                 singleLine = !isTextArea,
                                 maxLines = if (isTextArea) 4 else 1,
                                 keyboardOptions = KeyboardOptions(
-                                    keyboardType = if (isNumberField) KeyboardType.Number else KeyboardType.Text
+                                    keyboardType = KeyboardType.Text
+                                ),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = AccentYellow,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    cursorColor = AccentYellow,
+                                    focusedLabelColor = AccentYellow,
+                                    unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 ),
                                 supportingText = if (maxLen > 0) {
                                     { Text("${currentValue.length}/$maxLen", fontSize = d.font11, color = MaterialTheme.colorScheme.onSurfaceVariant) }

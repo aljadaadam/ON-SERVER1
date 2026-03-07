@@ -17,6 +17,7 @@ data class HomeUiState(
     val user: User? = null,
     val banners: List<Banner> = emptyList(),
     val featuredProducts: List<Product> = emptyList(),
+    val serverDate: String? = null,
     val error: String? = null
 )
 
@@ -44,6 +45,12 @@ class HomeViewModel @Inject constructor(
             val profileResult = productRepository.getProfile()
             profileResult.onSuccess { user ->
                 _state.value = _state.value.copy(user = user)
+            }
+
+            // Load server time
+            val timeResult = productRepository.getServerTime()
+            timeResult.onSuccess { date ->
+                _state.value = _state.value.copy(serverDate = date)
             }
 
             // Load banners

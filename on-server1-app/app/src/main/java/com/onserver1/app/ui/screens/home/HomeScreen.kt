@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -20,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -34,6 +37,9 @@ import com.onserver1.app.ui.components.BalanceCard
 import com.onserver1.app.ui.components.CinematicBanner
 import com.onserver1.app.ui.components.RamadanBanner
 import com.onserver1.app.ui.components.BankakBanner
+import com.onserver1.app.ui.components.UnlockToolBanner
+import com.onserver1.app.ui.components.HonorFrpBanner
+import com.onserver1.app.ui.components.SamsungBanner
 import com.onserver1.app.ui.components.ProductCard
 import com.onserver1.app.ui.theme.*
 import kotlinx.coroutines.delay
@@ -105,18 +111,37 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(d.space12))
 
-        // Banner Pager with auto-scroll (3 banners)
-        val bannerPagerState = rememberPagerState(pageCount = { 3 })
+        // Banner Pager with auto-scroll (random order, Ramadan expires March 19, 2026)
+        val showRamadan = remember(state.serverDate) {
+            val serverDate = state.serverDate
+            if (serverDate != null) {
+                try {
+                    java.time.LocalDate.parse(serverDate) <= java.time.LocalDate.of(2026, 3, 19)
+                } catch (_: Exception) { true }
+            } else {
+                java.time.LocalDate.now() <= java.time.LocalDate.of(2026, 3, 19)
+            }
+        }
+        val activeBanners = remember(showRamadan) {
+            val list = mutableListOf(0, 1, 3, 4, 5) // Cinematic, Bankak, UnlockTool, Honor, Samsung
+            if (showRamadan) list.add(2) // Ramadan
+            list.shuffled()
+        }
+        val bannerCount = activeBanners.size
+        val bannerPagerState = rememberPagerState(pageCount = { bannerCount })
+        var userTouching by remember { mutableStateOf(false) }
 
-        // Auto-scroll every 5 seconds
+        // Auto-scroll every 5 seconds, pauses when user touches
         LaunchedEffect(Unit) {
             while (true) {
                 delay(5000L)
-                val nextPage = (bannerPagerState.currentPage + 1) % 3
-                bannerPagerState.animateScrollToPage(
-                    page = nextPage,
-                    animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
-                )
+                if (!userTouching && !bannerPagerState.isScrollInProgress) {
+                    val nextPage = (bannerPagerState.currentPage + 1) % bannerCount
+                    bannerPagerState.animateScrollToPage(
+                        page = nextPage,
+                        animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
+                    )
+                }
             }
         }
 
@@ -126,8 +151,21 @@ fun HomeScreen(
                 .padding(horizontal = d.screenPadding)
                 .fillMaxWidth()
                 .height(d.bannerHeight)
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            awaitPointerEvent()
+                            userTouching = true
+                            // Wait until all pointers are up
+                            do {
+                                val event = awaitPointerEvent()
+                            } while (event.changes.any { it.pressed })
+                            userTouching = false
+                        }
+                    }
+                }
         ) { page ->
-            when (page) {
+            when (activeBanners[page]) {
                 0 -> CinematicBanner(
                     modifier = Modifier.fillMaxSize()
                 )
@@ -135,6 +173,15 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxSize()
                 )
                 2 -> RamadanBanner(
+                    modifier = Modifier.fillMaxSize()
+                )
+                3 -> UnlockToolBanner(
+                    modifier = Modifier.fillMaxSize()
+                )
+                4 -> HonorFrpBanner(
+                    modifier = Modifier.fillMaxSize()
+                )
+                5 -> SamsungBanner(
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -147,7 +194,7 @@ fun HomeScreen(
                 .padding(top = d.space8),
             horizontalArrangement = Arrangement.Center
         ) {
-            repeat(3) { index ->
+            repeat(bannerCount) { index ->
                 val isActive = bannerPagerState.currentPage == index
                 Box(
                     modifier = Modifier

@@ -537,7 +537,7 @@ export class ExternalProviderService {
         const filtered: Record<string, string> = {};
         for (const [key, val] of Object.entries(customFields)) {
           const k = key.toUpperCase();
-          if (k === 'IMEI' || k === 'IME') continue; // Skip IMEI fields
+          if (k === 'IMEI' || k === 'IME') continue; // Skip IMEI fields (already in <IMEI> tag)
           filtered[key] = val;
         }
         if (Object.keys(filtered).length > 0) {

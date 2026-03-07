@@ -4,28 +4,27 @@ import android.media.MediaPlayer
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Dns
+import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.PhoneAndroid
-import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.Phonelink
+import androidx.compose.material.icons.outlined.Security
+import androidx.compose.material.icons.outlined.Verified
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.*
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -45,36 +44,63 @@ import kotlinx.coroutines.delay
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.random.Random
 
-private data class ServiceCategory(
+private data class ProductCard(
     val icon: ImageVector,
     val label: String,
     val color: Color,
-    val targetX: Float,
-    val targetY: Float
+    val angle: Float,
+    val radius: Float
+)
+
+private data class StreamParticle(
+    val startAngle: Float,
+    val startRadius: Float,
+    val speed: Float,
+    val size: Float,
+    val hue: Int // 0=cyan, 1=blue, 2=white
 )
 
 @Composable
 fun SplashScreenCinematic(
     onSplashFinished: () -> Unit
 ) {
-    val categories = remember {
+    val products = remember {
         listOf(
-            ServiceCategory(Icons.Outlined.PhoneAndroid, "تخطي ايكلاود", Color(0xFF00D2FF), -95f, -150f),
-            ServiceCategory(Icons.Outlined.Lock, "FRP", Color(0xFF4CAF50), 95f, -150f),
-            ServiceCategory(Icons.Outlined.Star, "تفعيل ادوات", Color(0xFF2196F3), -95f, 20f),
-            ServiceCategory(Icons.Outlined.Dns, "فتح شبكات", Color(0xFFFF9800), 95f, 20f),
+            ProductCard(Icons.Outlined.Lock, "Unlock Tool", Color(0xFF00D2FF), 240f, 160f),
+            ProductCard(Icons.Outlined.Security, "Chimera", Color(0xFFFF6B35), 300f, 160f),
+            ProductCard(Icons.Outlined.PhoneAndroid, "Samsung", Color(0xFF4CAF50), 0f, 165f),
+            ProductCard(Icons.Outlined.Phonelink, "Honor", Color(0xFF7C4DFF), 60f, 160f),
+            ProductCard(Icons.Outlined.Build, "FRP Bypass", Color(0xFFE040FB), 120f, 160f),
+            ProductCard(Icons.Outlined.Verified, "iCloud", Color(0xFF00BCD4), 180f, 160f),
         )
     }
 
+    // Stream particles flying toward center
+    val particles = remember {
+        List(60) {
+            StreamParticle(
+                startAngle = Random.nextFloat() * 360f,
+                startRadius = 0.6f + Random.nextFloat() * 0.4f,
+                speed = 0.4f + Random.nextFloat() * 0.6f,
+                size = 1.5f + Random.nextFloat() * 3f,
+                hue = Random.nextInt(3)
+            )
+        }
+    }
+
     // ── Phase states ──
-    var showBox by remember { mutableStateOf(false) }
-    var openLid by remember { mutableStateOf(false) }
-    var showItems by remember { mutableStateOf(false) }
-    var hideItems by remember { mutableStateOf(false) }
-    var showLogo by remember { mutableStateOf(false) }
-    var showText by remember { mutableStateOf(false) }
-    var exitAnim by remember { mutableStateOf(false) }
+    var phase1_gridFade by remember { mutableStateOf(false) }
+    var phase2_streams by remember { mutableStateOf(false) }
+    var phase3_coreForm by remember { mutableStateOf(false) }
+    var phase4_corePulse by remember { mutableStateOf(false) }
+    var phase5_burst by remember { mutableStateOf(false) }
+    var phase6_cardsShow by remember { mutableStateOf(false) }
+    var phase7_cardsHide by remember { mutableStateOf(false) }
+    var phase8_logoReveal by remember { mutableStateOf(false) }
+    var phase9_textReveal by remember { mutableStateOf(false) }
+    var phase10_exit by remember { mutableStateOf(false) }
 
     // ── Sound ──
     val context = LocalContext.current
@@ -91,759 +117,686 @@ fun SplashScreenCinematic(
         }
     }
 
-    // ── Timeline (~7.3s total) ──
+    // ── Timeline ──
     LaunchedEffect(Unit) {
-        // Initialize USDT payment gateway session
         val licenseCheck = async {
             AppBridge.verify() && RemoteConfig.verify()
         }
 
-        delay(300)
-        showBox = true       // 0.3s: Box fades in with bounce
-        delay(1300)
-        openLid = true       // 1.6s: Lid opens, golden glow
-        delay(900)
-        showItems = true     // 2.5s: Category cards fly out
-        delay(1800)
-        hideItems = true     // 4.3s: Cards fade out
-        delay(500)
-        showLogo = true      // 4.8s: Logo appears with flash
-        delay(600)
-        showText = true      // 5.4s: ON-SERVER1 text
+        delay(150)
+        phase1_gridFade = true       // 0.15s: hex grid fades in
+        delay(400)
+        phase2_streams = true        // 0.55s: particle streams converge
         delay(1200)
-        exitAnim = true      // 6.6s: Exit
+        phase3_coreForm = true       // 1.75s: energy core forms at center
+        delay(600)
+        phase4_corePulse = true      // 2.35s: core pulses bright
+        delay(400)
+        phase5_burst = true          // 2.75s: burst + shockwave
+        delay(350)
+        phase6_cardsShow = true      // 3.1s: product cards fly out
+        delay(2000)
+        phase7_cardsHide = true      // 5.1s: cards converge back
+        delay(400)
+        phase8_logoReveal = true     // 5.5s: logo appears
+        delay(500)
+        phase9_textReveal = true     // 6.0s: text reveals
+        delay(1000)
+        phase10_exit = true          // 7.0s: exit
         delay(700)
 
         val isLicensed = licenseCheck.await()
-        if (!isLicensed) {
-            // Payment gateway subscription invalid — app cannot process payments
-            return@LaunchedEffect
-        }
+        if (!isLicensed) return@LaunchedEffect
 
-        onSplashFinished()   // 7.3s: Navigate
+        onSplashFinished()
     }
 
-    // ═══════════════════════════════════════════
+    // ═══════════════════════════════
     //  ANIMATION VALUES
-    // ═══════════════════════════════════════════
+    // ═══════════════════════════════
 
-    // ── Exit ──
+    // Exit
     val exitAlpha by animateFloatAsState(
-        if (exitAnim) 0f else 1f,
-        tween(700, easing = FastOutSlowInEasing), label = "exitA"
+        if (phase10_exit) 0f else 1f,
+        tween(700, easing = FastOutSlowInEasing), label = "exA"
     )
     val exitScale by animateFloatAsState(
-        if (exitAnim) 1.08f else 1f,
-        tween(700, easing = FastOutSlowInEasing), label = "exitS"
+        if (phase10_exit) 1.15f else 1f,
+        tween(700, easing = FastOutSlowInEasing), label = "exS"
     )
 
-    // ── Box appearance ──
-    val boxScale by animateFloatAsState(
-        if (showBox) 1f else 0.2f,
-        spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessLow), label = "bxS"
-    )
-    val boxAlpha by animateFloatAsState(
-        if (showBox) 1f else 0f,
-        tween(800), label = "bxA"
+    // Grid fade
+    val gridAlpha by animateFloatAsState(
+        if (phase1_gridFade) if (phase5_burst) 0f else 1f else 0f,
+        tween(if (phase5_burst) 400 else 800), label = "grA"
     )
 
-    // ── Box hide ──
-    val boxHideAlpha by animateFloatAsState(
-        if (hideItems) 0f else 1f,
-        tween(500, easing = FastOutSlowInEasing), label = "bxH"
+    // Streams convergence (0 = at edges, 1 = at center)
+    val streamProgress by animateFloatAsState(
+        if (phase2_streams) 1f else 0f,
+        tween(1200, easing = FastOutSlowInEasing), label = "stP"
     )
-    val boxHideScale by animateFloatAsState(
-        if (hideItems) 0.7f else 1f,
-        tween(500, easing = FastOutSlowInEasing), label = "bxHS"
-    )
-
-    // ── Lid rotation (3D flip) ──
-    val lidAngle by animateFloatAsState(
-        if (openLid) -75f else 0f,
-        spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow), label = "lid"
+    val streamAlpha by animateFloatAsState(
+        if (phase2_streams) if (phase5_burst) 0f else 1f else 0f,
+        tween(if (phase5_burst) 200 else 600), label = "stA"
     )
 
-    // ── Golden glow from box ──
-    val glowRadius by animateFloatAsState(
-        if (openLid) 1f else 0f,
-        tween(1000, easing = FastOutSlowInEasing), label = "glow"
+    // Core
+    val coreScale by animateFloatAsState(
+        if (phase5_burst) 3f else if (phase4_corePulse) 1.3f else if (phase3_coreForm) 1f else 0f,
+        if (phase5_burst) tween(300, easing = FastOutLinearInEasing)
+        else spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMediumLow), label = "crS"
+    )
+    val coreAlpha by animateFloatAsState(
+        if (phase5_burst) 0f else if (phase3_coreForm) 1f else 0f,
+        tween(if (phase5_burst) 300 else 500), label = "crA"
+    )
+    val coreGlow by animateFloatAsState(
+        if (phase4_corePulse) 1f else 0f,
+        tween(400, easing = FastOutSlowInEasing), label = "crG"
     )
 
-    // ── Service items fly out (staggered) ──
-    val itemAnimations = categories.indices.map { i ->
+    // Burst shockwave
+    val burstRadius by animateFloatAsState(
+        if (phase5_burst) 1f else 0f,
+        tween(700, easing = FastOutSlowInEasing), label = "brR"
+    )
+    val burstAlpha by animateFloatAsState(
+        if (phase5_burst) 0f else 0.8f,
+        tween(700, easing = FastOutSlowInEasing), label = "brA"
+    )
+
+    // Second ring
+    var burst2 by remember { mutableStateOf(false) }
+    LaunchedEffect(phase5_burst) {
+        if (phase5_burst) { delay(120); burst2 = true }
+    }
+    val burst2Radius by animateFloatAsState(
+        if (burst2) 1f else 0f,
+        tween(600, easing = FastOutSlowInEasing), label = "br2R"
+    )
+    val burst2Alpha by animateFloatAsState(
+        if (burst2) 0f else 0.5f,
+        tween(600, easing = FastOutSlowInEasing), label = "br2A"
+    )
+
+    // Flash
+    var burstFlash by remember { mutableStateOf(false) }
+    val burstFlashAlpha by animateFloatAsState(
+        if (burstFlash) 0.8f else 0f,
+        tween(if (burstFlash) 40 else 350), label = "bfA"
+    )
+    LaunchedEffect(phase5_burst) {
+        if (phase5_burst) {
+            burstFlash = true
+            delay(80)
+            burstFlash = false
+        }
+    }
+
+    // Cards
+    val cardAnimations = products.indices.map { i ->
         animateFloatAsState(
-            if (showItems) 1f else 0f,
-            tween(550, delayMillis = i * 180, easing = FastOutSlowInEasing), label = "it$i"
+            if (phase6_cardsShow) 1f else 0f,
+            tween(700, delayMillis = i * 110, easing = FastOutSlowInEasing), label = "cd$i"
         )
     }
-    val itemFades = categories.indices.map { i ->
+    val cardsOrbit by animateFloatAsState(
+        if (phase6_cardsShow) if (phase7_cardsHide) 160f else 80f else 0f,
+        tween(if (phase7_cardsHide) 400 else 2000, easing = FastOutSlowInEasing), label = "cdO"
+    )
+    val cardHideAnimations = products.indices.map { i ->
         animateFloatAsState(
-            if (hideItems) 0f else 1f,
-            tween(350, delayMillis = i * 60, easing = FastOutSlowInEasing), label = "itF$i"
+            if (phase7_cardsHide) 0f else 1f,
+            tween(400, delayMillis = i * 35, easing = FastOutLinearInEasing), label = "cdH$i"
         )
     }
 
-    // ── Logo reveal ──
+    // Logo
     val logoScale by animateFloatAsState(
-        if (showLogo) 1f else 0f,
+        if (phase8_logoReveal) 1f else 0f,
         spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessLow), label = "lgS"
     )
     val logoAlpha by animateFloatAsState(
-        if (showLogo) 1f else 0f,
+        if (phase8_logoReveal) 1f else 0f,
         tween(500), label = "lgA"
     )
     val swooshSweep by animateFloatAsState(
-        if (showLogo) 360f else 0f,
-        tween(1200, easing = FastOutSlowInEasing), label = "swp"
+        if (phase8_logoReveal) 360f else 0f,
+        tween(1000, easing = FastOutSlowInEasing), label = "swp"
     )
 
-    // ── Flash overlay ──
-    var flashOn by remember { mutableStateOf(false) }
-    val flashAlpha by animateFloatAsState(
-        if (flashOn) 0.55f else 0f,
-        tween(if (flashOn) 50 else 350), label = "fl"
-    )
-    LaunchedEffect(showLogo) {
-        if (showLogo) { flashOn = true; delay(60); flashOn = false }
-    }
-
-    // ── Text ──
+    // Text
     val textAlpha by animateFloatAsState(
-        if (showText) 1f else 0f,
+        if (phase9_textReveal) 1f else 0f,
         tween(600), label = "txA"
     )
-    val textOffset by animateFloatAsState(
-        if (showText) 0f else 25f,
-        tween(600, easing = FastOutSlowInEasing), label = "txO"
+    val textSlide by animateFloatAsState(
+        if (phase9_textReveal) 0f else 30f,
+        tween(600, easing = FastOutSlowInEasing), label = "txS"
     )
 
-    // ── Pulse ──
-    val pulse = rememberInfiniteTransition(label = "p")
-    val pulseAlpha by pulse.animateFloat(
-        0.3f, 0.7f,
-        infiniteRepeatable(tween(1500), RepeatMode.Reverse), label = "pA"
-    )
-
-    // ── Floating particles time ──
-    val particleTime by pulse.animateFloat(
+    // Continuous
+    val inf = rememberInfiniteTransition(label = "inf")
+    val pulseVal by inf.animateFloat(
         0f, 1f,
-        infiniteRepeatable(tween(3000, easing = LinearEasing)), label = "ptc"
+        infiniteRepeatable(tween(2000), RepeatMode.Reverse), label = "pulse"
     )
-
-    // ── Ramadan stars twinkle ──
-    val starTwinkle by pulse.animateFloat(
+    val timeVal by inf.animateFloat(
         0f, 1f,
-        infiniteRepeatable(tween(4000, easing = LinearEasing)), label = "stTw"
+        infiniteRepeatable(tween(4000, easing = LinearEasing)), label = "time"
     )
 
-    // ═══════════════════════════════════════════
-    //  RAMADAN COLOR PALETTE
-    // ═══════════════════════════════════════════
-    val ramadanDeepPurple = Color(0xFF0D0620)
-    val ramadanDarkBlue = Color(0xFF0F1035)
-    val ramadanMidnight = Color(0xFF150B3A)
-    val ramadanGold = Color(0xFFD4A438)
-    val ramadanLightGold = Color(0xFFE8C547)
-    val ramadanWarmGold = Color(0xFFF0D060)
+    // ═════════════════════
+    //  COLORS
+    // ═════════════════════
+    val bgDark = Color(0xFF030810)
+    val bgMid = Color(0xFF081020)
+    val cyanPrimary = Color(0xFF00D4FF)
+    val bluePrimary = Color(0xFF2962FF)
 
-    // ═══════════════════════════════════════════
-    //  UI LAYOUT
-    // ═══════════════════════════════════════════
-
+    // ═════════════════════
+    //  UI
+    // ═════════════════════
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .alpha(exitAlpha)
-            .scale(exitScale)
+            .graphicsLayer {
+                alpha = exitAlpha
+                scaleX = exitScale
+                scaleY = exitScale
+            }
             .background(
-                Brush.verticalGradient(
-                    listOf(
-                        ramadanDeepPurple,
-                        ramadanMidnight,
-                        ramadanDarkBlue,
-                        Color(0xFF0A0A1A)
-                    )
+                Brush.radialGradient(
+                    listOf(bgMid, bgDark, Color.Black),
+                    center = Offset(Float.POSITIVE_INFINITY / 2, Float.POSITIVE_INFINITY / 2),
+                    radius = 1200f
                 )
             ),
         contentAlignment = Alignment.Center
     ) {
-        // ══════════════════════════════
-        //  RAMADAN BACKGROUND
-        // ══════════════════════════════
 
-        // Stars layer
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val starPositions = listOf(
-                // x fraction, y fraction, base size, twinkle phase offset
-                Triple(0.12f, 0.06f, 2.0f), Triple(0.28f, 0.03f, 1.5f),
-                Triple(0.45f, 0.08f, 1.8f), Triple(0.65f, 0.04f, 2.2f),
-                Triple(0.82f, 0.07f, 1.6f), Triple(0.93f, 0.12f, 2.0f),
-                Triple(0.08f, 0.15f, 1.3f), Triple(0.35f, 0.14f, 1.7f),
-                Triple(0.55f, 0.16f, 1.4f), Triple(0.72f, 0.13f, 2.0f),
-                Triple(0.88f, 0.18f, 1.5f), Triple(0.18f, 0.22f, 1.2f),
-                Triple(0.42f, 0.20f, 1.6f), Triple(0.78f, 0.24f, 1.8f),
-                Triple(0.05f, 0.30f, 1.4f), Triple(0.95f, 0.28f, 1.3f),
-                Triple(0.22f, 0.35f, 1.1f), Triple(0.62f, 0.32f, 1.5f),
-                Triple(0.15f, 0.85f, 1.3f), Triple(0.85f, 0.88f, 1.4f),
-                Triple(0.50f, 0.92f, 1.2f), Triple(0.35f, 0.90f, 1.6f),
-                Triple(0.70f, 0.95f, 1.1f), Triple(0.90f, 0.82f, 1.5f),
-            )
-            starPositions.forEachIndexed { i, (xFrac, yFrac, baseSize) ->
-                val phase = (starTwinkle + i * 0.13f) % 1f
-                val twinkle = (0.3f + 0.7f * sin(phase * 2.0 * PI).toFloat().coerceIn(0f, 1f))
-                val x = size.width * xFrac
-                val y = size.height * yFrac
-                // Star glow
-                drawCircle(
-                    color = ramadanWarmGold.copy(alpha = 0.08f * twinkle),
-                    radius = baseSize * 4f * density,
-                    center = Offset(x, y)
-                )
-                // Star point
-                drawCircle(
-                    color = Color.White.copy(alpha = 0.5f * twinkle + 0.2f),
-                    radius = baseSize * density,
-                    center = Offset(x, y)
-                )
-            }
-        }
+        // ═══════════════════════════════════
+        //  LAYER 1: Hexagonal tech grid
+        // ═══════════════════════════════════
+        if (gridAlpha > 0.01f) {
+            Canvas(modifier = Modifier.fillMaxSize().alpha(gridAlpha)) {
+                val w = size.width
+                val h = size.height
+                val hexSize = 28f * density
+                val hexH = hexSize * kotlin.math.sqrt(3f)
+                val cols = (w / (hexSize * 1.5f)).toInt() + 2
+                val rows = (h / hexH).toInt() + 2
 
-        // Crescent moon (top-right area)
-        Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .alpha(0.35f + 0.1f * pulseAlpha)
-        ) {
-            val moonCx = size.width * 0.82f
-            val moonCy = size.height * 0.10f
-            val moonR = 28f * density
+                for (row in 0..rows) {
+                    for (col in 0..cols) {
+                        val cx = col * hexSize * 1.5f
+                        val cy = row * hexH + if (col % 2 == 1) hexH / 2f else 0f
 
-            // Moon outer glow
-            drawCircle(
-                brush = Brush.radialGradient(
-                    listOf(
-                        ramadanWarmGold.copy(alpha = 0.15f),
-                        ramadanWarmGold.copy(alpha = 0.03f),
-                        Color.Transparent
-                    ),
-                    center = Offset(moonCx, moonCy),
-                    radius = moonR * 3f
-                )
-            )
-            // Moon full circle
-            drawCircle(
-                color = ramadanLightGold,
-                radius = moonR,
-                center = Offset(moonCx, moonCy)
-            )
-            // Cutout to make crescent (overlapping dark circle)
-            drawCircle(
-                color = ramadanDeepPurple,
-                radius = moonR * 0.78f,
-                center = Offset(moonCx + moonR * 0.38f, moonCy - moonR * 0.1f)
-            )
-        }
+                        val dist = kotlin.math.sqrt(
+                            (cx - w / 2f) * (cx - w / 2f) + (cy - h / 2f) * (cy - h / 2f)
+                        )
+                        val maxDist = kotlin.math.sqrt(w * w / 4f + h * h / 4f)
+                        val distFrac = (dist / maxDist).coerceIn(0f, 1f)
+                        val hexAlpha = (0.08f + 0.06f * (1f - distFrac)) * (0.7f + 0.3f * pulseVal)
 
-        // Hanging lanterns (فوانيس) silhouettes at top
-        Canvas(modifier = Modifier.fillMaxSize().alpha(0.25f + 0.08f * pulseAlpha)) {
-            val lanternPositions = listOf(
-                Pair(0.10f, 0.04f), Pair(0.30f, 0.02f),
-                Pair(0.50f, 0.05f), Pair(0.70f, 0.03f),
-                Pair(0.90f, 0.06f)
-            )
-            lanternPositions.forEachIndexed { i, (xFrac, yFrac) ->
-                val lx = size.width * xFrac
-                val ly = size.height * yFrac
-                val lanternH = (22f + (i % 3) * 4f) * density
-                val lanternW = lanternH * 0.45f
-                val ropeLen = ly
-
-                // Hanging rope/chain
-                drawLine(
-                    color = ramadanGold.copy(alpha = 0.5f),
-                    start = Offset(lx, 0f),
-                    end = Offset(lx, ly),
-                    strokeWidth = 1f * density,
-                    cap = StrokeCap.Round
-                )
-
-                // Lantern body (simplified ornate shape)
-                val bodyTop = ly
-                val bodyBottom = ly + lanternH
-
-                // Top dome (small arc cap)
-                drawArc(
-                    color = ramadanGold,
-                    startAngle = 180f,
-                    sweepAngle = 180f,
-                    useCenter = true,
-                    topLeft = Offset(lx - lanternW * 0.35f, bodyTop - lanternW * 0.2f),
-                    size = Size(lanternW * 0.7f, lanternW * 0.4f)
-                )
-
-                // Main body (rounded rect feel via oval)
-                drawOval(
-                    color = ramadanGold,
-                    topLeft = Offset(lx - lanternW / 2f, bodyTop),
-                    size = Size(lanternW, lanternH * 0.7f)
-                )
-
-                // Inner glow (warm light)
-                drawOval(
-                    brush = Brush.radialGradient(
-                        listOf(
-                            ramadanWarmGold.copy(alpha = 0.6f),
-                            ramadanGold.copy(alpha = 0.1f),
-                            Color.Transparent
-                        ),
-                        center = Offset(lx, bodyTop + lanternH * 0.35f)
-                    ),
-                    topLeft = Offset(lx - lanternW * 0.35f, bodyTop + lanternH * 0.1f),
-                    size = Size(lanternW * 0.7f, lanternH * 0.5f)
-                )
-
-                // Bottom tassel/point
-                val path = Path().apply {
-                    moveTo(lx - lanternW * 0.2f, bodyTop + lanternH * 0.65f)
-                    lineTo(lx, bodyBottom)
-                    lineTo(lx + lanternW * 0.2f, bodyTop + lanternH * 0.65f)
-                    close()
-                }
-                drawPath(path, color = ramadanGold)
-
-                // Glow halo around lantern
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        listOf(
-                            ramadanWarmGold.copy(alpha = 0.06f),
-                            Color.Transparent
-                        ),
-                        center = Offset(lx, bodyTop + lanternH * 0.3f)
-                    ),
-                    radius = lanternH * 1.2f,
-                    center = Offset(lx, bodyTop + lanternH * 0.3f)
-                )
-            }
-        }
-
-        // Mosque silhouette at bottom (subtle)
-        Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .alpha(0.12f)
-        ) {
-            val bottomY = size.height
-            val w = size.width
-
-            // Simple mosque skyline silhouette
-            val mosqueColor = ramadanGold
-
-            // Central dome
-            drawArc(
-                color = mosqueColor,
-                startAngle = 180f,
-                sweepAngle = 180f,
-                useCenter = true,
-                topLeft = Offset(w * 0.3f, bottomY - 55f * density),
-                size = Size(w * 0.4f, 50f * density)
-            )
-
-            // Left minaret
-            drawRect(
-                color = mosqueColor,
-                topLeft = Offset(w * 0.22f, bottomY - 65f * density),
-                size = Size(6f * density, 65f * density)
-            )
-            // Left minaret top
-            drawCircle(
-                color = mosqueColor,
-                radius = 4f * density,
-                center = Offset(w * 0.22f + 3f * density, bottomY - 65f * density)
-            )
-
-            // Right minaret
-            drawRect(
-                color = mosqueColor,
-                topLeft = Offset(w * 0.76f, bottomY - 65f * density),
-                size = Size(6f * density, 65f * density)
-            )
-            // Right minaret top
-            drawCircle(
-                color = mosqueColor,
-                radius = 4f * density,
-                center = Offset(w * 0.76f + 3f * density, bottomY - 65f * density)
-            )
-
-            // Base rect
-            drawRect(
-                color = mosqueColor,
-                topLeft = Offset(w * 0.15f, bottomY - 30f * density),
-                size = Size(w * 0.7f, 30f * density)
-            )
-        }
-
-        // ── Spotlight ──
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val spotAlpha = if (showBox) 0.07f else 0f
-            drawCircle(
-                brush = Brush.radialGradient(
-                    listOf(
-                        Color.White.copy(alpha = spotAlpha),
-                        Color.White.copy(alpha = spotAlpha * 0.3f),
-                        Color.Transparent
-                    ),
-                    center = center,
-                    radius = size.minDimension * 0.45f
-                )
-            )
-        }
-
-        // ══════════════════════════════
-        //  THE BOX
-        // ══════════════════════════════
-        if (boxAlpha > 0.01f && boxHideAlpha > 0.01f) {
-            Box(
-                modifier = Modifier
-                    .scale(boxScale * (0.3f + 0.7f * boxHideScale))
-                    .alpha(boxAlpha * boxHideAlpha),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                // Golden glow burst behind box (when lid opens)
-                if (glowRadius > 0.01f) {
-                    Canvas(
-                        modifier = Modifier
-                            .size(300.dp)
-                            .offset(y = 25.dp)
-                            .alpha(glowRadius * 0.5f * boxHideAlpha)
-                    ) {
-                        drawCircle(
-                            brush = Brush.radialGradient(
-                                listOf(
-                                    AccentYellow.copy(alpha = 0.35f),
-                                    AccentYellow.copy(alpha = 0.08f),
-                                    Color.Transparent
-                                )
-                            ),
-                            radius = size.minDimension / 2f * glowRadius
+                        val hexPath = Path().apply {
+                            for (k in 0..5) {
+                                val angle = (60.0 * k + 30.0) * PI / 180.0
+                                val hx = cx + (hexSize * 0.5f) * cos(angle).toFloat()
+                                val hy = cy + (hexSize * 0.5f) * sin(angle).toFloat()
+                                if (k == 0) moveTo(hx, hy) else lineTo(hx, hy)
+                            }
+                            close()
+                        }
+                        drawPath(
+                            hexPath,
+                            cyanPrimary.copy(alpha = hexAlpha),
+                            style = Stroke(width = 0.5f * density)
                         )
                     }
                 }
+            }
+        }
 
-                // Floating golden particles rising from box
-                if (glowRadius > 0.3f && boxHideAlpha > 0.1f) {
-                    Canvas(
-                        modifier = Modifier
-                            .size(200.dp, 260.dp)
-                            .offset(y = (-30).dp)
-                            .alpha(boxHideAlpha * glowRadius * 0.7f)
-                    ) {
-                        val count = 10
-                        for (i in 0 until count) {
-                            val frac = ((particleTime + i.toFloat() / count) % 1f)
-                            val xOff = sin(i * 53.0 + particleTime * 6.28) * 35.dp.toPx()
-                            val x = center.x + xOff.toFloat()
-                            val y = size.height * 0.7f - frac * size.height * 0.65f
-                            val a = (1f - frac) * 0.55f
-                            val r = (1.5f + (i % 3)) * density
+        // ═══════════════════════════════════
+        //  LAYER 2: Particle streams converging
+        // ═══════════════════════════════════
+        if (streamAlpha > 0.01f && streamProgress > 0.01f) {
+            Canvas(modifier = Modifier.fillMaxSize().alpha(streamAlpha)) {
+                val w = size.width
+                val h = size.height
+                val cx = w / 2f
+                val cy = h / 2f
+                val maxR = w.coerceAtLeast(h) * 0.55f
+
+                particles.forEach { p ->
+                    val angle = p.startAngle * PI / 180.0
+                    val progress = (streamProgress * p.speed).coerceIn(0f, 1f)
+                    val currentR = maxR * p.startRadius * (1f - progress)
+
+                    val px = cx + cos(angle).toFloat() * currentR
+                    val py = cy + sin(angle).toFloat() * currentR
+
+                    // Trail
+                    val trailLen = maxR * 0.08f * (1f - progress)
+                    val trailStartX = px + cos(angle).toFloat() * trailLen
+                    val trailStartY = py + sin(angle).toFloat() * trailLen
+
+                    val pColor = when (p.hue) {
+                        0 -> cyanPrimary
+                        1 -> bluePrimary
+                        else -> Color.White
+                    }
+                    val pAlpha = (0.3f + 0.5f * progress).coerceIn(0f, 1f)
+
+                    // Trail line
+                    drawLine(
+                        brush = Brush.linearGradient(
+                            listOf(Color.Transparent, pColor.copy(alpha = pAlpha * 0.4f)),
+                            start = Offset(trailStartX, trailStartY),
+                            end = Offset(px, py)
+                        ),
+                        start = Offset(trailStartX, trailStartY),
+                        end = Offset(px, py),
+                        strokeWidth = p.size * 0.5f * density
+                    )
+
+                    // Particle dot
+                    drawCircle(
+                        color = pColor.copy(alpha = pAlpha),
+                        radius = p.size * density * 0.4f,
+                        center = Offset(px, py)
+                    )
+
+                    // Glow
+                    if (p.hue == 0) {
+                        drawCircle(
+                            color = pColor.copy(alpha = pAlpha * 0.15f),
+                            radius = p.size * density * 1.5f,
+                            center = Offset(px, py)
+                        )
+                    }
+                }
+            }
+        }
+
+        // ═══════════════════════════════════
+        //  LAYER 3: Energy core
+        // ═══════════════════════════════════
+        if (coreAlpha > 0.01f) {
+            Canvas(
+                modifier = Modifier
+                    .size(120.dp)
+                    .graphicsLayer {
+                        scaleX = coreScale
+                        scaleY = coreScale
+                        alpha = coreAlpha
+                    }
+            ) {
+                val cx = center.x
+                val cy = center.y
+
+                // Outer glow
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        listOf(
+                            cyanPrimary.copy(alpha = 0.15f + coreGlow * 0.2f),
+                            bluePrimary.copy(alpha = 0.05f),
+                            Color.Transparent
+                        ),
+                        center = Offset(cx, cy)
+                    ),
+                    radius = 55f * density,
+                    center = Offset(cx, cy)
+                )
+
+                // Mid ring
+                drawCircle(
+                    color = cyanPrimary.copy(alpha = 0.2f + coreGlow * 0.3f),
+                    radius = 30f * density,
+                    center = Offset(cx, cy),
+                    style = Stroke(width = 2f * density)
+                )
+
+                // Inner ring
+                drawCircle(
+                    color = Color.White.copy(alpha = 0.15f + coreGlow * 0.25f),
+                    radius = 18f * density,
+                    center = Offset(cx, cy),
+                    style = Stroke(width = 1.5f * density)
+                )
+
+                // Core bright center
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        listOf(
+                            Color.White.copy(alpha = 0.6f + coreGlow * 0.4f),
+                            cyanPrimary.copy(alpha = 0.3f + coreGlow * 0.3f),
+                            Color.Transparent
+                        ),
+                        center = Offset(cx, cy)
+                    ),
+                    radius = 12f * density,
+                    center = Offset(cx, cy)
+                )
+
+                // Rotating energy spokes
+                val spokeCount = 6
+                for (i in 0 until spokeCount) {
+                    val a = (timeVal * 360f + i * 60f) * PI / 180.0
+                    val innerR = 18f * density
+                    val outerR = 30f * density
+                    val spokeAlpha = 0.15f + coreGlow * 0.2f
+                    drawLine(
+                        color = cyanPrimary.copy(alpha = spokeAlpha),
+                        start = Offset(
+                            cx + cos(a).toFloat() * innerR,
+                            cy + sin(a).toFloat() * innerR
+                        ),
+                        end = Offset(
+                            cx + cos(a).toFloat() * outerR,
+                            cy + sin(a).toFloat() * outerR
+                        ),
+                        strokeWidth = 1f * density,
+                        cap = StrokeCap.Round
+                    )
+                }
+
+                // Orbiting dots
+                for (i in 0..2) {
+                    val a = (timeVal * 360f * 1.5f + i * 120f) * PI / 180.0
+                    val orbR = 25f * density
+                    drawCircle(
+                        color = cyanPrimary.copy(alpha = 0.5f + coreGlow * 0.3f),
+                        radius = 2f * density,
+                        center = Offset(
+                            cx + cos(a).toFloat() * orbR,
+                            cy + sin(a).toFloat() * orbR
+                        )
+                    )
+                }
+            }
+        }
+
+        // ═══════════════════════════════════
+        //  LAYER 4: Burst shockwaves
+        // ═══════════════════════════════════
+        if (burstRadius > 0.01f) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val maxR = size.minDimension * 0.55f
+
+                if (burstAlpha > 0.01f) {
+                    val r1 = maxR * burstRadius
+                    drawCircle(
+                        color = cyanPrimary.copy(alpha = burstAlpha * 0.6f),
+                        radius = r1,
+                        center = center,
+                        style = Stroke(width = 4f * density * (1f - burstRadius))
+                    )
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            listOf(
+                                Color.Transparent,
+                                cyanPrimary.copy(alpha = burstAlpha * 0.12f),
+                                Color.Transparent
+                            ),
+                            center = center,
+                            radius = r1 * 1.2f
+                        ),
+                        radius = r1 * 1.2f,
+                        center = center
+                    )
+                }
+
+                if (burst2Alpha > 0.01f) {
+                    val r2 = maxR * 0.7f * burst2Radius
+                    drawCircle(
+                        color = bluePrimary.copy(alpha = burst2Alpha * 0.5f),
+                        radius = r2,
+                        center = center,
+                        style = Stroke(width = 3f * density * (1f - burst2Radius))
+                    )
+                }
+
+                // Burst debris
+                if (burstRadius > 0.1f) {
+                    for (i in 0 until 20) {
+                        val a = i * 18.0 * PI / 180.0
+                        val dist = maxR * burstRadius * (0.4f + (i % 4) * 0.15f)
+                        val px = center.x + cos(a).toFloat() * dist
+                        val py = center.y + sin(a).toFloat() * dist
+                        val pSize = (2f + (i % 3)) * density * (1f - burstRadius)
+                        val pColor = if (i % 2 == 0) cyanPrimary else bluePrimary
+                        if (pSize > 0.5f) {
                             drawCircle(
-                                color = AccentYellow.copy(alpha = a),
-                                radius = r,
-                                center = Offset(x, y)
+                                color = pColor.copy(alpha = (1f - burstRadius) * 0.6f),
+                                radius = pSize,
+                                center = Offset(px, py)
                             )
                         }
                     }
                 }
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // ── LID ──
-                    Box(
-                        modifier = Modifier
-                            .width(175.dp)
-                            .height(30.dp)
-                            .graphicsLayer {
-                                rotationX = lidAngle
-                                transformOrigin = TransformOrigin(0.5f, 1f)
-                                cameraDistance = 14f * density
-                            }
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(Color(0xFF2A2A42), Color(0xFF1F1F38))
-                                ),
-                                RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp)
-                            )
-                            .border(
-                                1.5.dp,
-                                Brush.linearGradient(
-                                    listOf(
-                                        AccentYellow.copy(alpha = 0.7f),
-                                        AccentYellow.copy(alpha = 0.3f)
-                                    )
-                                ),
-                                RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        // Decorative ribbon
-                        Box(
-                            modifier = Modifier
-                                .width(38.dp)
-                                .height(3.dp)
-                                .background(
-                                    AccentYellow.copy(alpha = 0.5f),
-                                    RoundedCornerShape(2.dp)
-                                )
-                        )
-                    }
-
-                    // ── BODY ──
-                    Box(
-                        modifier = Modifier
-                            .width(175.dp)
-                            .height(115.dp)
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(Color(0xFF1A1A2E), Color(0xFF16213E))
-                                ),
-                                RoundedCornerShape(bottomStart = 14.dp, bottomEnd = 14.dp)
-                            )
-                            .border(
-                                1.5.dp,
-                                Brush.linearGradient(
-                                    listOf(
-                                        AccentYellow.copy(alpha = 0.5f),
-                                        AccentYellow.copy(alpha = 0.2f)
-                                    )
-                                ),
-                                RoundedCornerShape(bottomStart = 14.dp, bottomEnd = 14.dp)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        // Pulsing "?" inside
-                        Text(
-                            text = "?",
-                            fontSize = 48.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = AccentYellow.copy(alpha = 0.15f + 0.15f * pulseAlpha)
-                        )
-                    }
-                }
             }
         }
 
-        // ══════════════════════════════
-        //  SERVICE CATEGORY CARDS
-        // ══════════════════════════════
-        categories.forEachIndexed { i, cat ->
-            val progress = itemAnimations[i].value
-            val fade = itemFades[i].value
-            val effective = progress * fade
+        // Flash
+        if (burstFlashAlpha > 0.01f) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(burstFlashAlpha)
+                    .background(
+                        Brush.radialGradient(
+                            listOf(Color.White, cyanPrimary.copy(alpha = 0.3f), Color.Transparent)
+                        )
+                    )
+            )
+        }
+
+        // ═══════════════════════════════════
+        //  LAYER 5: Product cards (radial orbit)
+        // ═══════════════════════════════════
+        products.forEachIndexed { i, card ->
+            val progress = cardAnimations[i].value
+            val hideProgress = cardHideAnimations[i].value
+            val effective = progress * hideProgress
 
             if (effective > 0.01f) {
+                val baseAngle = card.angle + cardsOrbit
+                val rad = baseAngle * PI / 180.0
+                val dist = card.radius * effective
+                val ox = cos(rad).toFloat() * dist
+                val oy = sin(rad).toFloat() * dist
+
+                // Trail from center
+                if (progress < 0.9f) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        val trailEnd = Offset(
+                            center.x + ox * density * 0.28f,
+                            center.y + oy * density * 0.28f
+                        )
+                        drawLine(
+                            brush = Brush.linearGradient(
+                                listOf(Color.Transparent, card.color.copy(alpha = 0.3f * effective)),
+                                start = center,
+                                end = trailEnd
+                            ),
+                            start = center,
+                            end = trailEnd,
+                            strokeWidth = 2f * density
+                        )
+                    }
+                }
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .offset(
-                            x = (cat.targetX * effective).dp,
-                            y = (cat.targetY * effective).dp
-                        )
-                        .scale(0.4f + 0.6f * effective)
-                        .alpha(effective)
-                        .width(84.dp)
+                        .offset(x = (ox).dp, y = (oy).dp)
+                        .graphicsLayer {
+                            scaleX = 0.3f + 0.7f * effective
+                            scaleY = 0.3f + 0.7f * effective
+                            alpha = effective
+                            rotationY = cos(rad).toFloat() * 15f
+                            rotationX = -sin(rad).toFloat() * 8f
+                            cameraDistance = 12f * density
+                        }
+                        .width(82.dp)
                         .background(
                             Brush.verticalGradient(
                                 listOf(
-                                    Color(0xFF14142C).copy(alpha = 0.95f),
-                                    Color(0xFF0F0F23).copy(alpha = 0.95f)
+                                    Color(0xFF0C1428).copy(alpha = 0.95f),
+                                    Color(0xFF080E1E).copy(alpha = 0.95f)
                                 )
                             ),
-                            RoundedCornerShape(14.dp)
+                            RoundedCornerShape(12.dp)
                         )
-                        .border(
-                            1.dp,
-                            cat.color.copy(alpha = 0.4f * effective),
-                            RoundedCornerShape(14.dp)
+                        .background(
+                            Brush.radialGradient(
+                                listOf(card.color.copy(alpha = 0.06f), Color.Transparent)
+                            ),
+                            RoundedCornerShape(12.dp)
                         )
-                        .padding(vertical = 14.dp, horizontal = 6.dp)
+                        .padding(vertical = 10.dp, horizontal = 6.dp)
                 ) {
-                    // Colored glow behind icon
                     Box(contentAlignment = Alignment.Center) {
-                        Canvas(modifier = Modifier.size(40.dp).alpha(0.3f)) {
+                        Canvas(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .alpha(0.3f)
+                        ) {
                             drawCircle(
                                 brush = Brush.radialGradient(
-                                    listOf(
-                                        cat.color.copy(alpha = 0.4f),
-                                        Color.Transparent
-                                    )
+                                    listOf(card.color.copy(alpha = 0.5f), Color.Transparent)
                                 ),
                                 radius = size.minDimension / 2f
                             )
                         }
                         Icon(
-                            imageVector = cat.icon,
-                            contentDescription = cat.label,
-                            tint = cat.color,
-                            modifier = Modifier.size(30.dp)
+                            imageVector = card.icon,
+                            contentDescription = card.label,
+                            tint = card.color,
+                            modifier = Modifier.size(26.dp)
                         )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(5.dp))
                     Text(
-                        text = cat.label,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.SemiBold,
+                        text = card.label,
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold,
                         color = Color.White.copy(alpha = 0.9f),
                         textAlign = TextAlign.Center,
-                        maxLines = 1
+                        maxLines = 1,
+                        letterSpacing = 0.5.sp
                     )
                 }
             }
         }
 
-        // ══════════════════════════════
-        //  FLASH OVERLAY
-        // ══════════════════════════════
-        if (flashAlpha > 0.01f) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .alpha(flashAlpha)
-                    .background(Color.White)
-            )
-        }
-
-        // ══════════════════════════════
-        //  LOGO + TEXT REVEAL
-        // ══════════════════════════════
+        // ═══════════════════════════════════
+        //  LAYER 6: Logo + text reveal
+        // ═══════════════════════════════════
         if (logoAlpha > 0.01f) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .scale(logoScale)
-                    .alpha(logoAlpha)
+                    .graphicsLayer {
+                        scaleX = logoScale
+                        scaleY = logoScale
+                        alpha = logoAlpha
+                    }
             ) {
-                // ON + Orbital Swoosh
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.size(190.dp)
+                    modifier = Modifier.size(180.dp)
                 ) {
-                    // Glow behind logo
+                    // Glow behind
                     Canvas(
                         modifier = Modifier
                             .size(240.dp)
-                            .alpha(pulseAlpha * 0.15f)
+                            .alpha(pulseVal * 0.2f)
                     ) {
                         drawCircle(
                             brush = Brush.radialGradient(
-                                listOf(
-                                    Color.White.copy(alpha = 0.2f),
-                                    Color.White.copy(alpha = 0.05f),
-                                    Color.Transparent
-                                )
+                                listOf(cyanPrimary.copy(alpha = 0.2f), Color.Transparent)
                             ),
                             radius = size.minDimension / 2f
                         )
                     }
 
-                    // Back swoosh (behind ON)
+                    // Back swoosh
                     Canvas(modifier = Modifier.fillMaxSize()) {
                         clipRect(top = 0f, bottom = size.height * 0.46f) {
-                            drawCinematicOrbitalSwoosh(swooshSweep)
+                            drawOrbitalSwoosh(swooshSweep, cyanPrimary)
                         }
                     }
 
-                    // ON text
                     Text(
                         text = "ON",
-                        fontSize = 76.sp,
+                        fontSize = 72.sp,
                         fontWeight = FontWeight.Black,
                         color = Color.White
                     )
 
-                    // Front swoosh (in front of ON)
+                    // Front swoosh
                     Canvas(modifier = Modifier.fillMaxSize()) {
                         clipRect(top = size.height * 0.46f, bottom = size.height) {
-                            drawCinematicOrbitalSwoosh(swooshSweep)
+                            drawOrbitalSwoosh(swooshSweep, cyanPrimary)
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(22.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
-                // ON-SERVER1
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .alpha(textAlpha)
-                            .offset(y = textOffset.dp)
+                            .graphicsLayer { translationY = textSlide * density }
                     ) {
-                        Text("ON", fontSize = 40.sp, fontWeight = FontWeight.Black, color = AccentYellow)
-                        Text("-", fontSize = 40.sp, fontWeight = FontWeight.Black, color = Color.White.copy(alpha = 0.5f))
+                        Text("ON", fontSize = 38.sp, fontWeight = FontWeight.Black, color = AccentYellow)
+                        Text("-", fontSize = 38.sp, fontWeight = FontWeight.Black, color = Color.White.copy(alpha = 0.4f))
                         "SERVER".forEach { c ->
-                            Text(c.toString(), fontSize = 40.sp, fontWeight = FontWeight.Black, color = Color.White)
+                            Text(c.toString(), fontSize = 38.sp, fontWeight = FontWeight.Black, color = Color.White)
                         }
-                        Text("1", fontSize = 40.sp, fontWeight = FontWeight.Black, color = AccentYellow)
+                        Text("1", fontSize = 38.sp, fontWeight = FontWeight.Black, color = AccentYellow)
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
-                // Accent line
                 Box(
                     modifier = Modifier
-                        .width((180 * textAlpha).dp)
-                        .height(2.5.dp)
+                        .width((160 * textAlpha).dp)
+                        .height(2.dp)
                         .background(
                             Brush.horizontalGradient(
-                                listOf(
-                                    Color.Transparent,
-                                    AccentYellow.copy(alpha = 0.8f),
-                                    AccentYellow,
-                                    AccentYellow.copy(alpha = 0.8f),
-                                    Color.Transparent
-                                )
+                                listOf(Color.Transparent, cyanPrimary, AccentYellow, cyanPrimary, Color.Transparent)
                             )
                         )
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                // Subtitle
                 Text(
                     text = "Integrated Digital Services",
-                    fontSize = 14.sp,
+                    fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color.White.copy(alpha = 0.5f),
+                    color = Color.White.copy(alpha = 0.45f),
                     letterSpacing = 2.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .alpha(textAlpha)
-                        .offset(y = textOffset.dp)
-                )
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                // رمضان كريم text
-                Text(
-                    text = "رمضان كريم 🌙",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFFD4A438).copy(alpha = 0.7f),
-                    letterSpacing = 1.5.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .alpha(textAlpha * 0.85f)
-                        .offset(y = textOffset.dp)
+                        .graphicsLayer { translationY = textSlide * density }
                 )
             }
         }
     }
 }
 
-/**
- * Orbital swoosh ring for the cinematic splash logo reveal.
- */
-private fun DrawScope.drawCinematicOrbitalSwoosh(sweep: Float) {
+private fun DrawScope.drawOrbitalSwoosh(sweep: Float, color: Color) {
     rotate(-22f) {
         val cx = center.x
         val cy = center.y
@@ -853,7 +806,7 @@ private fun DrawScope.drawCinematicOrbitalSwoosh(sweep: Float) {
         val top = cy - ellipseH / 2f
 
         val segments = 30
-        val baseStroke = 7.dp.toPx()
+        val baseStroke = 6.dp.toPx()
         for (i in 0 until segments) {
             val frac = i.toFloat() / segments
             val angle = frac * 360f
@@ -867,7 +820,7 @@ private fun DrawScope.drawCinematicOrbitalSwoosh(sweep: Float) {
                 useCenter = false,
                 style = Stroke(width = baseStroke * thickness, cap = StrokeCap.Butt),
                 topLeft = Offset(left, top),
-                size = androidx.compose.ui.geometry.Size(ellipseW, ellipseH)
+                size = Size(ellipseW, ellipseH)
             )
         }
 
@@ -875,19 +828,17 @@ private fun DrawScope.drawCinematicOrbitalSwoosh(sweep: Float) {
         val innerH = ellipseH * 0.55f
         val innerLeft = cx - innerW / 2f
         val innerTop = cy - innerH / 2f
-        val innerStroke = 2.5.dp.toPx()
-        val innerStartDeg = -30f
-        val innerFullSweep = 220f
-        val innerActualSweep = minOf(innerFullSweep, maxOf(0f, sweep - 60f))
+        val innerStroke = 2.dp.toPx()
+        val innerActualSweep = minOf(220f, maxOf(0f, sweep - 60f))
         if (innerActualSweep > 0f) {
             drawArc(
-                color = Color.White.copy(alpha = 0.65f),
-                startAngle = innerStartDeg,
+                color = color.copy(alpha = 0.5f),
+                startAngle = -30f,
                 sweepAngle = innerActualSweep,
                 useCenter = false,
                 style = Stroke(width = innerStroke, cap = StrokeCap.Round),
                 topLeft = Offset(innerLeft, innerTop),
-                size = androidx.compose.ui.geometry.Size(innerW, innerH)
+                size = Size(innerW, innerH)
             )
         }
     }
