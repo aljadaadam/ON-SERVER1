@@ -241,6 +241,8 @@ export class OrderService {
       const isImeiField = primaryFieldKey === 'IMEI';
 
       // Validate and fix IMEI only for actual IMEI-type fields
+      // For non-IMEI fields (SN, etc.), send value as-is in <IMEI> tag
+      // DHRU API always uses <IMEI> tag for the primary input regardless of type
       if (product.serviceType === 'IMEI' && isImeiField) {
         const imeiResult = validateAndFixImei(imei);
         if (!imeiResult.valid) {
@@ -248,6 +250,8 @@ export class OrderService {
           return;
         }
         imei = imeiResult.imei;
+      } else if (!isImeiField) {
+        console.log(`[OrderService] Non-IMEI field (${primaryFieldKey}): sending raw value in <IMEI> tag`);
       }
 
       // Parse custom field values from metadata
@@ -261,23 +265,12 @@ export class OrderService {
         } catch {}
       }
 
-      // For non-IMEI fields (SN, etc.), send value via CUSTOMFIELD only
-      // and use a dummy IMEI for the <IMEI> XML tag
-      let imeiForApi = imei;
-      if (!isImeiField) {
-        if (!customFields) customFields = {};
-        if (!customFields[productFields[0]?.key]) {
-          customFields[productFields[0]?.key] = imei;
-        }
-        imeiForApi = externalProvider.generateRandomImei();
-        console.log(`[OrderService] SN-type field (${primaryFieldKey}): sending via CUSTOMFIELD, dummy IMEI for tag`);
-      }
-
       try {
         // Call external provider
+        // DHRU API: <IMEI> tag carries the primary input (IMEI, SN, etc.)
         const result = await externalProvider.placeOrder(
           product.externalId,
-          imeiForApi,
+          imei,
           product.supportsQnt ? item.quantity : undefined,
           customFields
         );
